@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CategoryProduct creation</h1>
+
+    {% include 'ZiiwebEcommerceBundle:CategoryProduct:form.html.twig' %}
+
+    <ul>
+        <li>
+            <a href="{{ path('categoryproduct_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

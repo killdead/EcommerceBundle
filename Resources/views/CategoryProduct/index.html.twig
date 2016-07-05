@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CategoryProduct list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Lft</th>
+                <th>Lvl</th>
+                <th>Rgt</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for categoryProduct in categoryProducts %}
+            <tr>
+                <td><a href="{{ path('categoryproduct_show', { 'id': categoryProduct.id }) }}">{{ categoryProduct.id }}</a></td>
+                <td>{{ categoryProduct.title }}</td>
+                <td>{{ categoryProduct.lft }}</td>
+                <td>{{ categoryProduct.lvl }}</td>
+                <td>{{ categoryProduct.rgt }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('categoryproduct_show', { 'id': categoryProduct.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('categoryproduct_edit', { 'id': categoryProduct.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('categoryproduct_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}
