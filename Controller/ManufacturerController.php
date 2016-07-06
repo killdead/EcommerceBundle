@@ -92,10 +92,13 @@ class ManufacturerController extends Controller
             $em->persist($manufacturer);
             $em->flush();
 
-            return $this->redirectToRoute('manufacturer_edit', array('id' => $manufacturer->getId()));
+            return $this->render('ZiiwebEcommerceBundle:Manufacturer:edit.html.twig', array(
+                'id' => $manufacturer->getId(),
+                'edit_form' => $editForm->createView(),
+            ));
         }
 
-        return $this->render('manufacturer/edit.html.twig', array(
+        return $this->render('ZiiwebEcommerceBundle:Manufacturer:edit.html.twig', array(
             'manufacturer' => $manufacturer,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),

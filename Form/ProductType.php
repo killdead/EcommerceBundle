@@ -5,6 +5,9 @@ namespace Ziiweb\EcommerceBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Ziiweb\EcommerceBundle\Form\ProductVersionType;
 
 class ProductType extends AbstractType
 {
@@ -15,7 +18,22 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
+            ->add('name', null, array('label' => 'Nombre', 'data' => 'jadner'))
+            //->add('description', null, array('label' => 'Descripción'))
+            ->add('manufacturer', EntityType::class, array(
+                'label' => 'Marca/Fabricante',
+                'class' => 'ZiiwebEcommerceBundle:Manufacturer',
+            ))
+            ->add('categoryProduct', EntityType::class, array(
+                'label' => 'Categoría',
+                'class' => 'ZiiwebEcommerceBundle:CategoryProduct',
+            ))
+            ->add('productVersions', CollectionType::class, array(
+                'entry_type' => ProductVersionType::class, 
+                'label' => 'Versiones del producto',
+                'allow_add' => true,
+                'allow_delete' => true,
+            ))
         ;
     }
     

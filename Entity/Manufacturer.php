@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Ziiweb\EcommerceBundle\Entity\Manufacturer
  *
  * @ORM\Table
- * @ORM\Entity(repositoryClass="Ziiweb\EcommerceBundle\Entity\Repository\ManufacturerRepository")
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  */
 class Manufacturer
@@ -28,6 +28,10 @@ class Manufacturer
      */
     protected $name;
   
+    public function __toString() 
+    {
+        return $this->name;
+    }
 
     /**
      * Get id

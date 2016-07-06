@@ -42,7 +42,11 @@ class CategoryProductController extends Controller
     public function newAction(Request $request)
     {
         $categoryProduct = new CategoryProduct();
-        $form = $this->createForm('Ziiweb\EcommerceBundle\Form\CategoryProductType', $categoryProduct);
+
+        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+        $categories = $repository->findAll();
+
+        $form = $this->createForm('Ziiweb\EcommerceBundle\Form\CategoryProductType', $categoryProduct, array('categories' => $categories));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -50,7 +54,10 @@ class CategoryProductController extends Controller
             $em->persist($categoryProduct);
             $em->flush();
 
-            return $this->render('ZiiwebEcommerceBundle:CategoryProduct:edit.html.twig', array('id' => $categoryProduct->getId()));
+            return $this->render('ZiiwebEcommerceBundle:CategoryProduct:edit.html.twig', array(
+                'id' => $categoryProduct->getId(),
+                'edit_form' => $form->createView()
+            ));
         }
 
        return $this->render('ZiiwebEcommerceBundle:CategoryProduct:new.html.twig', array(
@@ -84,7 +91,11 @@ class CategoryProductController extends Controller
     public function editAction(Request $request, CategoryProduct $categoryProduct)
     {
         $deleteForm = $this->createDeleteForm($categoryProduct);
-        $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\CategoryProductType', $categoryProduct);
+
+        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+        $categories = $repository->findAll();
+
+        $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\CategoryProductType', $categoryProduct, array('categories' => $categories));
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -92,10 +103,13 @@ class CategoryProductController extends Controller
             $em->persist($categoryProduct);
             $em->flush();
 
-            return $this->redirectToRoute('categoryproduct_edit', array('id' => $categoryProduct->getId()));
+            return $this->render('ZiiwebEcommerceBundle:CategoryProduct:edit.html.twig', array(
+                'id' => $categoryProduct->getId(),
+                'edit_form' => $editForm->createView()
+            ));
         }
 
-        return $this->render('categoryproduct/edit.html.twig', array(
+        return $this->render('ZiiwebEcommerceBundle:CategoryProduct:edit.html.twig', array(
             'categoryProduct' => $categoryProduct,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),

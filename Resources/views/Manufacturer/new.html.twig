@@ -3,7 +3,10 @@
 {% block body %}
     <h1>Manufacturer creation</h1>
 
-   {% include 'ZiiwebEcommerceBundle:Manufacturer:form.html.twig' %}
+    {{ form_start(edit_form) }}
+        {% include 'ZiiwebEcommerceBundle:Manufacturer:form.html.twig' %}
+        <input type="submit" value="Save" />
+    {{ form_end(edit_form) }}
 
     <ul>
         <li>

@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Ziiweb\EcommerceBundle\Entity\Product;
+use Ziiweb\EcommerceBundle\Entity\ProductVersion;
 use Ziiweb\EcommerceBundle\Form\ProductType;
 
 /**
@@ -42,7 +43,13 @@ class ProductController extends Controller
     public function newAction(Request $request)
     {
         $product = new Product();
+
+        $productVersion = new ProductVersion();
+
+        $product->addProductVersion($productVersion);
+
         $form = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -50,12 +57,14 @@ class ProductController extends Controller
             $em->persist($product);
             $em->flush();
 
-            return $this->redirectToRoute('product_show', array('id' => $product->getId()));
+            return $this->redirectToRoute('product_edit', array(
+		'id' => $product->getId()
+            ));
         }
 
-        return $this->render('product/new.html.twig', array(
+        return $this->render('ZiiwebEcommerceBundle:Product:new.html.twig', array(
             'product' => $product,
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ));
     }
 
@@ -87,15 +96,25 @@ class ProductController extends Controller
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
         $editForm->handleRequest($request);
 
+var_dump($product->getProductVersions());
+
+        var_dump($editForm->isSubmitted());
+        var_dump($editForm->isValid());
+
+die("lfs");
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
             $em->persist($product);
             $em->flush();
 
-            return $this->redirectToRoute('product_edit', array('id' => $product->getId()));
+            return $this->render('ZiiwebEcommerceBundle:Product:edit.html.twig', array(
+                'id' => $product->getId(),
+                'edit_form' => $editForm->createView()
+            ));
         }
 
-        return $this->render('product/edit.html.twig', array(
+        return $this->render('ZiiwebEcommerceBundle:Product:edit.html.twig', array(
             'product' => $product,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
