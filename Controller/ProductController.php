@@ -44,15 +44,25 @@ class ProductController extends Controller
     {
         $product = new Product();
 
-        $productVersion = new ProductVersion();
-
-        $product->addProductVersion($productVersion);
+        if ($request->getMethod() == 'GET') {
+            $productVersion = new ProductVersion();
+	    $product->addProductVersion($productVersion);
+        } else {
+            //I CAN COMMENT THESE LINES BECAUSE I HAVE ADDED 'by_reference => false' TO ProductType > ProductVersions
+            /*
+            foreach ($requestParameters['product']['productVersions'] as $key => $value) {
+		${'productVersion' . $key} = new ProductVersion();
+		$product->addProductVersion(${'productVersion' . $key});
+            }
+            */
+        }
 
         $form = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
@@ -96,12 +106,6 @@ class ProductController extends Controller
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
         $editForm->handleRequest($request);
 
-var_dump($product->getProductVersions());
-
-        var_dump($editForm->isSubmitted());
-        var_dump($editForm->isValid());
-
-die("lfs");
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
 

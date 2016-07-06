@@ -207,6 +207,9 @@ class Product
         $this->productVersions[] = $productVersion;
 
         $productVersion->setProduct($this);
+//var_dump('addProductVersion: ');
+//var_dump($productVersion);
+//die();
 
         return $this;
     }
