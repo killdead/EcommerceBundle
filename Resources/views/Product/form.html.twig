@@ -1,1 +1,21 @@
 {{ form_widget(form) }}
+<script type="text/javascript">
+
+    //add element to collection form
+    $('.add-product').on('click', function(event) {
+	event.preventDefault();
+	var prototype = $(this).prev().data('prototype');
+
+        var index = $(this).prev().children().length;
+
+        prototype = prototype.replace(/\__name__/g, index);
+	$(this).prev().append($.parseHTML(prototype));
+    });
+
+    //delete the one element in the collection type
+    $(document).on('click', '.delete-product', function(event) {
+        event.preventDefault();
+        $(this).prev().remove();
+        $(this).remove();
+    })
+</script>
