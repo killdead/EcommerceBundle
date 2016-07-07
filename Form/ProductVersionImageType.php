@@ -17,7 +17,8 @@ class ProductVersionImageType extends AbstractType
     {
         $builder
             ->add('file', FileType::class, array(
-              'data_class' => null
+              'data_class' => null,
+              'required' => false
             ))
             //->add('productVersion')
         ;

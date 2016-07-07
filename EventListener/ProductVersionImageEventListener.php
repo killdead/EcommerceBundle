@@ -13,13 +13,14 @@ class ProductVersionImageEventListener
     {
         $entity = $args->getEntity();
 
+//var_dump('prePersis');
+//die("jlfs");
 
         if ($entity instanceof ProductVersionImage) {
 
             $file = $entity->getFile();
 
             $filename = md5(uniqid()) . '.' . $file->guessExtension(); 
-
 
             $sizes = array('s' => 100, 'm' => 200, 'l' => 400, 'xl' => 600);
 
@@ -36,7 +37,6 @@ class ProductVersionImageEventListener
          
             $file->move('uploads', $filename);
             
-
             $entity->setFile($filename);
         }
     }

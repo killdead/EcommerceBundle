@@ -38,7 +38,7 @@ class ProductController extends Controller
     /**
      * Creates a new Product entity.
      *
-     * @Route("/new", name="product_new")
+     * @Route("/newer", name="product_new")
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
@@ -109,7 +109,9 @@ class ProductController extends Controller
     public function editAction(Request $request, Product $product)
     {
         $deleteForm = $this->createDeleteForm($product);
+
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
+
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -117,6 +119,9 @@ class ProductController extends Controller
 
             $em->persist($product);
             $em->flush();
+
+            $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
+
 
             return $this->render('ZiiwebEcommerceBundle:Product:edit.html.twig', array(
                 'id' => $product->getId(),

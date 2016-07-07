@@ -60,9 +60,13 @@ class ProductVersionImage
      */
     public function setFile($file)
     {
-        $this->file = $file;
 
-        return $this;
+        if ($file !== null) {
+//die("jfalsd");
+	  $this->file = $file;
+
+	  return $this;
+        }
     }
 
     /**
