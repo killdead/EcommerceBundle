@@ -5,9 +5,9 @@ namespace Ziiweb\EcommerceBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
-class ProductVersionType extends AbstractType
+class ProductVersionImageType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -16,15 +16,10 @@ class ProductVersionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('price')
-            //->add('oldPrice')
-            ->add('productVersionImages', CollectionType::class, array(
-                'entry_type' => ProductVersionImageType::class, 
-                //'label' => false
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
+            ->add('file', FileType::class, array(
+              'data_class' => null
             ))
+            //->add('productVersion')
         ;
     }
     
@@ -34,7 +29,7 @@ class ProductVersionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Ziiweb\EcommerceBundle\Entity\ProductVersion'
+            'data_class' => 'Ziiweb\EcommerceBundle\Entity\ProductVersionImage'
         ));
     }
 }

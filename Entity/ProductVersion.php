@@ -44,6 +44,16 @@ class ProductVersion
     protected $oldPrice;
 
     /**
+     * @ORM\OneToMany(targetEntity="ProductVersionImage", mappedBy="productVersion", cascade={"persist", "remove"})
+     **/
+    private $productVersionImages;
+  
+
+    public function __construct() {
+        $this->productVersionImages = new ArrayCollection();
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -147,5 +157,43 @@ class ProductVersion
     public function getOldPrice()
     {
         return $this->oldPrice;
+    }
+
+    /**
+     * Add productVersionImage
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\ProductVersionImage $productVersionImage
+     *
+     * @return ProductVersion
+     */
+    public function addProductVersionImage(\Ziiweb\EcommerceBundle\Entity\ProductVersionImage $productVersionImage)
+    {
+        $this->productVersionImages[] = $productVersionImage;
+
+        $productVersionImage->setProductVersion($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove productVersionImage
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\ProductVersionImage $productVersionImage
+     */
+    public function removeProductVersionImage(\Ziiweb\EcommerceBundle\Entity\ProductVersionImage $productVersionImage)
+    {
+        $this->productVersionImages->removeElement($productVersionImage);
+
+        $productVersionImage->setProductVersion(null);
+    }
+
+    /**
+     * Get productVersionImages
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProductVersionImages()
+    {
+        return $this->productVersionImages;
     }
 }

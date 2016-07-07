@@ -1,4 +1,6 @@
 services:
-#    ziiweb_ecommerce.example:
-#        class: Ziiweb\EcommerceBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+    ziiweb_ecommerce.example:
+        class: Ziiweb\EcommerceBundle\EventListener\ProductVersionImageEventListener
+        #arguments: ["@service_id", "plain_value", %parameter%]
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }

@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Ziiweb\EcommerceBundle\Entity\Product;
 use Ziiweb\EcommerceBundle\Entity\ProductVersion;
+use Ziiweb\EcommerceBundle\Entity\ProductVersionImage;
 use Ziiweb\EcommerceBundle\Form\ProductType;
 
 /**
@@ -45,8 +46,13 @@ class ProductController extends Controller
         $product = new Product();
 
         if ($request->getMethod() == 'GET') {
+            $productVersionImage = new ProductVersionImage();
             $productVersion = new ProductVersion();
+
+            $productVersion->addProductVersionImage($productVersionImage);
+
 	    $product->addProductVersion($productVersion);
+
         } else {
             //I CAN COMMENT THESE LINES BECAUSE I HAVE ADDED 'by_reference => false' TO ProductType > ProductVersions
             /*

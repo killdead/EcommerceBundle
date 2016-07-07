@@ -1,0 +1,22 @@
+{% block collection_row %}
+  {{ form_widget(form) }}
+  {% if form.vars.name == 'productVersions' %}
+    <a class="add-product" href="#">Añadir versión de producto</a>
+  {% else %}
+    <a class="add-image" href="#">Añadir imagen</a>
+  {% endif %}
+{% endblock %}
+
+{% block product_version_row %}
+  <div class="form-group">
+    {{ form_widget(form) }}
+    <a href="#" class="delete-product">Eliminar version del producto</a>
+  </div>
+{% endblock %}
+
+{% block file_row %}
+  {{ form_widget(form) }}
+  {% if app.request.attributes.get('_route') == 'product_edit'%}
+    <img src="/uploads/s/{{ form.vars.data }}">
+  {% endif %}
+{% endblock %}

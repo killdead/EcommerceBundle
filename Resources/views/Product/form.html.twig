@@ -6,9 +6,16 @@
     $('.add-product').on('click', function(event) {
 	event.preventDefault();
 	var prototype = $(this).prev().data('prototype');
-
         var index = $(this).prev().children().length;
+        prototype = prototype.replace(/\__name__/g, index);
+	$(this).prev().append($.parseHTML(prototype));
+    });
 
+    $('.add-image').on('click', function(event) {
+	event.preventDefault();
+
+	var prototype = $(this).prev().data('prototype');
+        var index = $(this).prev().children().length;
         prototype = prototype.replace(/\__name__/g, index);
 	$(this).prev().append($.parseHTML(prototype));
     });
