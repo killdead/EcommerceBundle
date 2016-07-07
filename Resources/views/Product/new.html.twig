@@ -1,5 +1,18 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme edit_form _self %}
+
+{% block collection_row %}
+  {{ form_widget(form) }}
+  <a class="add-product" href="#">Añadir versión de producto</a>
+{% endblock %}
+
+{% block product_version_row %}
+  <div class="form-group">
+    {{ form_widget(form) }}
+    <a href="#" class="delete-product">Eliminar version del producto</a>
+  </div>
+{% endblock %}
 {% block body %}
     <h1>Product creation</h1>
 
