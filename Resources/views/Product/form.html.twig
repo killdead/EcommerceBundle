@@ -20,10 +20,15 @@
 	$(this).prev().append($.parseHTML(prototype));
     });
 
-    //delete the one element in the collection type
+    //delete a product version
     $(document).on('click', '.delete-product', function(event) {
         event.preventDefault();
         $(this).prev().remove();
         $(this).remove();
     })
+
+    $(document).on('click', '.delete-image', function(event) {
+        event.preventDefault();
+        $(this).parent().parent().remove();
+    });
 </script>

@@ -13,9 +13,6 @@ class ProductVersionImageEventListener
     {
         $entity = $args->getEntity();
 
-//var_dump('prePersis');
-//die("jlfs");
-
         if ($entity instanceof ProductVersionImage) {
 
             $file = $entity->getFile();

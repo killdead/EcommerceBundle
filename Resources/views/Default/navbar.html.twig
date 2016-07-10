@@ -1,0 +1,15 @@
+
+<ul>
+{% for item in navbar %}
+
+    <li>
+    {{ item.name }}
+    </li>
+  {% if item.__children is not empty %}
+    {% include 'ZiiwebEcommerceBundle:Default:navbar.html.twig' with {'navbar': (item.__children) } %}
+  {% endif %}
+
+  
+
+{% endfor %}
+</ul>
