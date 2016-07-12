@@ -18,7 +18,8 @@ class ProductVersionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('price')
+            ->add('price', null, array('label' => 'Precio'))
+            ->add('color', null, array('label' => 'Color', 'required' => false))
             //->add('oldPrice')
             ->add('productVersionImages', CollectionType::class, array(
                 'entry_type' => ProductVersionImageType::class, 

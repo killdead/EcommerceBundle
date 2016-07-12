@@ -41,13 +41,13 @@ class DefaultController extends Controller
 
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
 
-        //$products = $repo->findBy(array('categoryProduct' => $categoryProduct->getId()));
 
 
         $qb = $repo->createQueryBuilder('pv')
           ->join('pv.product', 'p')
-          ->where('p.categoryProduct = :categoryProduct')
-          ->setParameter('categoryProduct', $categoryProduct->getId());
+          ->where('p.categoryProduct = :category_product')
+          ->setParameter('category_product', $categoryProduct->getId());
+
 
         $query = $qb->getQuery();
         $productVersions = $query->getResult();
@@ -64,5 +64,44 @@ class DefaultController extends Controller
             'pedido' => $pedido
         ));
     }    
-    
+
+    /**
+     * @Route("/producto/{product_slug}/{product_version_slug}", name="product_show", defaults={"product_version_slug" = false}) 
+     */
+    public function productShowAction($product_slug, $product_version_slug) {
+
+
+        $csrfToken = $this->get('security.csrf.token_manager')->getToken('authenticate')->getValue();
+
+	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+
+        $qb = $repo->createQueryBuilder('pv')
+            ->join('pv.product', 'p')
+            ->where('p.slug = :product_slug')
+            ->andWhere('pv.slug = :product_version_slug')
+            ->setParameter('product_slug', $product_slug)
+            ->setParameter('product_version_slug', $product_version_slug)
+        ;
+  
+        $query = $qb->getQuery();
+        $productVersion = $query->getSingleResult();
+
+        $session = $this->get('session');
+        $pedido = null;
+        if ($session->has('pedido')) {
+          $pedido = $session->get('pedido'); 
+        } 
+
+        return $this->render('ZiiwebEcommerceBundle:Default:product_show.html.twig', array(
+            'product_version' => $productVersion,
+            'csrf_token' => $csrfToken,
+            'pedido' => $pedido
+        ));
+    }
 }
+
+
+
+
+
+

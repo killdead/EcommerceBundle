@@ -1,0 +1,15 @@
+{% extends 'ZiiwebEcommerceBundle:Default:layout.html.twig' %}
+
+{% block body %}
+  {% for product_version_image in product_version.productVersionImages %}
+    <img src="/uploads/l/{{ product_version_image.file }}">
+  {% endfor %}
+  <h1>{{ product_version.product.name }}</h1>
+  {{ product_version.price }} €
+  Tallas disponibles:
+  {% for product_version_size in product_version.productVersionSizes %}
+    {% if product_version_size.stock > 0%} 
+      {{ product_version_size.size }}
+    {% endif %}
+  {% endfor %}
+{% endblock %}

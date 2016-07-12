@@ -133,12 +133,11 @@ class OrderController extends Controller
   public function addSubitemAction(Request $request)
   {
 
-
     $subitemColorId = $request->request->get('producto_color_id');
     $productoQty = $request->request->get('producto_qty');
 
     $em = $this->getDoctrine()->getManager();
-    $subitemColor = $em->find('ZiiwebEcommerceBundle:ProductVersion', $subitemColorId);
+    $productVersionSize = $em->find('ZiiwebEcommerceBundle:ProductVersionSize', $subitemColorId);
 
     $stock = $subitemColor->getStock();
     $newStock = $stock - $productoQty;

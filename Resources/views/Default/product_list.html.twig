@@ -1,18 +1,22 @@
 {% extends 'ZiiwebEcommerceBundle:Default:layout.html.twig' %}
 
 {% block body %}
-{{ path('add-subitem') }}
 {% for product_version in product_versions %}
-  {{ product_version.product.name }}
-  {{ product_version.price|number_format(2, ',', '.') }} €
-  <img src="/uploads/m/{{ product_version.productVersionImages[0].file }}">
+  <a href="{{ path('product_show', {'product_slug': product_version.product.slug, 'product_version_slug': product_version.slug }) }}"><img src="/uploads/m/{{ product_version.productVersionImages[0].file }}"></a><br>
+  {{ product_version.product.name ~ ' ' ~ product_version.color|lower }}
+  {{ product_version.price|number_format(2, ',', '.') }} €<br>
+  Tallas disponibles: 
+  {% for size in product_version.productVersionSizes %}
+    {% if size.stock > 0 %}
+      {{ size.size }}
+    {% endif %}
+  {% endfor %}
 
   <div class="anadir-qty">
-                    <input min="0" value="1" class="producto-qty">
-                    <span data-producto_id="{{ product_version.id }}" class="anadir_subitem ">
-            <span class="verde">
-              Añadir            </span>
-          </span>
+    <input min="0" value="1" class="producto-qty" size="2">
+    <span data-producto_id="{{ product_version.id }}" class="anadir_subitem ">
+      <button>Añadir</button>
+    </span>
   </div>
 
   <button>Añadir a lista de deseos</button>

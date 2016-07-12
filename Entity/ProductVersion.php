@@ -39,6 +39,19 @@ class ProductVersion
     protected $price;
 
     /**
+     * @ORM\Column(type="string", name="color", nullable=true)
+     *
+     * @var string $color
+     */
+    protected $color;
+
+    /**
+     * @Gedmo\Slug(fields={"color"})
+     * @ORM\Column(length=128, nullable=true)
+     */
+    private $slug;
+
+    /**
      * @ORM\Column(type="float", name="oldPrice", nullable=true)
      *
      * @var string $price
@@ -205,30 +218,6 @@ class ProductVersion
     }
 
     /**
-     * Set stock
-     *
-     * @param integer $stock
-     *
-     * @return ProductVersion
-     */
-    public function setStock($stock)
-    {
-        $this->stock = $stock;
-
-        return $this;
-    }
-
-    /**
-     * Get stock
-     *
-     * @return integer
-     */
-    public function getStock()
-    {
-        return $this->stock;
-    }
-
-    /**
      * Add productVersionSize
      *
      * @param \Ziiweb\EcommerceBundle\Entity\ProductVersionSize $productVersionSize
@@ -262,5 +251,53 @@ class ProductVersion
     public function getProductVersionSizes()
     {
         return $this->productVersionSizes;
+    }
+
+    /**
+     * Set color
+     *
+     * @param string $color
+     *
+     * @return ProductVersion
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color
+     *
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return ProductVersion
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

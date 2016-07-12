@@ -19,7 +19,14 @@
 {% block file_row %}
   {{ form_widget(form) }}
   {% if app.request.attributes.get('_route') == 'product_edit'%}
-    <img src="/uploads/s/{{ form.vars.data }}">
+    <img src="/uploads/s/{{ form.vars.data }}"  onerror="this.style.display='none'">
   {% endif %}
   <a href="#" class="delete-image">Eliminar imagen</a>
+{% endblock %}
+
+{% block product_version_size_row %}
+  <div class="form-group">
+    {{ form_widget(form) }}
+    <a href="#" class="delete-product">Eliminar talla</a>
+  </div>
 {% endblock %}
