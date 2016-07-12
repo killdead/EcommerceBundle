@@ -1,0 +1,132 @@
+<div id="cart" {% if pedido is null %} style="display: none" {% endif %} data-url_anadir="{{ path('add-subitem') }}" data-url_eliminar="{{ path('remove-subitem-cart') }}" data-url_pago="{{ path('update-metodo-pago') }}" data-url_envio="{{ path('update-metodo-envio') }}" data-url_cantidad="{{ path('update-qty-subitem') }}">
+  <h4>
+    Tu pedido
+    <img src="/images/shopping.svg">
+    {#
+    {{ 'Regimen iva: ' ~ app.user.regimenIva }}<br>
+    {{ 'Revendedor: ' ~ app.user.reseller }}
+    #}
+  </h4>
+  <ul>
+  {% if pedido is not null %}
+    {% for subitem in pedido.subitems %}
+    <li class="subitem {{ cycle(['odd', 'even'], loop.index0) }}" data-subitem_color_id="{{ subitem.id }}" {% if subitem.color_id is defined %}data-color_id="{{ subitem.color_id }}"{% endif %}>
+      <span class="eliminar" title="Eliminar">X</span>
+      <div class="movilin-container">
+        <img src="/images/movilin.svg"> 
+      </div>
+      {{ subitem.nombre }} {% if subitem.color_name is defined %} {{ ' color ' ~ subitem.color_name }} {% endif %}</span><br>
+      {{ subitem.precio | number_format(2, ',', '.') ~ ' €' }} X 
+      <input class="cart-qty" type="text" value="{{ subitem.qty }}" min="1" max="100">
+      <div class="" style="display: inline-block; width: 20px; height: 12px">
+        <div class="subitem-qty up"></div>
+        <div class="subitem-qty down" {% if subitem.qty == 1 %} style="display: none" {% endif %}></div>
+      </div>
+      unid. = 
+      <span class="precio_total_subitem">{{ subitem.precio_total_subitem|number_format(2, ',', '.') ~ ' €' }}</span> 
+      </li>
+    {% endfor %}
+  {% endif %}
+  </ul>
+  <div class="metodo-de-envio">
+    <div class="opciones-envio">
+      <strong>Selecciona el método de envio:</strong>
+      <div class="triangle"></div>
+      <label for="r1" style="font-weight: normal; {% if pedido is not null and pedido.metodo_envio == 3 %}opacity: 0.5 {% endif %}"> Envio 24 horas (coste 5€, IVA no inc.)</label>
+      <input class="envio 24" id="r1" type="radio" name="envio" value="1" 
+      {% if pedido.metodo_envio is defined %}
+        {% if pedido.metodo_envio == 1 %}
+          checked="checked"
+        {% elseif pedido.metodo_envio == 3 %}
+          disabled="disabled"
+        {% endif %}
+      {% endif %}>
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <label for="r2" style="font-weight: normal; {% if pedido is not null and pedido.metodo_envio == 3 %}opacity: 0.5 {% endif %}" > Envio 48 horas (coste 3,5€, IVA no inc.)</label>
+      <input class="envio 48" id="r2" type="radio" name="envio" value="2" 
+      {% if pedido.metodo_envio is defined %}
+        {% if pedido.metodo_envio == 2 %}
+          checked="checked"
+        {% elseif pedido.metodo_envio == 3 %}
+          disabled="disabled"
+        {% endif %}
+      {% endif %}>
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <label for="r4" style="font-weight: normal; {% if pedido is not null and pedido.metodo_envio == 3 %}opacity: 0.5 {% endif %}">Envío fuera de la península<br><small>(consulta coste con tu comercial)</small></label>
+      <input class="envio fuera-peninsula" id="r4" type="radio" name="envio" value="4" 
+      {% if pedido.metodo_envio is defined %}
+        {% if pedido.metodo_envio == 4 %}
+          checked="checked"
+        {% elseif pedido.metodo_envio == 3 %}
+          disabled="disabled"
+        {% endif %}
+      {% endif %}>
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+      <!--^^^^^^^^^^^^^ "== 3" => si ha superado los 300€ se ponen DISABLED todas las opciones ^^^^^^^^^^^ -->
+    </div>
+    <div class="aviso">
+      <p class="depago" 
+      {% if pedido.total is defined %}
+        {% if pedido.subtotal >= 250 %}
+        style="display: none"
+        {% endif %}
+      {% endif %}
+      >Los gastos de envío serán gratuitos si el pedido supera los 250€ (sin IVA). Te faltan <span class="faltan">{% if pedido.total is defined %}{{ (250 - pedido.subtotal) | number_format(2, ',', '.') ~ ' €' }}{% endif %}</span></p>
+      <p class="gratis" 
+      {% if pedido.total is defined %}
+        {% if pedido.subtotal <= 250 %}
+        style="display: none"
+        {% endif %}
+      {% endif %}
+      >Tu pedido <u>es superior a 250 € (sin IVA)</u>, asi que no te cobraremos los gastos de envío.</p>
+    </div>
+  </div>
+  <div class="metodo-de-pago">
+    <strong>Selecciona el método de pago:</strong>
+    <label for="r3" class="pago transferencia" style="font-weight: normal">Ingreso / transferencia </label>
+    <input class="pago transferencia" id="r3" type="radio" name="pago" value="1"
+    {% if pedido.metodo_pago is defined %}
+      {% if pedido.metodo_pago == 1 %}
+      checked="checked"
+      {% endif %}
+    {% endif %}>
+    <label for="r4" class="pago contra" style="font-weight: normal">Contrareembolso <span class="aumento">(+2%, mínimo 2€)</span></label>
+    <input class="pago contra" id="r4" type="radio" name="pago" value="2"
+    {% if pedido.metodo_envio is defined %}
+      {% if pedido.metodo_envio == 2 %}
+        disabled="disabled"
+      {% endif %}
+    {% endif %}
+    {% if pedido.metodo_pago is defined %}
+      {% if pedido.metodo_pago == 2 %}
+        checked="checked"
+      {% endif %}
+    {% endif %}>
+  </div>
+  <div class="totales" {% if pedido is null %} style="display: none" {% endif %}>
+    <div class="fila">
+      <span class="etiq">Subtotal:</span><span class="subtotal cantidad">{% if pedido is not null %} {{ pedido.subtotal | number_format(2, ',', '.') ~ ' €' }}{% endif %}</span>
+    </div>
+    <div class="fila">
+      <span class="iva etiq">IVA {% if pedido is not null %} {{ ((pedido.tasa_iva - 1) * 100)|number_format(0, ',', '.') ~ '%'}}{% endif %}:</span>
+      <span class="iva_del_subtotal cantidad">{% if pedido is not null %} {{ (pedido.iva)|number_format(2, ',', '.') ~ ' €' }}{% endif %}</span>
+    </div>
+    <!-- si el usuario es del tipo "regimen de equivalencia"-->
+    <div class="fila contrareembolso" {% if pedido.contrareembolso is not defined %} style="display: none" {% endif%}>
+      <span class="etiq">Contrare.:</span>
+      <span class="cantidad">{% if pedido is not null %} {{ pedido.contrareembolso|number_format(2, ',', '.') ~ ' €' }}{% endif %}</span>
+    </div>
+    <div class="fila ultima">
+      <span class="etiq gorda">Total:</span><span class="total cantidad">{% if pedido is not null %} {{ pedido.total|number_format(2, ',', '.') ~ ' €' }}{% endif %}</span>
+    </div>
+  </div>
+  <a class="enviar-pedido" href={{ url('pedido_preenvio_resumen') }}>Enviar pedido</a>
+</div>
+<!-- OJOOOOOO: si cambiamos el nombre de este __js__ de aqui abajo: lo tenemos que cambiar tambien en otros dos archivos mas donde se hace referencia, además de el propio archivo ofcourse --> 
+<script src="/bundles/projectfrontend/js/carrito_frontend.js"></script>
+<!-- OJOOOOOO: si cambiamos el nombre de este __js__ de aqui abajo: lo tenemos que cambiar tambien en otros dos archivos mas donde se hace referencia, además de el propio archivo ofcourse --> 

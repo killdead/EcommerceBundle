@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
+use Ziiweb\EcommerceBundle\Entity\Order;
+use Ziiweb\EcommerceBundle\Entity\ProductVersionSizes;
 
 /**
  * Ziiweb\EcommerceBundle\Entity\ProductVersion
@@ -47,6 +49,11 @@ class ProductVersion
      * @ORM\OneToMany(targetEntity="ProductVersionImage", mappedBy="productVersion", cascade={"persist", "remove"})
      **/
     private $productVersionImages;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ProductVersionSize", mappedBy="productVersion", cascade={"persist", "remove"})
+     **/
+    private $productVersionSizes;
   
 
     public function __construct() {
@@ -195,5 +202,65 @@ class ProductVersion
     public function getProductVersionImages()
     {
         return $this->productVersionImages;
+    }
+
+    /**
+     * Set stock
+     *
+     * @param integer $stock
+     *
+     * @return ProductVersion
+     */
+    public function setStock($stock)
+    {
+        $this->stock = $stock;
+
+        return $this;
+    }
+
+    /**
+     * Get stock
+     *
+     * @return integer
+     */
+    public function getStock()
+    {
+        return $this->stock;
+    }
+
+    /**
+     * Add productVersionSize
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\ProductVersionSize $productVersionSize
+     *
+     * @return ProductVersion
+     */
+    public function addProductVersionSize(\Ziiweb\EcommerceBundle\Entity\ProductVersionSize $productVersionSize)
+    {
+        $this->productVersionSizes[] = $productVersionSize;
+
+        $productVersionSize->setProductVersion($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove productVersionSize
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\ProductVersionSize $productVersionSize
+     */
+    public function removeProductVersionSize(\Ziiweb\EcommerceBundle\Entity\ProductVersionSize $productVersionSize)
+    {
+        $this->productVersionSizes->removeElement($productVersionSize);
+    }
+
+    /**
+     * Get productVersionSizes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProductVersionSizes()
+    {
+        return $this->productVersionSizes;
     }
 }

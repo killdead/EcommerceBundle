@@ -1,15 +1,24 @@
 
-<ul>
 {% for item in navbar %}
-
-    <li>
-    {{ item.name }}
-    </li>
-  {% if item.__children is not empty %}
-    {% include 'ZiiwebEcommerceBundle:Default:navbar.html.twig' with {'navbar': (item.__children) } %}
-  {% endif %}
-
-  
-
+    {% if item.__children is not empty %}
+      <li class="dropdown">
+        <a href="{{ path('product_list', {'categoryProduct': (item.slug)} ) }}">{{ item.name }}</a>
+	<ul class="dropdown-menu">
+          {% for subitem in item.__children %}
+          <li>
+            <a href="#">
+            {{ subitem.name }}
+            </a>
+          </li>
+          {% endfor %}
+	</ul>
+      </li>
+    {% else %}
+      <li>
+	<a href="#">
+	{{ item.name }}
+	</a>
+      </li>
+    {% endif %}
 {% endfor %}
 </ul>

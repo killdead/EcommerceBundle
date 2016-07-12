@@ -1,0 +1,20 @@
+{% extends 'ZiiwebEcommerceBundle:Default:layout.html.twig' %}
+
+{% block body %}
+{{ path('add-subitem') }}
+{% for product_version in product_versions %}
+  {{ product_version.product.name }}
+  {{ product_version.price|number_format(2, ',', '.') }} €
+  <img src="/uploads/m/{{ product_version.productVersionImages[0].file }}">
+
+  <div class="anadir-qty">
+                    <input min="0" value="1" class="producto-qty">
+                    <span data-producto_id="{{ product_version.id }}" class="anadir_subitem ">
+            <span class="verde">
+              Añadir            </span>
+          </span>
+  </div>
+
+  <button>Añadir a lista de deseos</button>
+{% endfor %}
+{% endblock %}

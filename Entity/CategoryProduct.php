@@ -27,6 +27,12 @@ class CategoryProduct
     private $name;
 
     /**
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=64, unique=true)
+     */
+    private $slug;
+
+    /**
      * @Gedmo\TreeLeft
      * @ORM\Column(type="integer")
      */
@@ -224,5 +230,29 @@ class CategoryProduct
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return CategoryProduct
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

@@ -2,8 +2,10 @@
   {{ form_widget(form) }}
   {% if form.vars.name == 'productVersions' %}
     <a class="add-product" href="#">Añadir versión de producto</a>
-  {% else %}
+  {% elseif form.vars.name == 'productVersionImages' %}
     <a class="add-image" href="#">Añadir imagen</a>
+  {% elseif form.vars.name == 'productVersionSizes' %}
+    <a class="add-image" href="#">Añadir talla</a>
   {% endif %}
 {% endblock %}
 

@@ -27,6 +27,13 @@ class ProductVersionType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
             ))
+            ->add('productVersionSizes', CollectionType::class, array(
+                'entry_type' => ProductVersionSizeType::class, 
+                //'label' => false
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ))
         ;
     }
     

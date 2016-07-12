@@ -6,15 +6,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
+use Ziiweb\EcommerceBundle\Entity\Order;
 
 /**
- * Ziiweb\EcommerceBundle\Entity\ProductVersionImage
+ * Ziiweb\EcommerceBundle\Entity\ProductVersionSize
  *
  * @ORM\Table
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  */
-class ProductVersionImage
+class ProductVersionSize
 {
     /**
      * @ORM\Id
@@ -24,22 +25,20 @@ class ProductVersionImage
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ProductVersion", inversedBy="productVersionImages", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="ProductVersion", inversedBy="productVersionSizes", cascade={"persist"})
      * @ORM\JoinColumn(name="product_version_id", referencedColumnName="id")
      **/
     private $productVersion;
 
     /**
-     * @ORM\Column(type="string", length=255, name="file")
-     *
-     * @Assert\File(
-     *     maxSize = "40M",
-     *     mimeTypes= {"image/jpeg", "image/png"},
-     *     mimeTypesMessage= "Archivo no válido. Los archivos deben ser .jpg o .png.",
-     * )
+     * @ORM\Column(type="string")
      */
-    protected $file;
+    protected $size;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $stock;
 
     /**
      * Get id
@@ -52,30 +51,27 @@ class ProductVersionImage
     }
 
     /**
-     * Set file
+     * Set stock
      *
-     * @param string $file
+     * @param integer $stock
      *
-     * @return ProductVersionImage
+     * @return ProductVersionSize
      */
-    public function setFile($file)
+    public function setStock($stock)
     {
+        $this->stock = $stock;
 
-        if ($file !== null) {
-	  $this->file = $file;
-
-	  return $this;
-        }
+        return $this;
     }
 
     /**
-     * Get file
+     * Get stock
      *
-     * @return string
+     * @return integer
      */
-    public function getFile()
+    public function getStock()
     {
-        return $this->file;
+        return $this->stock;
     }
 
     /**
@@ -83,7 +79,7 @@ class ProductVersionImage
      *
      * @param \Ziiweb\EcommerceBundle\Entity\ProductVersion $productVersion
      *
-     * @return ProductVersionImage
+     * @return ProductVersionSize
      */
     public function setProductVersion(\Ziiweb\EcommerceBundle\Entity\ProductVersion $productVersion = null)
     {
@@ -100,5 +96,29 @@ class ProductVersionImage
     public function getProductVersion()
     {
         return $this->productVersion;
+    }
+
+    /**
+     * Set size
+     *
+     * @param string $size
+     *
+     * @return ProductVersionSize
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * Get size
+     *
+     * @return string
+     */
+    public function getSize()
+    {
+        return $this->size;
     }
 }
