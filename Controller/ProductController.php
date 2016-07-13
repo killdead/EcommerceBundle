@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Ziiweb\EcommerceBundle\Entity\Product;
 use Ziiweb\EcommerceBundle\Entity\ProductVersion;
 use Ziiweb\EcommerceBundle\Entity\ProductVersionImage;
+use Ziiweb\EcommerceBundle\Entity\ProductVersionSize;
 use Ziiweb\EcommerceBundle\Form\ProductType;
 
 /**
@@ -47,9 +48,11 @@ class ProductController extends Controller
 
         if ($request->getMethod() == 'GET') {
             $productVersionImage = new ProductVersionImage();
+            $productVersionSize = new ProductVersionSize();
             $productVersion = new ProductVersion();
 
             $productVersion->addProductVersionImage($productVersionImage);
+            $productVersion->addProductVersionSize($productVersionSize);
 
 	    $product->addProductVersion($productVersion);
 

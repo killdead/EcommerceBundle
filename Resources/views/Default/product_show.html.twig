@@ -6,10 +6,21 @@
   {% endfor %}
   <h1>{{ product_version.product.name }}</h1>
   {{ product_version.price }} €
-  Tallas disponibles:
+  {% if product_version.productVersionSizes[0].size is not null %}
+  Elige una talla:
+  <form id="size">
   {% for product_version_size in product_version.productVersionSizes %}
-    {% if product_version_size.stock > 0%} 
-      {{ product_version_size.size }}
+    {% if product_version_size.stock > 0 %} 
+      <input class="size" type="radio" value="{{ product_version_size.size }}">{{ product_version_size.size }}
     {% endif %}
   {% endfor %}
+  </form>
+  {% endif %}
+  <div class="anadir-qty">
+    <input min="0" value="1" class="producto-qty" size="2">
+    <span data-producto_id="{{ product_version.id }}" class="anadir_subitem ">
+      <button>Añadir al carro</button>
+    </span>
+  </div>
+
 {% endblock %}

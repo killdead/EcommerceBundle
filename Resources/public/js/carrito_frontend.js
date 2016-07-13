@@ -24,20 +24,22 @@ $(document).on('change', '.cart-qty', function() {
 
 $('body').on('click', '.eliminar', function(){
   var subitem = $(this).parents('.subitem');
-  var subitem_color_id = subitem.data("subitem_color_id");
+  var product_version_id = subitem.data("product_version_id");
+  var size = subitem.data("size");
   var color_id = subitem.data("color_id");
   var element_collection_id = subitem.data("element_collection_id");
   var url_eliminar = $('#cart').data("url_eliminar");
+
   $.ajax({
     type: "POST",
     url: url_eliminar, 
-    data: { producto_color_id: subitem_color_id, color_id: color_id },
+    data: { product_version_id: product_version_id, size: size},
     success: function(response) {
       var subitem_id = subitem.data('subitem_color_id');
       response = JSON.parse(response);
-      $('.subitems-container .subitem[data-subitem_color_id="' + subitem_color_id + '"]').find('.anadir-qty').html(
+      $('.subitems-container .subitem[data-subitem_color_id="' + product_version_id + '_' + size + '"]').find('.anadir-qty').html(
         '<input min="0" value="1" class="producto-qty">' +
-        '<span class="anadir_subitem" ' + 'data-producto-id="' + subitem_color_id + '">' + 
+        '<span class="anadir_subitem" ' + 'data-producto-id="' + product_version_id + '_' + size + '">' + 
           '<span class="verde">Añadir</span>' + 
         '</span>'
       );
@@ -122,19 +124,20 @@ function clander(aux, new_producto_qty) {
 
 $('body').on('click', '.anadir_subitem', function(){
   var subitem = $(this).parents('.subitem');
-  var subitem_color_id = $(this).data("producto_id");
+  var product_version_id = $(this).data("producto_id");
   // ESTA LINEA COMENTADA ES PARA CUANDO QUERAMOS MOSTRAR LOS ____CUADRADITOS DE LOS COLORES___ /////////
   //var producto_color = $(this).parents('.subitem').find('.cuadrado-container.actual').data('color');
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-  var producto_color = $(this).parents('.subitem').find('.cuadrado-container').data('color');
-  var producto_qty = $(this).parents('.subitem').find('.producto-qty').val();
+  var producto_color = $(this).find('.cuadrado-container').data('color');
+  var producto_qty = $('.producto-qty').val();
   var url_anadir = $("#cart").data("url_anadir");
-console.log(subitem_color_id);
+  var size = $('#size input[type="radio"]:checked').val();
+
   $.ajax({
     type: "POST",
     url: url_anadir,
-    data: { producto_color_id: subitem_color_id, producto_qty: producto_qty },
+    data: { product_version_id: product_version_id, producto_qty: producto_qty, size: size },
     dataType: 'json',
     success: function(response) {
       response = JSON.parse(response);
@@ -179,12 +182,13 @@ console.log(subitem_color_id);
             var arrow_down = '<div class="subitem-qty down" style="display: none"></div>';
           }
           $('#cart ul').prepend(
-            '<li class="subitem ' +  clase + '" '  +
+            '<li class="list-group-item subitem ' +  clase + '" '  +
             '" data-element_collection_id="' + response.element_collection_id +
-            '" data-subitem_color_id="' + subitem_color_id + '"' +
+            '" data-product_version_id="' + product_version_id + '"' +
+            '" data-size="' + size + '"' +
             ' data-color_id="' + response.color_id + '">' + 
             '<div class="movilin-container"><img src="/images/movilin.svg"></div>' +
-              response.nombre + '<br>' + precio + ' X ' + 
+              response.nombre + ' talla ' + response.size + '<br>' + precio + ' X ' + 
               '<input type="text" class="cart-qty" min="1" max="100" value="' + response.productoQty + '">' + 
               '<div style="display: inline-block; width: 20px; height: 12px">' +
                 '<div class="subitem-qty up"></div>' + 
@@ -199,7 +203,7 @@ console.log(subitem_color_id);
           $('.metodo-de-pago input[value=' + response.metodo_pago + ']').attr('checked', 'checked');
 
         } else {
-          var subitem_en_carro = $("#cart .subitem[data-subitem_color_id='" + subitem_color_id + "']");
+          var subitem_en_carro = $("#cart .subitem[data-size='" + size  + "'].subitem[data-product_version_id='" + product_version_id  + "']");
           subitem_en_carro.find('input').val(response.productoQty).change();
           subitem_en_carro.find('.precio_total_subitem').html(precio_total_subitem);
         }

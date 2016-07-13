@@ -16,7 +16,7 @@ class ProductVersionSizeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('size', null, array('label' => 'Talla'))
+            ->add('size', null, array('label' => 'Talla (dejar en blanco si la talla es única)', 'required' => false))
             ->add('stock', null, array('label' => 'Stock'))
         ;
     }

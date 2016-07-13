@@ -19,7 +19,7 @@ class ProductVersionType extends AbstractType
     {
         $builder
             ->add('price', null, array('label' => 'Precio'))
-            ->add('color', null, array('label' => 'Color', 'required' => false))
+            ->add('color', null, array('label' => 'Color (dejar en blanco si no tiene un color especifico)', 'required' => false))
             //->add('oldPrice')
             ->add('productVersionImages', CollectionType::class, array(
                 'entry_type' => ProductVersionImageType::class, 

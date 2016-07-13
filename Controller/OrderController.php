@@ -19,6 +19,9 @@ use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class OrderController extends Controller
 {
+  /**
+   * @Route("/clear-session", name="clear_session")
+   */
   public function clearSessionAction()
   {
     $session = $this->get("session");
@@ -40,43 +43,15 @@ class OrderController extends Controller
       $pedido['subtotal'] += $subitem['precio_total_subitem']; 
 
       //1.2 calculamos el iva de los productos
-      //si el usario NO es intracomunitario, se le cobra iva a los productos (bueno, es relativo..)
-      if ($pedido['tasa_iva'] != 1) {
+      $pedido['iva'] += ($subitem['precio_total_subitem'] * ($pedido['tasa_iva'] - 1)); 
 
-        //no es revendedor (paga iva en todos los productos)
-        if ($pedido['user_reseller'] == 0) {
-          $pedido['iva'] += ($subitem['precio_total_subitem'] * ($pedido['tasa_iva'] - 1)); 
-        }
-        //es revendedor (solo paga iva en los productos que NO son moviles o tablets )
-        else
-        {
-          if ($subitem['root_item_id'] != 1 && $subitem['root_item_id'] != 4) {
-            $pedido['iva'] += ($subitem['precio_total_subitem'] * ($pedido['tasa_iva'] - 1)); 
-          }
-        }
-      }
-
-      if ($pedido['tasa_re'] != 1) {
-        //no es revendedor (paga iva en todos los productos)
-        if ($pedido['user_reseller'] == 0) {
-          $pedido['re'] += ($subitem['precio_total_subitem'] * ($pedido['tasa_re'] - 1)); 
-
-        //es revendedor (solo paga iva en los productos que no son moviles o tablets )
-        } else {
-          if ($subitem['root_item_id'] != 1 && $subitem['root_item_id'] != 4) {
-            $pedido['re'] += ($subitem['precio_total_subitem'] * ($pedido['tasa_re'] - 1)); 
-          }
-        }
-      }
     }
 
     $aux = $pedido['subtotal'] + $pedido['iva'] + $pedido['re'];
 
-//var_dump($pedido['metodo_envio']);
-//var_dump($pedido['metodo_envio_backup']);
     $pedido['metodo_envio'] = $pedido['metodo_envio_backup'];
 
-    $repositoryMetodoEnvio = $this->getDoctrine()->getRepository('ProjectBackendBundle:MetodoEnvio');
+    $repositoryMetodoEnvio = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ShippingMethod');
     $metodoEnvio = $repositoryMetodoEnvio->find($pedido['metodo_envio']);
     $gastosEnvio = $metodoEnvio->getPrecio();
 
@@ -88,12 +63,8 @@ class OrderController extends Controller
     $ivaBackup = $pedido['iva'];
     $pedido['iva'] += ($gastosEnvio * ($pedido['tasa_iva'] - 1));
 
-    //2.3 calculamos el re de los gastos de envío 
-    $reBackup = $pedido['re'];
-    $pedido['re'] += ($gastosEnvio * ($pedido['tasa_re'] - 1));
-
     //MÉTODO DE PAGO 
-    $repositoryMetodoPago = $this->getDoctrine()->getRepository('ProjectBackendBundle:MetodoPago');
+    $repositoryMetodoPago = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:PaymentMethod');
     $metodoPago = $repositoryMetodoPago->find($pedido['metodo_pago']);
 
     $totalSinMetodoPago = $pedido['subtotal'] + $pedido['iva'] + $pedido['re'];
@@ -119,7 +90,7 @@ class OrderController extends Controller
       $pedido['metodo_envio'] = 3;
       $pedido['subtotal'] = $subtotalBackup;
       $pedido['iva'] = $ivaBackup;
-      $pedido['re'] = $reBackup;
+      //$pedido['re'] = $reBackup;
       $pedido['total'] = $subtotalBackup + $ivaBackup + $pedido['re'] + $pedido['contrareembolso'];
     }
 
@@ -133,15 +104,29 @@ class OrderController extends Controller
   public function addSubitemAction(Request $request)
   {
 
-    $subitemColorId = $request->request->get('producto_color_id');
+    $productVersionId = $request->request->get('product_version_id');
     $productoQty = $request->request->get('producto_qty');
+    $size = $request->request->get('size');
 
+    //if check the qty requested is higher than stock, show a message  
     $em = $this->getDoctrine()->getManager();
-    $productVersionSize = $em->find('ZiiwebEcommerceBundle:ProductVersionSize', $subitemColorId);
 
-    $stock = $subitemColor->getStock();
+    $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+    $qb = $repo->createQueryBuilder('pvs')
+        ->where('pvs.productVersion = :product_version_id')
+        ->setParameter('product_version_id', $productVersionId);
+
+
+    if ($size !== null) {
+        $qb->andWhere('pvs.size = :product_version_size')
+        ->setParameter('product_version_size', $size);
+    }
+
+    $query = $qb->getQuery();
+    $productVersionSize = $query->getSingleResult();
+
+    $stock = $productVersionSize->getStock();
     $newStock = $stock - $productoQty;
-
 
     if ($newStock < 0) {
       $response = array('stock' => 'false', 'stock' => $stock);
@@ -152,9 +137,8 @@ class OrderController extends Controller
       return new JsonResponse($pedidoJson);
     }
 
-
+    //retrieve session (pedido)
     $user = $this->getUser();
-
     $session = $this->get('session'); 
 
     if(!$session->has('pedido')) {
@@ -187,17 +171,19 @@ class OrderController extends Controller
       $pedido = $session->get('pedido');
     }
 
+    $productVersionIdPlusSize = $productVersionId . '_' . $size;
 
     //>>>> PRODUCTO YA EN CARRO <<<<
-    if (isset($pedido['subitems'][$subitemColorId])) 
+    if (isset($pedido['subitems'][$productVersionIdPlusSize])) 
     {
-      $pedido['subitems'][$subitemColorId]['qty'] = $pedido['subitems'][$subitemColorId]['qty'] + $productoQty; 
-      $pedido['subitems'][$subitemColorId]['precio_total_subitem'] = $pedido['subitems'][$subitemColorId]['precio'] * $pedido['subitems'][$subitemColorId]['qty'];
+      $pedido['subitems'][$productVersionIdPlusSize]['qty'] = $pedido['subitems'][$productVersionIdPlusSize]['qty'] + $productoQty; 
+      $pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'] = $pedido['subitems'][$productVersionIdPlusSize]['precio'] * $pedido['subitems'][$productVersionIdPlusSize]['qty'];
       $enCarro = 'true';
 
+/*
       $maxPedido = $subitemColor->getMaxPedido();
 
-      if ($pedido['subitems'][$subitemColorId]['qty'] > $maxPedido) {
+      if ($pedido['subitems'][$productVersionId]['qty'] > $maxPedido) {
 	      $response = array('maxPedido' => 'false', 'maxPedido' => $maxPedido);
 
 	      $serializer = $this->container->get('jms_serializer');
@@ -205,49 +191,34 @@ class OrderController extends Controller
 
 	      return new JsonResponse($pedidoJson);
       }
+*/
 
 
     //>>>> PRODUCTO NUEVO EN CARRO <<<<
     } else {
       $enCarro = 'false';
 
-      //"OFERTAS" SECTION PRODUCT
-      if ($request->query->get('sale_value') == 'true') {
-        $subitem = $repositorySale->find($subitemColorId);
+      if ($productVersionSize->getProductVersion()->getColor() != null) {
+        $color = $productVersionSize->getProductVersion()->getColor();
+      }
+
+      $name = $productVersionSize->getProductVersion()->getProduct()->getName() . ' ' . $color;
+
+      if ($productVersionSize->getSize() != null) {
+	$size = $productVersionSize->getSize();
       } else {
-        $subitem = $em->find('ZiiwebEcommerceBundle:ProductVersion', $subitemColorId);
+	$size =  null;
       }
-
-      //$color = '';
-      if ($subitemColor->getColor() != null) {
-        $color = $subitemColor->getColor()->getName();
-      }
-
-      $name = $subitemColor->getSubitem()->getNombre() . ' ' . $color;
     
-      //Si el producto NO cuelga directamente de una categoría raiz
-      if ($subitemColor->getSubitem()->getItem()->getParent() != null) {
-        $rootItemId = $subitemColor->getSubitem()->getItem()->getParent()->getId();
-      } else {
-      //Si el producto cuelga directamente de una categoría raiz
-        $rootItemId = $subitemColor->getSubitem()->getItem()->getId();
-      }
-
-      $root_item_id = 
-      $pedido['subitems'][$subitemColorId] = array(
-        'id' => $subitemColorId, 
+      $pedido['subitems'][$productVersionIdPlusSize] = array(
+        'id' => $productVersionId, 
         'qty' => $productoQty, 
-        'precio' => $subitemColor->getPrecio(), 
-        //*************** OJOOOOOO: root_item_id es para no cobrar el iva a los revendedores **************
-        //*************** OJOOOOOO: root_item_id es para no cobrar el iva a los revendedores **************
-        //*************** OJOOOOOO: root_item_id es para no cobrar el iva a los revendedores **************
-        'root_item_id' => $rootItemId,
-        //*************** OJOOOOOO: root_item_id es para no cobrar el iva a los revendedores **************
-        //*************** OJOOOOOO: root_item_id es para no cobrar el iva a los revendedores **************
-        //*************** OJOOOOOO: root_item_id es para no cobrar el iva a los revendedores **************
+        'precio' => $productVersionSize->getProductVersion()->getPrice(), 
         'nombre' => $name,
-        'precio_total_subitem' => ($subitemColor->getPrecio() * $productoQty)
+        'size' => $size,
+        'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty)
       );
+
     }
 
     //////////////////////
@@ -257,27 +228,28 @@ class OrderController extends Controller
 
     $session->set('pedido', $pedido);
 
-    if ($subitemColor->getColor() != null) {
-      $colorName = $subitemColor->getColor()->getName();
+    if ($productVersionSize->getProductVersion()->getColor() != null) {
+      $colorName = $productVersionSize->getProductVersion()->getColor();
     } else {
       $colorName =  null;
     }
-//var_dump($pedido['metodo_envio']);
-//die("jlfs");
+
+
     $response = array(
       'subtotal' => $pedido['subtotal'],
       'iva' => $pedido['iva'],
       're' => $pedido['re'],
       'total' => $pedido['total'],
-      'productoQty' => $pedido['subitems'][$subitemColorId]['qty'],
-      'nombre' => $pedido['subitems'][$subitemColorId]['nombre'],
+      'productoQty' => $pedido['subitems'][$productVersionIdPlusSize]['qty'],
+      'nombre' => $pedido['subitems'][$productVersionIdPlusSize]['nombre'],
       'color_name' => $colorName,
-      'precio' => $pedido['subitems'][$subitemColorId]['precio'],
+      'size' => $size,
+      'precio' => $pedido['subitems'][$productVersionIdPlusSize]['precio'],
       'metodo_envio' => $pedido['metodo_envio'],
       'metodo_pago' => $pedido['metodo_pago'],
       'en_carro' => $enCarro,
       'tasa_iva' => $pedido['tasa_iva'],
-      'tasa_re' => $pedido['tasa_re'],
+      //'tasa_re' => $pedido['tasa_re'],
       'contrareembolso' => $pedido['contrareembolso']
     );
 
@@ -285,8 +257,8 @@ class OrderController extends Controller
     $serializer = $this->container->get('jms_serializer');
 
     //PERSISTIMOS EL PRODUCTO PARA ALMACENAR EL LA BASE DE DATOS EL NUEVO STOCK
-    $subitemColor->setEnStock($newStock);
-    $em->persist($subitemColor);
+    $productVersionSize->setStock($newStock);
+    $em->persist($productVersionSize);
     $em->flush();
 
     $response['stock'] = $newStock;
@@ -296,8 +268,119 @@ class OrderController extends Controller
     return new JsonResponse($pedidoJson);
   }
 
+
+
   /**
-   * @Route("/", name="update-qty-subitem")
+   * @Route("/remove-subitem-cart", name="remove-subitem-cart")
+   */
+  public function removeSubitemCartAction(Request $request)
+  {
+    $productVersionId = $request->request->get('product_version_id');
+    $size = $request->request->get('size');
+
+    $session = $this->get('session'); 
+    $pedido = $session->get('pedido'); 
+
+    $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+    $qb = $repo->createQueryBuilder('pvs')
+       ->join('pvs.productVersion', 'pv')
+       ->where('pv.id = :product_version_id')
+       ->setParameter(':product_version_id', $productVersionId)
+    ;
+    
+    if ($size !== NULL) {
+        $qb->andWhere('pvs.size = :product_version_size')
+        ->setParameter('product_version_size', $size);
+    }
+
+    $query = $qb->getQuery();
+    $productVersionSize = $query->getSingleResult();
+
+    $productVersionIdPlusSize =  $productVersionId . '_' . $size;
+
+//var_dump($pedido['subitems']);
+    $qtyInCart = $pedido['subitems'][$productVersionIdPlusSize]['qty'];
+
+    unset($pedido['subitems'][$productVersionIdPlusSize]);
+
+    //si hay algun producto en el pedido
+    if(!empty($pedido['subitems']))
+    {
+      $pedido = $this->calcularTotales2($pedido);
+
+    } else {
+
+      $pedido = array();
+
+      ///OJOOOOOOOOOOOOOOO si modificamos al go de aqui abajo, tenemos tambien que modificarlo en anadirSubitem()
+      $pedido['subitems'] = array();
+      if ($this->getUser()) {
+          $pedido['user'] = $this->getUser()->getId();
+      }
+      //$pedido['user_regimen_iva'] = $this->getUser()->getRegimenIva();
+      //$pedido['user_reseller'] = $this->getUser()->getReseller();
+      ////////////////////////////////////
+      $pedido['tasa_iva'] = TaxRates::VAT_RATE + 1;
+      $pedido['iva'] = 0;
+      //$pedido['tasa_re'] = $this->container->getParameter('re');
+      //$pedido['re'] = 0;
+      $pedido['contrareembolso'] = 0;
+      //asignamos un metodo de envio por defecto, porque si el pedido no llega a los 300€, hay que mostrar uno por huevos!!!
+/*
+      if ((preg_match('/^35/', $this->getUser()->getPostalCode()) || preg_match('/^38/', $this->getUser()->getPostalCode()) || preg_match('/^07/', $this->getUser()->getPostalCode())) && strtolower($this->getUser()->getCountry()) == 'españa') {
+          $pedido['metodo_envio'] = 4;
+      } else {
+*/
+          $pedido['metodo_envio'] = 1;
+/*
+      }
+*/
+      //declaramos un indice para guardar el ultimo metodo de envio, por si el total subiese y bajase de los 300€ durante el preenvio.
+/*
+      if ((preg_match('/^35/', $this->getUser()->getPostalCode()) || preg_match('/^38/', $this->getUser()->getPostalCode()) || preg_match('/^07/', $this->getUser()->getPostalCode())) && strtolower($this->getUser()->getCountry()) == 'españa') {
+          $pedido['metodo_envio_backup'] = 4;
+      } else {
+*/
+          $pedido['metodo_envio_backup'] = 1;
+/*
+      }
+*/
+      //asignamos un metodo de pago por defecto: la transferencia.
+      $pedido['metodo_pago'] = 1;
+      $pedido['subtotal'] = 0;
+      $pedido['total'] = 0;
+      ///OJOOOOOOOOOOOOOOO si modificamos al go de aqui arriba, tenemos tambien que modificarlo en anadirSubitem()
+      //
+
+    }
+
+    $response = array(
+      'subtotal' => $pedido['subtotal'],
+      'iva' => $pedido['iva'], 'tasa_iva' => $pedido['tasa_iva'],
+      //'re' => $pedido['re'], 'tasa_re' => $pedido['tasa_re'],
+      'total' => $pedido['total'],
+      'metodo_envio' => $pedido['metodo_envio'],
+      'metodo_pago' => $pedido['metodo_pago'],
+      'contrareembolso' => $pedido['contrareembolso']
+    );
+
+    $session->set('pedido', $pedido); 
+
+    $serializer = $this->container->get('jms_serializer');
+    $pedidoJson = $serializer->serialize($response, 'json');
+
+    //PERSISTIMOS EL PRODUCTO PARA ALMACENAR EL LA BASE DE DATOS EL NUEVO STOCK
+    $em = $this->getDoctrine()->getManager();
+    $stock = $productVersionSize->getStock();
+    $productVersionSize->setStock($stock + $qtyInCart);
+    $em->persist($productVersionSize);
+    $em->flush();
+
+    return new JsonResponse($pedidoJson);
+  }
+
+  /**
+   * @Route("/update-qty-subitem", name="update-qty-subitem")
    */
   public function updateQtySubitemAction(Request $request)
   {
@@ -352,92 +435,6 @@ class OrderController extends Controller
     return new JsonResponse($pedidoJson);
   }
 
-
-  /**
-   * @Route("/", name="remove-subitem-cart")
-   */
-  public function removeSubitemCartAction(Request $request)
-  {
-    $subitemColorId = $request->request->get('producto_color_id');
-
-    $session = $this->get('session'); 
-    $pedido = $session->get('pedido'); 
-
-    $em = $this->getDoctrine()->getEntityManager();
-    $subitemColor = $em->find('ProjectBackendBundle:SubitemColor', $subitemColorId);
-
-    $subitemsColorEnCarro = $pedido['subitems'][$subitemColorId]['qty'];
-
-
-
-    unset($pedido['subitems'][$subitemColorId]);
-
-    //si hay algun producto en el pedido
-    if(!empty($pedido['subitems']))
-    {
-      $pedido = $this->calcularTotales2($pedido);
-
-    } else {
-
-      $pedido = array();
-
-      ///OJOOOOOOOOOOOOOOO si modificamos al go de aqui abajo, tenemos tambien que modificarlo en anadirSubitem()
-      $pedido['subitems'] = array();
-      $pedido['user'] = $this->getUser()->getId();
-      $pedido['user_regimen_iva'] = $this->getUser()->getRegimenIva();
-      $pedido['user_reseller'] = $this->getUser()->getReseller();
-      ////////////////////////////////////
-      $pedido['tasa_iva'] = $this->container->getParameter('iva');
-      $pedido['iva'] = 0;
-      $pedido['tasa_re'] = $this->container->getParameter('re');
-      $pedido['re'] = 0;
-      $pedido['contrareembolso'] = 0;
-      //asignamos un metodo de envio por defecto, porque si el pedido no llega a los 300€, hay que mostrar uno por huevos!!!
-      if ((preg_match('/^35/', $this->getUser()->getPostalCode()) || preg_match('/^38/', $this->getUser()->getPostalCode()) || preg_match('/^07/', $this->getUser()->getPostalCode())) && strtolower($this->getUser()->getCountry()) == 'españa') {
-          $pedido['metodo_envio'] = 4;
-      } else {
-          $pedido['metodo_envio'] = 1;
-      }
-      //declaramos un indice para guardar el ultimo metodo de envio, por si el total subiese y bajase de los 300€ durante el preenvio.
-      if ((preg_match('/^35/', $this->getUser()->getPostalCode()) || preg_match('/^38/', $this->getUser()->getPostalCode()) || preg_match('/^07/', $this->getUser()->getPostalCode())) && strtolower($this->getUser()->getCountry()) == 'españa') {
-          $pedido['metodo_envio_backup'] = 4;
-      } else {
-          $pedido['metodo_envio_backup'] = 1;
-      }
-      //asignamos un metodo de pago por defecto: la transferencia.
-      $pedido['metodo_pago'] = 1;
-      $pedido['subtotal'] = 0;
-      $pedido['total'] = 0;
-      ///OJOOOOOOOOOOOOOOO si modificamos al go de aqui arriba, tenemos tambien que modificarlo en anadirSubitem()
-      //
-
-    }
-
-    $response = array(
-      'subtotal' => $pedido['subtotal'],
-      'iva' => $pedido['iva'], 'tasa_iva' => $pedido['tasa_iva'],
-      're' => $pedido['re'], 'tasa_re' => $pedido['tasa_re'],
-      'total' => $pedido['total'],
-      'metodo_envio' => $pedido['metodo_envio'],
-      'metodo_pago' => $pedido['metodo_pago'],
-      'contrareembolso' => $pedido['contrareembolso']
-    );
-
-    $session->set('pedido', $pedido); 
-
-    $serializer = $this->container->get('jms_serializer');
-    $pedidoJson = $serializer->serialize($response, 'json');
-
-    //PERSISTIMOS EL PRODUCTO PARA ALMACENAR EL LA BASE DE DATOS EL NUEVO STOCK
-    $stock = $subitemColor->getEnStock();
-    $subitemColor->setEnStock($stock + $subitemsColorEnCarro);
-    $em->persist($subitemColor);
-    $em->flush();
-
-    return new JsonResponse($pedidoJson);
-  }
-
-
   //este es el formulario del avioncito
   public function pedidoPreenvioDomicilioAction()
   {
@@ -458,7 +455,7 @@ class OrderController extends Controller
   }
 
   /**
-   * @Route("/", name="update-metodo-envio")
+   * @Route("/update-metodo-envio", name="update-metodo-envio")
    */
   public function updateMetodoEnvioAction(Request $request)
   {
@@ -499,7 +496,7 @@ class OrderController extends Controller
 
 
   /**
-   * @Route("/", name="update-metodo-pago")
+   * @Route("/update-metodo-pago", name="update-metodo-pago")
    */
   public function updateMetodoPagoAction(Request $request)
   {
@@ -558,8 +555,6 @@ class OrderController extends Controller
 
     foreach($pedido['subitems'] as $subitem)
     {
-    //var_dump($subitem);
-    //die;
       //$color = $repositoryColor->find($subitem['color_id']);
 
       $producto = $repositorySubitemColor->find($subitem['id']);
