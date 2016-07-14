@@ -11,6 +11,7 @@ use Ziiweb\EcommerceBundle\Entity\ProductVersion;
 use Ziiweb\EcommerceBundle\Entity\ProductVersionImage;
 use Ziiweb\EcommerceBundle\Entity\ProductVersionSize;
 use Ziiweb\EcommerceBundle\Form\ProductType;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Product controller.
@@ -115,16 +116,42 @@ class ProductController extends Controller
 
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
 
+	$originalProductVersionSize = new ArrayCollection();
+	$originalProductVersionImage = new ArrayCollection();
+
+	// Create an ArrayCollection of the current Tag objects in the database
+	foreach ($product->getProductVersions() as $productVersion) {
+            foreach ($productVersion->getProductVersionSizes() as $productVersionSize) {
+                $originalProductVersionSize->add($productVersionSize);
+            }
+            foreach ($productVersion->getProductVersionImages() as $productVersionImage) {
+                $originalProductVersionImage->add($productVersionImage);
+            }
+	}
+
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+
+	    $em = $this->getDoctrine()->getManager();
+
+	    foreach ($product->getProductVersions() as $productVersion) {
+		foreach ($originalProductVersionSize as $productVersionSize) {
+		    if (false === $productVersion->getProductVersionSizes()->contains($productVersionSize) ) {
+		      $em->remove($productVersionSize);
+		    }
+		}
+		foreach ($originalProductVersionImage as $productVersionImage) {
+		    if (false === $productVersion->getProductVersionSizes()->contains($productVersionImage) ) {
+		      $em->remove($productVersionImage);
+		    }
+		}
+	    }
 
             $em->persist($product);
             $em->flush();
 
             $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
-
 
             return $this->render('ZiiwebEcommerceBundle:Product:edit.html.twig', array(
                 'id' => $product->getId(),

@@ -181,6 +181,11 @@ $('body').on('click', '.anadir_subitem', function(){
           if (response.productoQty == 1) {
             var arrow_down = '<div class="subitem-qty down" style="display: none"></div>';
           }
+          if (response.size != undefined) {
+            var size_aux = ' talla ' + response.size;
+          } else {
+            var size_aux = '';
+          }
           $('#cart ul').prepend(
             '<li class="list-group-item subitem ' +  clase + '" '  +
             '" data-element_collection_id="' + response.element_collection_id +
@@ -188,7 +193,7 @@ $('body').on('click', '.anadir_subitem', function(){
             '" data-size="' + size + '"' +
             ' data-color_id="' + response.color_id + '">' + 
             '<div class="movilin-container"><img src="/images/movilin.svg"></div>' +
-              response.nombre + ' talla ' + response.size + '<br>' + precio + ' X ' + 
+              response.nombre + size_aux + '<br>' + precio + ' X ' + 
               '<input type="text" class="cart-qty" min="1" max="100" value="' + response.productoQty + '">' + 
               '<div style="display: inline-block; width: 20px; height: 12px">' +
                 '<div class="subitem-qty up"></div>' + 

@@ -198,6 +198,7 @@ class OrderController extends Controller
     } else {
       $enCarro = 'false';
 
+      $color = '';
       if ($productVersionSize->getProductVersion()->getColor() != null) {
         $color = $productVersionSize->getProductVersion()->getColor();
       }

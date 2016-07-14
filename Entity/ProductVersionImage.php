@@ -24,7 +24,7 @@ class ProductVersionImage
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ProductVersion", inversedBy="productVersionImages", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="ProductVersion", inversedBy="productVersionImages", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="product_version_id", referencedColumnName="id")
      **/
     private $productVersion;
