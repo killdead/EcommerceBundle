@@ -164,7 +164,7 @@ $('body').on('click', '.anadir_subitem', function(){
           subitem.find('.producto-qty').hide();
         }
         var precio = accounting.formatMoney(response.precio * response.tasa_iva);
-        var precio_total_subitem = (parseFloat(response.precio) * response.productoQty);
+        var precio_total_subitem = (parseFloat(response.precio) * response.tasa_iva) * response.productoQty;
 
         precio_total_subitem = accounting.formatMoney(precio_total_subitem);
 
