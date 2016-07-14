@@ -157,7 +157,7 @@ class OrderController extends Controller
       $pedido['metodo_pago'] = 1;
       ///OJOOOOOOOOOOOOOOO si modificamos algo de aqui arriba, tenemos tambien que modificarlo en anadirSubitem()
 
-      $pedido['tasa_iva'] = TaxRates::VAT_RATE;
+      $pedido['tasa_iva'] = TaxRates::VAT_RATE + 1;
 
       $session->set('pedido', $pedido);
     }
@@ -246,6 +246,7 @@ class OrderController extends Controller
       'color_name' => $colorName,
       'size' => $size,
       'precio' => $pedido['subitems'][$productVersionIdPlusSize]['precio'],
+      'precio_plus_taxes' => $pedido['subitems'][$productVersionIdPlusSize]['precio'],
       'metodo_envio' => $pedido['metodo_envio'],
       'metodo_pago' => $pedido['metodo_pago'],
       'en_carro' => $enCarro,
@@ -332,7 +333,7 @@ class OrderController extends Controller
           $pedido['metodo_envio'] = 4;
       } else {
 */
-          $pedido['metodo_envio'] = 1;
+          $pedido['metodo_envio'] = 3;
 /*
       }
 */

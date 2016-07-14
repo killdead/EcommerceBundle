@@ -1,5 +1,6 @@
 {% form_theme form 'ZiiwebEcommerceBundle:Product:aux_form_theme.html.twig' %}
 {{ form_widget(form) }}
+<script type="text/javascript" src="/bundles/ziiwebecommerce/js/accounting.js"></script>
 <script type="text/javascript">
 
     //add element to collection form
@@ -31,4 +32,18 @@
         event.preventDefault();
         $(this).parent().parent().remove();
     });
+
+    $('.price').on('change key paste keyup', function() {
+      var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
+      var tax_rate = {{ constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') + 1 }};
+      var price_plus_taxes =  price_with_dots * tax_rate; 
+      $('.price_plus_taxes').val(accounting.formatNumber(price_plus_taxes, 2, '', ',')); 
+    })
+
+    $('.price_plus_taxes').on('change key paste keyup', function() {
+      var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
+      var tax_rate = {{ constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') + 1 }};
+      var price =  price_with_dots * tax_rate; 
+      $('.price').val(accounting.formatNumber(price, 2, '', ',')); 
+    })
 </script>

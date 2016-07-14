@@ -163,7 +163,7 @@ $('body').on('click', '.anadir_subitem', function(){
           );
           subitem.find('.producto-qty').hide();
         }
-        var precio = accounting.formatMoney(response.precio);
+        var precio = accounting.formatMoney(response.precio * response.tasa_iva);
         var precio_total_subitem = (parseFloat(response.precio) * response.productoQty);
 
         precio_total_subitem = accounting.formatMoney(precio_total_subitem);
@@ -194,7 +194,7 @@ $('body').on('click', '.anadir_subitem', function(){
             ' data-color_id="' + response.color_id + '">' + 
             '<div class="movilin-container"><img src="/images/movilin.svg"></div>' +
               response.nombre + size_aux + '<br>' + precio + ' X ' + 
-              '<input type="text" class="cart-qty" min="1" max="100" value="' + response.productoQty + '">' + 
+              '<input type="text" class="cart-qty" min="1" max="100" size="1" value="' + response.productoQty + '">' + 
               '<div style="display: inline-block; width: 20px; height: 12px">' +
                 '<div class="subitem-qty up"></div>' + 
                 arrow_down +
@@ -270,7 +270,7 @@ function updateTotales(response)
 {
     var subtotal = accounting.formatMoney(response.subtotal);
 
-    var tasa_iva = (parseFloat(response.tasa_iva) - 1) * 100;
+    var tasa_iva = (parseFloat(response.tasa_iva) - 1) * 0;
     var tasa_re = (parseFloat(response.tasa_re) - 1) * 100;
 
     var tasa_iva = Math.round(tasa_iva);
