@@ -77,7 +77,6 @@ class DefaultController extends Controller
      */
     public function productShowAction($product_slug, $product_version_slug) {
 
-
         $csrfToken = $this->get('security.csrf.token_manager')->getToken('authenticate')->getValue();
 
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
@@ -96,6 +95,11 @@ class DefaultController extends Controller
         $query = $qb->getQuery();
         $productVersion = $query->getSingleResult();
 
+        $generalStock = 0;
+        foreach ($productVersion->getProductVersionSizes() as $productVersionSize) {
+            $generalStock += $productVersionSize->getStock();
+        }
+
         $session = $this->get('session');
         $pedido = null;
         if ($session->has('pedido')) {
@@ -105,7 +109,8 @@ class DefaultController extends Controller
         return $this->render('ZiiwebEcommerceBundle:Default:product_show.html.twig', array(
             'product_version' => $productVersion,
             'csrf_token' => $csrfToken,
-            'pedido' => $pedido
+            'pedido' => $pedido,
+            'general_stock' => $generalStock
         ));
     }
 }

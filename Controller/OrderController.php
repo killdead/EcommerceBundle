@@ -393,10 +393,6 @@ class OrderController extends Controller
     $newProductoQty = $request->request->get('producto_qty');
     $size = $request->request->get('size');
 
-//var_dump($size);
-//var_dump($productoQty);
-//die("jlfa");
-
     //if check the qty requested is higher than stock, show a message  
     $em = $this->getDoctrine()->getManager();
 
@@ -405,6 +401,7 @@ class OrderController extends Controller
         ->where('pvs.productVersion = :product_version_id')
         ->setParameter('product_version_id', $productVersionId);
 
+    //for when the product is added and increased its quantity in the same page
     if ($size == 'undefined') {
         $size = '';
     }
@@ -425,13 +422,6 @@ class OrderController extends Controller
     //get the difference between the last qty and new qty: for example '-1', '1', etc
     $differenceQty = $newProductoQty - $pedido['subitems'][$productVersionIdPlusSize]['qty'] ;
     $newStock = $productVersionSize->getStock() - $differenceQty;
-/*
-var_dump($pedido['subitems'][$productVersionIdPlusSize]['qty']);
-var_dump($newProductoQty);
-var_dump('current stock:' . $productVersionSize->getStock());
-var_dump($differenceQty);
-var_dump($newStock);
-*/
 
     if ($newStock < 0) {
       $response = array('stock' => 0);
