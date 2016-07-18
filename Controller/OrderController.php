@@ -151,8 +151,8 @@ class OrderController extends Controller
       }
 
       $pedido['user_regimen_iva'] = 1;
-      $pedido['metodo_envio'] = 1;
-      $pedido['metodo_envio_backup'] = 1;
+      $pedido['metodo_envio'] = 3;
+      $pedido['metodo_envio_backup'] = 3;
       //asignamos un metodo de pago por defecto: la transferencia.
       $pedido['metodo_pago'] = 1;
       ///OJOOOOOOOOOOOOOOO si modificamos algo de aqui arriba, tenemos tambien que modificarlo en anadirSubitem()
@@ -343,7 +343,7 @@ class OrderController extends Controller
           $pedido['metodo_envio_backup'] = 4;
       } else {
 */
-          $pedido['metodo_envio_backup'] = 1;
+          $pedido['metodo_envio_backup'] = 3;
 /*
       }
 */
@@ -381,26 +381,60 @@ class OrderController extends Controller
     return new JsonResponse($pedidoJson);
   }
 
+
   /**
    * @Route("/update-qty-subitem", name="update-qty-subitem")
    */
   public function updateQtySubitemAction(Request $request)
   {
-    $subitemColorId = $request->request->get('producto_color_id');
-    $productoQty = $request->request->get('producto_qty');
+    //$productVersionId = $request->request->get('product_version_id');
 
-    $em = $this->getDoctrine()->getEntityManager();
-    $subitemColor = $em->find('ProjectBackendBundle:SubitemColor', $subitemColorId);
+    $productVersionId = $request->request->get('product_version_id');
+    $newProductoQty = $request->request->get('producto_qty');
+    $size = $request->request->get('size');
+
+//var_dump($size);
+//var_dump($productoQty);
+//die("jlfa");
+
+    //if check the qty requested is higher than stock, show a message  
+    $em = $this->getDoctrine()->getManager();
+
+    $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+    $qb = $repo->createQueryBuilder('pvs')
+        ->where('pvs.productVersion = :product_version_id')
+        ->setParameter('product_version_id', $productVersionId);
+
+    if ($size == 'undefined') {
+        $size = '';
+    }
+    
+    if ($size !== '') {
+        $qb->andWhere('pvs.size = :product_version_size')
+        ->setParameter('product_version_size', $size);
+    }
+
+    $query = $qb->getQuery();
+    $productVersionSize = $query->getSingleResult();
 
     $session = $this->get('session'); 
     $pedido = $session->get('pedido'); 
 
-    $stock = $subitemColor->getEnStock();
-    $diferencia = $pedido['subitems'][$subitemColorId]['qty'] - $productoQty;
-    $newStock = $stock + $diferencia;
-    
+    $productVersionIdPlusSize = $productVersionId . '_' . $size;
+
+    //get the difference between the last qty and new qty: for example '-1', '1', etc
+    $differenceQty = $newProductoQty - $pedido['subitems'][$productVersionIdPlusSize]['qty'] ;
+    $newStock = $productVersionSize->getStock() - $differenceQty;
+/*
+var_dump($pedido['subitems'][$productVersionIdPlusSize]['qty']);
+var_dump($newProductoQty);
+var_dump('current stock:' . $productVersionSize->getStock());
+var_dump($differenceQty);
+var_dump($newStock);
+*/
+
     if ($newStock < 0) {
-      $response = array('stock' => 'false');
+      $response = array('stock' => 0);
 
       $serializer = $this->container->get('jms_serializer');
       $pedidoJson = $serializer->serialize($response, 'json');
@@ -408,18 +442,19 @@ class OrderController extends Controller
       return new JsonResponse($pedidoJson);
     }
 
-    $pedido['subitems'][$subitemColorId]['qty'] = $productoQty;
-    $pedido['subitems'][$subitemColorId]['precio_total_subitem'] = $pedido['subitems'][$subitemColorId]['precio'] * $productoQty;
+    $pedido['subitems'][$productVersionIdPlusSize]['qty'] = $newProductoQty;
+    $pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'] = $pedido['subitems'][$productVersionIdPlusSize]['precio'] * $newProductoQty;
 
     $pedido = $this->calcularTotales2($pedido);
 
     $session->set('pedido', $pedido); 
 
     $response = array(
-      'precio_total_subitem' => $pedido['subitems'][$subitemColorId]['precio_total_subitem'],
+      'precio_total_subitem' => $pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'],
       'subtotal' => $pedido['subtotal'],
-      'iva' => $pedido['iva'], 'tasa_iva' => $pedido['tasa_iva'],
-      're' => $pedido['re'], 'tasa_re' => $pedido['tasa_re'],
+      'iva' => $pedido['iva'],
+      'tasa_iva' => $pedido['tasa_iva'],
+      //'re' => $pedido['re'], 'tasa_re' => $pedido['tasa_re'],
       'total' => $pedido['total'],
       'stock_qty' => $newStock,
       'metodo_envio' => $pedido['metodo_envio'],
@@ -430,12 +465,13 @@ class OrderController extends Controller
     $pedidoJson = $serializer->serialize($response, 'json');
 
     //PERSISTIMOS EL PRODUCTO PARA ALMACENAR EL LA BASE DE DATOS EL NUEVO STOCK
-    $subitemColor->setEnStock($stock + $diferencia);
-    $em->persist($subitemColor);
+    $productVersionSize->setStock($newStock);
+    $em->persist($productVersionSize);
     $em->flush();
 
     return new JsonResponse($pedidoJson);
   }
+
 
   //este es el formulario del avioncito
   public function pedidoPreenvioDomicilioAction()

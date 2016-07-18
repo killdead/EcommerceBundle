@@ -74,7 +74,8 @@ $("body").on('click', '#cart .subitem .up, .down', function() {
 
 
 function clander(aux, new_producto_qty) {
-  var subitem_color_id = aux.data("subitem_color_id");
+  var product_version_id = aux.data("product_version_id");
+  var size = aux.data("size");
   var color_id = aux.data("color_id");
 
   var input_qty = aux.find('input');
@@ -84,11 +85,11 @@ function clander(aux, new_producto_qty) {
   $.ajax({
     type: "POST",
     url: url_cantidad,
-    data: { producto_color_id: subitem_color_id, producto_qty: new_producto_qty },
+    data: { product_version_id: product_version_id, size: size, producto_qty: new_producto_qty },
     dataType: 'json',
     success: function(response) {
       response = JSON.parse(response);
-      if (response.stock) {
+      if (response.stock == '0') {
         alert("Lo sentimos, no tenemos tantas existencias de este producto.");
       } else {
         //establecemos la nueva cantidad del producto en el carrito
@@ -96,22 +97,23 @@ function clander(aux, new_producto_qty) {
         if (new_producto_qty != 0) {
           input_qty.val(new_producto_qty).change();
         }
-        //cambiamos el texto del boton "Añadir" 
+        //cambiamos el texto del boton "Añadir" si se han quitado productos del carrito y de nuevo hay stock 
         if (response.stock_qty != 0) {
-          $('.subitems-container .subitem[data-subitem_color_id="' + subitem_color_id + '"]').find('.anadir-qty').html(
+          $('.subitems-container .subitem[data-product_version_id="' + product_version_id + '"]').find('.anadir-qty').html(
             '<input min="0" value="1" class="producto-qty">' +
-            '<span class="anadir_subitem" ' + 'data-producto-id="' + subitem_color_id + '">' + 
+            '<span class="anadir_subitem" ' + 'data-producto-id="' + product_version_id + '">' + 
               '<span class="verde">Añadir</span>' + 
             '</span>'
           );
         } else {
-          $('.subitems-container .subitem[data-subitem_color_id="' + subitem_color_id + '"]').find('.anadir-qty').html(
+          $('.subitems-container .subitem[data-product_version_id="' + product_version_id + '"]').find('.anadir-qty').html(
             '<span class="anadir_subitem agotado">' +
               '<span class="rojo">Agotado</span>' + 
             '</span>'
           );
         }
-        var precio_total_subitem = parseFloat(response.precio_total_subitem);
+        //var precio_total_subitem = parseFloat(response.precio_total_subitem);
+        var precio_total_subitem = (parseFloat(response.precio_total_subitem) * response.tasa_iva);
 
         precio_total_subitem = accounting.formatMoney(precio_total_subitem);
 
@@ -182,10 +184,15 @@ $('body').on('click', '.anadir_subitem', function(){
             var arrow_down = '<div class="subitem-qty down" style="display: none"></div>';
           }
           if (response.size != undefined) {
-            var size_aux = ' talla ' + response.size;
+            var size_string = ' talla ' + response.size;
           } else {
-            var size_aux = '';
+            var size_string = '';
+            var size = '';
+alert("jla");
           }
+
+
+          var size = $('#size input[type="radio"]:checked').val();
           $('#cart ul').prepend(
             '<li class="list-group-item subitem ' +  clase + '" '  +
             '" data-element_collection_id="' + response.element_collection_id +
@@ -193,10 +200,11 @@ $('body').on('click', '.anadir_subitem', function(){
             '" data-size="' + size + '"' +
             ' data-color_id="' + response.color_id + '">' + 
             '<div class="movilin-container"><img src="/images/movilin.svg"></div>' +
-              response.nombre + size_aux + '<br>' + precio + ' X ' + 
+              response.nombre + size_string + '<br>' + precio + ' X ' + 
+              '<i class="down subitem-qty fa fa-minus-circle "></i>&nbsp' + 
               '<input type="text" class="cart-qty" min="1" max="100" size="1" value="' + response.productoQty + '">' + 
-              '<div style="display: inline-block; width: 20px; height: 12px">' +
-                '<div class="subitem-qty up"></div>' + 
+              '&nbsp<div style="display: inline-block; width: 20px; height: 12px">' +
+                '<i class="up subitem-qty fa fa-plus-circle "></i>' + 
                 arrow_down +
               '</div>' +
               'unid. = ' +
