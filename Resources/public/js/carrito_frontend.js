@@ -188,7 +188,6 @@ $('body').on('click', '.anadir_subitem', function(){
           } else {
             var size_string = '';
             var size = '';
-alert("jla");
           }
 
 

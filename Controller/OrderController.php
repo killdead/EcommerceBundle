@@ -211,7 +211,11 @@ class OrderController extends Controller
 	$size =  null;
       }
     
-      $pedido['subitems'][$productVersionIdPlusSize] = array(
+      if (!isset($pedido['subitems'])) {
+          $pedido['subitems'] = array();
+      }
+
+      $aux = array(
         'id' => $productVersionId, 
         'qty' => $productoQty, 
         'precio' => $productVersionSize->getProductVersion()->getPrice(), 
@@ -219,6 +223,8 @@ class OrderController extends Controller
         'size' => $size,
         'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty)
       );
+
+      $pedido['subitems'] = array_merge(array($productVersionIdPlusSize => $aux), $pedido['subitems']);
 
     }
 
