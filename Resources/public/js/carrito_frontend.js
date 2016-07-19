@@ -99,18 +99,15 @@ function clander(aux, new_producto_qty) {
         }
         //cambiamos el texto del boton "Añadir" si se han quitado productos del carrito y de nuevo hay stock 
         if (response.stock_qty != 0) {
-          $('.subitems-container .subitem[data-product_version_id="' + product_version_id + '"]').find('.anadir-qty').html(
-            '<input min="0" value="1" class="producto-qty">' +
-            '<span class="anadir_subitem" ' + 'data-producto-id="' + product_version_id + '">' + 
-              '<span class="verde">Añadir</span>' + 
-            '</span>'
+          $('.anadir_subitem[data-product_version_id="' + product_version_id + '"]').html(
+              '<button class="verde">Añadir al carro</button>'  
           );
         } else {
-          $('.subitems-container .subitem[data-product_version_id="' + product_version_id + '"]').find('.anadir-qty').html(
-            '<span class="anadir_subitem agotado">' +
-              '<span class="rojo">Agotado</span>' + 
-            '</span>'
-          );
+          //if (response.size == null) {
+	    $('.anadir_subitem[data-product_version_id="' + product_version_id + '"]').html(
+		'<button disabled class="rojo">Producto agotado</button>'  
+	    );
+          //}
         }
         //var precio_total_subitem = parseFloat(response.precio_total_subitem);
         var precio_total_subitem = (parseFloat(response.precio_total_subitem) * response.tasa_iva);
@@ -126,7 +123,7 @@ function clander(aux, new_producto_qty) {
 
 $('body').on('click', '.anadir_subitem', function(){
   var subitem = $(this).parents('.subitem');
-  var product_version_id = $(this).data("producto_id");
+  var product_version_id = $(this).data("product_version_id");
   // ESTA LINEA COMENTADA ES PARA CUANDO QUERAMOS MOSTRAR LOS ____CUADRADITOS DE LOS COLORES___ /////////
   //var producto_color = $(this).parents('.subitem').find('.cuadrado-container.actual').data('color');
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +136,7 @@ $('body').on('click', '.anadir_subitem', function(){
   $.ajax({
     type: "POST",
     url: url_anadir,
-    data: { product_version_id: product_version_id, producto_qty: producto_qty, size: size },
+    data: { product_version_id: product_version_size_id, producto_qty: producto_qty, size: size },
     dataType: 'json',
     success: function(response) {
       response = JSON.parse(response);
@@ -158,10 +155,8 @@ $('body').on('click', '.anadir_subitem', function(){
         $(".totales").show();
 
         if (response.stock == 0) {
-          subitem.find('.anadir-qty').html(
-            '<span class="anadir_subitem agotado">' +
-              '<span class="rojo">Agotado</span>' + 
-            '</span>'
+          $('.anadir_subitem[data-product_version_id="' + product_version_id + '"]').html(
+              '<button class="rojo" disabled>Producto agotado</button>'  
           );
           subitem.find('.producto-qty').hide();
         }

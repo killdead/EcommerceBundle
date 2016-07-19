@@ -306,7 +306,6 @@ class OrderController extends Controller
 
     $productVersionIdPlusSize =  $productVersionId . '_' . $size;
 
-//var_dump($pedido['subitems']);
     $qtyInCart = $pedido['subitems'][$productVersionIdPlusSize]['qty'];
 
     unset($pedido['subitems'][$productVersionIdPlusSize]);
