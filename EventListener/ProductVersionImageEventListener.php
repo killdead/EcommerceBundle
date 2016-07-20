@@ -19,7 +19,7 @@ class ProductVersionImageEventListener
 
             $filename = md5(uniqid()) . '.' . $file->guessExtension(); 
 
-            $sizes = array('s' => 100, 'm' => 200, 'l' => 400, 'xl' => 600);
+            $sizes = array('xs' => 65, 's' => 100, 'm' => 200, 'l' => 400, 'xl' => 600);
 
             foreach ($sizes as $key => $size) {
                 ${'imagick' . $key} = new \Imagick($file->getRealPath()); 

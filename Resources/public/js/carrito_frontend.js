@@ -217,25 +217,28 @@ $('body').on('click', '.anadir_subitem', function(){
             var size_string = '';
             var size = '';
           }
+  
+          var product_name = $.trim(response.nombre).substring(0, 28).trim(this);
+          if (response.nombre.length >= 28) {
+            product_name += ' ...';
+          }
 
           var size = $('#size input[type="radio"]:checked').val();
-          $('#cart ul').prepend(
+          $('#cart .products-list').prepend(
             '<li class="list-group-item subitem ' +  clase + '" '  +
             '" data-element_collection_id="' + response.element_collection_id +
             '" data-product_version_size_id="' + product_version_size_id + '"' +
             '" data-size="' + size + '"' +
             ' data-color_id="' + response.color_id + '">' + 
-            '<div class="movilin-container"><img src="/images/movilin.svg"></div>' +
-              response.nombre + size_string + '<br>' + precio + ' X ' + 
+            '<div class="pull-left img-trash"><img src="/uploads/xs/' + response.image_path + '"></div>' +
+              product_name + size_string + '<br>' + precio + '&nbsp&nbsp&nbsp' + 
               '<i class="down subitem-qty fa fa-minus-circle "></i>&nbsp' + 
               '<input type="text" class="cart-qty" min="1" max="100" size="1" value="' + response.productoQty + '">' + 
               '&nbsp<div style="display: inline-block; width: 20px; height: 12px">' +
                 '<i class="up subitem-qty fa fa-plus-circle "></i>' + 
                 arrow_down +
               '</div>' +
-              'unid. = ' +
-              '<span class="precio_total_subitem">' + precio_total_subitem + '</span>' +
-              '<span class="eliminar" title="Eliminar">X</span>' + 
+              '<btn class="eliminar" title="Eliminar"><i class="fa fa-trash-o aria-hidden="true"></i></span>' + 
             '</li>'
           );
           $('.metodo-de-envio input[value=' + response.metodo_envio + ']').attr('checked', 'checked');

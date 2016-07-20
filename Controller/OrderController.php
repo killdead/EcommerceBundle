@@ -173,7 +173,7 @@ class OrderController extends Controller
     }
 
     $productVersionIdPlusSize = $productVersionSizeId;
-
+/*
     //>>>> PRODUCTO YA EN CARRO <<<<
     if (isset($pedido['subitems'][$productVersionIdPlusSize])) 
     {
@@ -192,11 +192,11 @@ class OrderController extends Controller
 
 	      return new JsonResponse($pedidoJson);
       }
-*/
 
 
     //>>>> PRODUCTO NUEVO EN CARRO <<<<
     } else {
+*/
       $enCarro = 'false';
 
       $color = '';
@@ -216,17 +216,20 @@ class OrderController extends Controller
           $pedido['subitems'] = array();
       }
 
+      $imagePath = $productVersionSize->getProductVersion()->getProductVersionImages()[0]->getFile();
+
       $aux = array(
         'id' => $productVersionSizeId, 
         'qty' => $productoQty, 
         'precio' => $productVersionSize->getProductVersion()->getPrice(), 
         'nombre' => $name,
         'size' => $size,
-        'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty)
+        'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty),
+        'image_path' => $imagePath
       );
 
       $pedido['subitems'][$productVersionIdPlusSize] = array_merge($aux, $pedido['subitems']);
-    }
+    //}
 
     //////////////////////
     //////////////////////
@@ -258,7 +261,8 @@ class OrderController extends Controller
       'en_carro' => $enCarro,
       'tasa_iva' => $pedido['tasa_iva'],
       //'tasa_re' => $pedido['tasa_re'],
-      'contrareembolso' => $pedido['contrareembolso']
+      'contrareembolso' => $pedido['contrareembolso'],
+      'image_path' => $imagePath
     );
 
     //tras la actulización de la variable de session, devolvemos el pedido serializado
