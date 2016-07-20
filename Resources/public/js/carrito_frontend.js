@@ -231,7 +231,7 @@ $('body').on('click', '.anadir_subitem', function(){
             '" data-size="' + size + '"' +
             ' data-color_id="' + response.color_id + '">' + 
             '<div class="pull-left img-trash"><img src="/uploads/xs/' + response.image_path + '"></div>' +
-              product_name + size_string + '<br>' + precio + '&nbsp&nbsp&nbsp' + 
+              '<p>' + product_name + size_string + '</p>' + precio + '&nbsp&nbsp&nbsp' + 
               '<i class="down subitem-qty fa fa-minus-circle "></i>&nbsp' + 
               '<input type="text" class="cart-qty" min="1" max="100" size="1" value="' + response.productoQty + '">' + 
               '&nbsp<div style="display: inline-block; width: 20px; height: 12px">' +
