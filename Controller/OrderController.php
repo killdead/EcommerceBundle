@@ -104,23 +104,24 @@ class OrderController extends Controller
   public function addSubitemAction(Request $request)
   {
 
-    $productVersionId = $request->request->get('product_version_id');
+    $productVersionSizeId = $request->request->get('product_version_size_id');
     $productoQty = $request->request->get('producto_qty');
-    $size = $request->request->get('size');
+    //$size = $request->request->get('size');
 
     //if check the qty requested is higher than stock, show a message  
     $em = $this->getDoctrine()->getManager();
 
     $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
     $qb = $repo->createQueryBuilder('pvs')
-        ->where('pvs.productVersion = :product_version_id')
-        ->setParameter('product_version_id', $productVersionId);
+        ->where('pvs.id = :product_version_size_id')
+        ->setParameter('product_version_size_id', $productVersionSizeId);
 
-
+/*
     if ($size !== null) {
         $qb->andWhere('pvs.size = :product_version_size')
         ->setParameter('product_version_size', $size);
     }
+*/
 
     $query = $qb->getQuery();
     $productVersionSize = $query->getSingleResult();
@@ -171,7 +172,7 @@ class OrderController extends Controller
       $pedido = $session->get('pedido');
     }
 
-    $productVersionIdPlusSize = $productVersionId . '_' . $size;
+    $productVersionIdPlusSize = $productVersionSizeId;
 
     //>>>> PRODUCTO YA EN CARRO <<<<
     if (isset($pedido['subitems'][$productVersionIdPlusSize])) 
@@ -216,7 +217,7 @@ class OrderController extends Controller
       }
 
       $aux = array(
-        'id' => $productVersionId, 
+        'id' => $productVersionSizeId, 
         'qty' => $productoQty, 
         'precio' => $productVersionSize->getProductVersion()->getPrice(), 
         'nombre' => $name,
@@ -224,8 +225,7 @@ class OrderController extends Controller
         'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty)
       );
 
-      $pedido['subitems'] = array_merge(array($productVersionIdPlusSize => $aux), $pedido['subitems']);
-
+      $pedido['subitems'][$productVersionIdPlusSize] = array_merge($aux, $pedido['subitems']);
     }
 
     //////////////////////
@@ -250,7 +250,7 @@ class OrderController extends Controller
       'productoQty' => $pedido['subitems'][$productVersionIdPlusSize]['qty'],
       'nombre' => $pedido['subitems'][$productVersionIdPlusSize]['nombre'],
       'color_name' => $colorName,
-      'size' => $size,
+      'size' => $productVersionSize->getSize(),
       'precio' => $pedido['subitems'][$productVersionIdPlusSize]['precio'],
       'precio_plus_taxes' => $pedido['subitems'][$productVersionIdPlusSize]['precio'],
       'metodo_envio' => $pedido['metodo_envio'],
@@ -283,7 +283,7 @@ class OrderController extends Controller
    */
   public function removeSubitemCartAction(Request $request)
   {
-    $productVersionId = $request->request->get('product_version_id');
+    $productVersionSizeId = $request->request->get('product_version_size_id');
     $size = $request->request->get('size');
 
     $session = $this->get('session'); 
@@ -291,20 +291,21 @@ class OrderController extends Controller
 
     $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
     $qb = $repo->createQueryBuilder('pvs')
-       ->join('pvs.productVersion', 'pv')
-       ->where('pv.id = :product_version_id')
-       ->setParameter(':product_version_id', $productVersionId)
+       //->join('pvs.productVersion', 'pv')
+       ->where('pvs.id = :product_version_size_id')
+       ->setParameter(':product_version_size_id', $productVersionSizeId)
     ;
-    
+   /* 
     if ($size !== NULL) {
         $qb->andWhere('pvs.size = :product_version_size')
         ->setParameter('product_version_size', $size);
     }
+*/
 
     $query = $qb->getQuery();
     $productVersionSize = $query->getSingleResult();
 
-    $productVersionIdPlusSize =  $productVersionId . '_' . $size;
+    $productVersionIdPlusSize =  $productVersionSizeId;
 
     $qtyInCart = $pedido['subitems'][$productVersionIdPlusSize]['qty'];
 
@@ -394,7 +395,7 @@ class OrderController extends Controller
   {
     //$productVersionId = $request->request->get('product_version_id');
 
-    $productVersionId = $request->request->get('product_version_id');
+    $productVersionSizeId = $request->request->get('product_version_size_id');
     $newProductoQty = $request->request->get('producto_qty');
     $size = $request->request->get('size');
 
@@ -403,18 +404,19 @@ class OrderController extends Controller
 
     $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
     $qb = $repo->createQueryBuilder('pvs')
-        ->where('pvs.productVersion = :product_version_id')
-        ->setParameter('product_version_id', $productVersionId);
+        ->where('pvs.id = :product_version_size_id')
+        ->setParameter('product_version_size_id', $productVersionSizeId);
 
     //for when the product is added and increased its quantity in the same page
     if ($size == 'undefined') {
         $size = '';
     }
-    
+   /* 
     if ($size !== '') {
         $qb->andWhere('pvs.size = :product_version_size')
         ->setParameter('product_version_size', $size);
     }
+*/
 
     $query = $qb->getQuery();
     $productVersionSize = $query->getSingleResult();
@@ -422,7 +424,7 @@ class OrderController extends Controller
     $session = $this->get('session'); 
     $pedido = $session->get('pedido'); 
 
-    $productVersionIdPlusSize = $productVersionId . '_' . $size;
+    $productVersionIdPlusSize = $productVersionSizeId;
 
     //get the difference between the last qty and new qty: for example '-1', '1', etc
     $differenceQty = $newProductoQty - $pedido['subitems'][$productVersionIdPlusSize]['qty'] ;
