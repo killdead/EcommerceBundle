@@ -1,0 +1,14 @@
+.products-list {
+  .subitem {
+    position: relative;
+    .eliminar {
+      position: absolute;
+      top: -7px;
+      right: -8px;
+    }
+    .img-trash {
+      margin-right: 15px;
+      height: 100%;
+    }
+  }
+}
