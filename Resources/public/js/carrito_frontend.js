@@ -260,6 +260,7 @@ $('.envio').on('click',function(){
   var envio = $(".envio[name=envio]:checked").val();
   var url_envio = $("#cart").data("url_envio"); 
   //si se elije "48 horas" la opcion Contrareembolso desaparece
+/*
   if(envio == 2)
   {
     $('.pago.transferencia').prop('checked', true);
@@ -269,6 +270,7 @@ $('.envio').on('click',function(){
     $('.pago.contra').attr('disabled', false);
     $('label.pago.contra').css('opacity', '1');
   }
+*/
   $.ajax({
     type: "POST",
     url: url_envio,
@@ -291,15 +293,16 @@ $('.pago').on('click', function(){
     dataType: 'json',
     success: function(response) {
       response = JSON.parse(response);
-      $('.transferencia').attr('checked', 'checked');
+      //$('.transferencia').attr('checked', 'checked');
       updateTotals(response);
 
+/*
       if (response.metodo_pago == 2) {
-
         $('.contrareembolso').show();
       }  else {
         $('.contrareembolso').hide();
       }
+*/
     }
   });
 });
@@ -339,6 +342,7 @@ function updateTotals(response)
 
     $('#cart .total').html(total);
 
+/*
     if(response.metodo_envio == 3)
     {
       $('.gratis').show(); 
@@ -368,5 +372,6 @@ function updateTotals(response)
       $('#r2').prev().css('opacity', 1);
       $('#r4').prev().css('opacity', 1);
     }
+*/
 }
 

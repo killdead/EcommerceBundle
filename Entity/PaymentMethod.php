@@ -39,6 +39,10 @@ class PaymentMethod
      */
     protected $porcentaje;
 
+    /**
+     * @ORM\Column(type="boolean", name="enabled")
+     */
+    protected $enabled;
     
     public function __construct() {
     }
@@ -126,5 +130,29 @@ class PaymentMethod
     public function getPorcentaje()
     {
         return $this->porcentaje;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return PaymentMethod
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return boolean
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
     }
 }

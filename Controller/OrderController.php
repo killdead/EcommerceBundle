@@ -16,6 +16,8 @@ use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use DefaultBundle\Form\RegistrationType;
+use Ziiweb\EcommerceBundle\Form\ShippingDataType;
 
 class OrderController extends Controller
 {
@@ -76,11 +78,15 @@ class OrderController extends Controller
         $pedido['contrareembolso'] = $totalSinMetodoPago * (($metodoPago->getPorcentaje())/100);
       }
       if ($pedido['tasa_iva'] != 1) {
+/*
         if ($pedido['tasa_re'] == 1) {
+*/
           $pedido['contrareembolso'] = $pedido['contrareembolso'] * $pedido['tasa_iva'];
+/*
         } else {
           $pedido['contrareembolso'] = $pedido['contrareembolso'] * ($pedido['tasa_iva'] + ($pedido['tasa_re'] - 1));
         }
+*/
       }
     }
 
@@ -555,7 +561,7 @@ class OrderController extends Controller
       'iva' => $pedido['iva'], 
       'tasa_iva' => $pedido['tasa_iva'], 
       're' => $pedido['re'], 
-      'tasa_re' => $pedido['tasa_re'], 
+      //'tasa_re' => $pedido['tasa_re'], 
       'total' => $pedido['total'],
       'metodo_envio' => $pedido['metodo_envio'],
       'metodo_pago' => $pedido['metodo_pago'],
@@ -822,17 +828,63 @@ class OrderController extends Controller
 
 
   /**
-   * @Route("/", name="pedido_preenvio_resumen")
+   * @Route("/pedido-resumen", name="preenvio_resumen")
    */
   public function preenvioResumenAction() 
   {
-    return $this->render('ProjectFrontendBundle:Pedido:preenvio_resumen.html.twig');
+    $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ShippingMethod');
+    $shippingMethods = $repository->findBy(array('enabled' => true));
+
+    $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:PaymentMethod');
+    $paymentMethods = $repository->findBy(array('enabled' => true));
+
+    $session = $this->get('session'); 
+    $pedido = $session->get('pedido'); 
+    
+    return $this->render('ZiiwebEcommerceBundle:Order:preenvio_resumen.html.twig', array(
+        'shippingMethods' => $shippingMethods,
+        'paymentMethods' => $paymentMethods,
+        'pedido' => $pedido
+    ));
   }
 
 
-  public function preenvioDireccionAction() 
+  /**
+   * @Route("/registro-login", name="registration_login")
+   */
+  public function registrationLoginAction(Request $request) 
   {
-    return $this->render('ProjectFrontendBundle:Pedido:preenvio_direccion.html.twig');
+      $registrationForm = $this->createForm(RegistrationType::class);
+
+      return $this->render('ZiiwebEcommerceBundle:Order:registration_login.html.twig', array(
+	  'registration_form' => $registrationForm->createView()
+      ));
+  }
+
+  /**
+   * @Route("/direccion-envio", name="shipping_data")
+   */
+  public function shippingDataAction(Request $request) 
+  {
+        //$type = new ShippingDataType();
+
+        $form = $this->createForm(ShippingDataType::class, $this->getUser());
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $user = $form->getData();
+ 
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user); 
+            $em->flush($user); 
+            
+            return false;
+        }
+
+	return $this->render('ZiiwebEcommerceBundle:Order:shipping_data.html.twig', array(
+	    'form' => $form->createView()
+	));
   }
 
 

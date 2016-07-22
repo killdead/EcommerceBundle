@@ -13,8 +13,6 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        $csrfToken = $this->get('security.csrf.token_manager')->getToken('authenticate')->getValue();
-
         $session = $this->get('session');
         $pedido = null;
         if ($session->has('pedido')) {
@@ -22,7 +20,6 @@ class DefaultController extends Controller
         } 
 
         return $this->render('ZiiwebEcommerceBundle:Default:index.html.twig', array(
-            'csrf_token' => $csrfToken,
             'pedido' => $pedido
         ));
     }
@@ -40,8 +37,6 @@ class DefaultController extends Controller
      * @Route("/categoria/{categoryProduct}", name="product_list") 
      */
     public function listProductsAction($categoryProduct) {
-
-        $csrfToken = $this->get('security.csrf.token_manager')->getToken('authenticate')->getValue();
 
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
         $categoryProduct = $repo->findOneBy(array('slug' => $categoryProduct));
@@ -67,7 +62,6 @@ class DefaultController extends Controller
 
         return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
             'product_versions' => $productVersions,
-            'csrf_token' => $csrfToken,
             'pedido' => $pedido
         ));
     }    
@@ -76,8 +70,6 @@ class DefaultController extends Controller
      * @Route("/producto/{product_slug}/{product_version_slug}", name="product_show", defaults={"product_version_slug" = null}) 
      */
     public function productShowAction($product_slug, $product_version_slug) {
-
-        $csrfToken = $this->get('security.csrf.token_manager')->getToken('authenticate')->getValue();
 
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
 
@@ -108,7 +100,6 @@ class DefaultController extends Controller
 
         return $this->render('ZiiwebEcommerceBundle:Default:product_show.html.twig', array(
             'product_version' => $productVersion,
-            'csrf_token' => $csrfToken,
             'pedido' => $pedido,
             'general_stock' => $generalStock
         ));

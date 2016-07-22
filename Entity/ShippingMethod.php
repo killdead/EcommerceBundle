@@ -34,6 +34,11 @@ class ShippingMethod
      */
     protected $precio;
 
+    /**
+     * @ORM\Column(type="boolean", name="enabled")
+     */
+    protected $enabled;
+    
     
     public function __construct() {
     }
@@ -99,4 +104,28 @@ class ShippingMethod
         return $this->precio;
     }
 
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return ShippingMethod
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return boolean
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
 }
