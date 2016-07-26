@@ -1,24 +1,44 @@
+<nav class="navbar navbar-light bg-faded">
+  <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+    &#9776;
+  </button>
+  <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+    <a class="navbar-brand" href="{{ path('index') }}">MiTienda</a>
+    <ul class="nav navbar-nav">
+    {% for item in navbar %}
+	{% if item.__children is not empty %}
 
-{% for item in navbar %}
-    {% if item.__children is not empty %}
-      <li class="dropdown">
-        <a href="{{ path('product_list', {'categoryProduct': (item.slug)} ) }}">{{ item.name }}</a>
-	<ul class="dropdown-menu">
-          {% for subitem in item.__children %}
-          <li>
-            <a href="#">
-            {{ subitem.name }}
-            </a>
-          </li>
-          {% endfor %}
-	</ul>
-      </li>
-    {% else %}
-      <li>
-	<a href="#">
-	{{ item.name }}
-	</a>
-      </li>
-    {% endif %}
-{% endfor %}
-</ul>
+	  <li class="nav-item active dropdown">
+
+           {# ITEM NAME #}
+	    <a class="nav-link dropdown-toggle" href="{{ path('product_list', {'categoryProduct': (item.slug)} ) }}">{{ item.name }}</a>
+
+	    <ul class="dropdown-menu">
+	      {% for subitem in item.__children %}
+	      <li>
+		<a class="dropdown-item" href="#" >
+		{{ subitem.name }}
+		</a>
+	      </li>
+	      {% endfor %}
+	    </ul>
+
+	  </li>
+
+	{% else %}
+
+	  <li class="nav-item">
+
+            {# ITEM NAME #}
+	    <a href="#">
+	    {{ item.name }}
+	    </a>
+
+	  </li>
+
+	{% endif %}
+
+    {% endfor %}
+    </ul>
+  </div>
+</nav>

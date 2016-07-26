@@ -4,6 +4,9 @@ namespace Ziiweb\EcommerceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
@@ -19,8 +22,12 @@ class DefaultController extends Controller
           $pedido = $session->get('pedido'); 
         } 
 
-        return $this->render('ZiiwebEcommerceBundle:Default:index.html.twig', array(
-            'pedido' => $pedido
+	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+        $productVersions = $repo->findBy(array('featured' => true));
+
+        return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
+            'pedido' => $pedido,
+            'product_versions' => $productVersions
         ));
     }
 
@@ -48,6 +55,7 @@ class DefaultController extends Controller
           ->join('pv.productVersionSizes', 'pvs')
           ->where('p.categoryProduct = :category_product')
           ->andWhere('pvs.stock > 0')
+          ->andWhere('pv.enabled = 1')
           ->setParameter('category_product', $categoryProduct->getId());
 
 
@@ -103,6 +111,54 @@ class DefaultController extends Controller
             'pedido' => $pedido,
             'general_stock' => $generalStock
         ));
+    }
+
+    /**
+     * @Route("/add-to-wishlist", name="add-to-wishlist") 
+     */
+    public function addToWishlistAction(Request $request) {
+
+       $product_version_id = $request->request->get('product_version_id');
+
+       $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+       $productVersion = $repo->findOneBy(array('id' => $product_version_id));
+
+       $productVersion->addUser($this->getUser()); 
+
+       $em = $this->getDoctrine()->getManager();
+       $em->persist($productVersion);
+       $em->flush();
+
+       $response = new JsonResponse();
+       $response = $response->setData(array('status' => 'added'));
+
+       return $response;
+    }
+
+    /**
+     * @Route("/remove-from-wishlist", name="remove-from-wishlist") 
+     */
+    public function removeFromWishlistAction(Request $request) {
+
+       $product_version_id = $request->request->get('product_version_id');
+
+       $repo = $this->getDoctrine()->getRepository('DefaultBundle:User');
+       $user = $repo->findOneBy(array('id' => $this->getUser()->getId()));
+
+       $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+       $productVersion = $repo->findOneBy(array('id' => $product_version_id));
+     
+       $user->removeProductVersion($productVersion); 
+       $productVersion->removeUser($user); 
+
+       $em = $this->getDoctrine()->getManager();
+       $em->persist($user);
+       $em->flush();
+
+       $response = new JsonResponse();
+       $response = $response->setData(array('status' => 'removed'));
+
+       return $response;
     }
 }
 

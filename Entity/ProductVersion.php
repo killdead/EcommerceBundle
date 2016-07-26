@@ -8,6 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ziiweb\EcommerceBundle\Entity\Order;
 use Ziiweb\EcommerceBundle\Entity\ProductVersionSizes;
+use DefaultBundle\Entity\User;
 
 /**
  * Ziiweb\EcommerceBundle\Entity\ProductVersion
@@ -32,6 +33,12 @@ class ProductVersion
     private $product;
 
     /**
+     * @ORM\ManyToMany(targetEntity="DefaultBundle\Entity\User", inversedBy="productVersions")
+     * @ORM\JoinTable(name="wishlist")
+     */
+    private $users;
+
+    /**
      * @ORM\Column(type="float", name="price")
      *
      * @var string $price
@@ -44,6 +51,20 @@ class ProductVersion
      * @var string $color
      */
     protected $color;
+
+    /**
+     * @ORM\Column(type="boolean", name="enabled", nullable=true)
+     *
+     * @var string $enabled
+     */
+    protected $enabled = true;
+ 
+    /**
+     * @ORM\Column(type="boolean", name="featured", nullable=true)
+     *
+     * @var string $featured
+     */
+    protected $featured;
 
     /**
      * @Gedmo\Slug(fields={"color"})
@@ -71,6 +92,7 @@ class ProductVersion
 
     public function __construct() {
         $this->productVersionImages = new ArrayCollection();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -299,5 +321,87 @@ class ProductVersion
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return ProductVersion
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return boolean
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Set featured
+     *
+     * @param boolean $featured
+     *
+     * @return ProductVersion
+     */
+    public function setFeatured($featured)
+    {
+        $this->featured = $featured;
+
+        return $this;
+    }
+
+    /**
+     * Get featured
+     *
+     * @return boolean
+     */
+    public function getFeatured()
+    {
+        return $this->featured;
+    }
+
+    /**
+     * Add user
+     *
+     * @param \DefaultBundle\Entity\User $user
+     *
+     * @return ProductVersion
+     */
+    public function addUser(\DefaultBundle\Entity\User $user)
+    {
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param \DefaultBundle\Entity\User $user
+     */
+    public function removeUser(\DefaultBundle\Entity\User $user)
+    {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 }
