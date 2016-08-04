@@ -17,12 +17,10 @@ class DefaultController extends Controller
      */
     public function generateFilterAction($category_id)
     {
+        //get the id's of the children categories
         $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('id' => $category_id));
-
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
         $childrenHierarchy = $repository->childrenHierarchy($categoryProduct, false, array(), true);
-
-        //get the id's of the children categories
 	$res = array();
         $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($childrenHierarchy), \RecursiveIteratorIterator::SELF_FIRST);
 	foreach ($iterator as $k => $v) {
@@ -44,10 +42,7 @@ class DefaultController extends Controller
 		'name' => 'size',
                 'label' => 'Talla',
 		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
-		'type' => 'range',
-		'currency' => '0',
-		'add_taxes' => '0',
-		'step' => '1'),
+		'type' => 'checkbox'),
             array(
 		'name' => 'color',
                 'label' => 'Color',
@@ -179,6 +174,18 @@ class DefaultController extends Controller
         $filter = $request->request->get('filter');
         $categoryProduct = $request->request->get('category_product');
 
+        //get the id's of the children categories
+        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('slug' => $categoryProduct));
+        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+        $childrenHierarchy = $repository->childrenHierarchy($categoryProduct, false, array(), true);
+	$res = array();
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($childrenHierarchy), \RecursiveIteratorIterator::SELF_FIRST);
+	foreach ($iterator as $k => $v) {
+	    if ($k === 'id') {
+		$res[] = $v;
+	    }
+	}
+
         $filterColumns = array(
             array(
 		'name' => 'price',
@@ -192,10 +199,7 @@ class DefaultController extends Controller
 		'name' => 'size',
                 'label' => 'Talla',
 		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
-		'type' => 'range',
-		'currency' => '0',
-		'add_taxes' => '0',
-		'step' => '1'),
+		'type' => 'checkbox'),
             array(
 		'name' => 'color',
                 'label' => 'Color',
@@ -221,10 +225,10 @@ class DefaultController extends Controller
           ->join('pv.product', 'p')
           ->join('p.categoryProduct', 'cp')
           ->join('pv.productVersionSizes', 'pvs')
-          ->andWhere('cp.slug = :categoryProduct')
+          ->andWhere('cp.id IN (:categoryProduct)')
           ->andWhere('pv.enabled = ?1')
 	  ->andWhere('pvs.stock > ?2')
-          ->setParameter('categoryProduct', $categoryProduct)
+          ->setParameter('categoryProduct', $res)
           ->setParameter(1, 1)
           ->setParameter(2, 0)
        ;
