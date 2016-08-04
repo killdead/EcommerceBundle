@@ -5,8 +5,8 @@
   <p>
     <label for="amount">{{ form.vars.label }}</label>
     <input type="text" id="{{ amount_id }}" readonly style="border:0; color:#f6931f; font-weight:bold;">
-    <input type="text" id="{{ amount_id }}-min" hidden name="filter[{{ form.vars.name }}]['min']">
-    <input type="text" id="{{ amount_id }}-max" hidden name="filter[{{ form.vars.name }}]['max']">
+    <input hidden type="text" id="{{ amount_id }}-min" name="filter[{{ form.vars.name }}][min]">
+    <input hidden type="text" id="{{ amount_id }}-max" name="filter[{{ form.vars.name }}][max]">
   </p>
   <div id="{{ slider_range_id }}"></div>
    
@@ -25,13 +25,14 @@
 	  slide: function( event, ui ) {
 
 	    $( "#{{ amount_id }}" ).val(amount(ui.values[0], ui.values[1], {{ currency}}, {{ add_taxes}}));
+	    $('#{{ amount_id ~ "-min" }}').val(ui.values[0]);
+	    $('#{{ amount_id ~ "-max" }}').val(ui.values[1]);
 
 	  },
 	  stop: function(event, ui) {
 	    var clar = $('form[name="filter"]').serialize().replace(/%5B/g, '[').replace(/%5D/g, ']');
 	    var url_parameters = $.deparam(clar);
  
-            $({{ slider_range_id  ~ '-min'}}).val();
 
 	    $.ajax({
 		  type: "POST",
@@ -44,8 +45,9 @@
 	  } 
 	});
 
-
 	$( "#{{ amount_id }}" ).val(amount( {{ min }}, {{ max }}, {{ currency }}, {{ add_taxes }} ));
+        $('#{{ amount_id ~ "-min" }}').val({{ min }});
+        $('#{{ amount_id ~ "-max" }}').val({{ max }});
 
       } );
     });
@@ -69,6 +71,7 @@
           max = accounting.formatMoney(max);
         }
    
+
         return min + ' - ' + max;
     }
   </script>

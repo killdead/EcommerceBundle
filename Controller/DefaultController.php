@@ -187,16 +187,6 @@ class DefaultController extends Controller
             $filterColumnsConfig[] = $aux;
         }
 
-        foreach ($filterColumnsConfig as $key => &$filterColumnConfig) {
-            if ($filterColumnConfig['type'] == 'range') {
-		preg_match_all('!\d+(?:\.\d+)?!', $filterColumnConfig['values'], $matches);
-		$floats = array_map('floatval', $matches[0]);
-                $filterColumnConfig['values'] = array();
-                $filterColumnConfig['values']['min'] = $floats[0];
-                $filterColumnConfig['values']['max'] = $floats[1];
-            }
-        } 
-
         //query
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
         $qb = $repository->createQueryBuilder('pv')
@@ -217,10 +207,6 @@ class DefaultController extends Controller
            if ($filterColumnConfig['class'] == 'ZiiwebEcommerceBundle:ProductVersion') {
 	       if ($filterColumnConfig['type'] == 'range') {
 		   $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' >= :min AND pv.' . $filterColumnConfig['name'] . ' <= :max');
-                   if ($filterColumnConfig['add_taxes'] == true) {
-                       $filterColumnConfig['values']['min'] /= (1 + TaxRates::VAT_RATE);
-                       $filterColumnConfig['values']['max'] /= (1 + TaxRates::VAT_RATE);
-                   }
 		   $qb->setParameter('min', $filterColumnConfig['values']['min']);
 		   $qb->setParameter('max', $filterColumnConfig['values']['max']);
 	       } else if ($filterColumnConfig['type'] == 'checkbox') {
