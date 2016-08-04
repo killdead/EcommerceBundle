@@ -39,17 +39,12 @@ class DefaultController extends Controller
 		'type' => 'range',
 		'currency' => '1',
 		'add_taxes' => '1',
-		'add_symbol' => ' €',
 		'step' => '0.01'),
             array(
 		'name' => 'size',
                 'label' => 'Talla',
 		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
-		'type' => 'range',
-		'currency' => '0',
-		'add_taxes' => '0',
-		'add_symbol' => false,
-		'step' => '1'),
+		'type' => 'checkbox')
         );
 
         $options = array();
@@ -161,17 +156,12 @@ class DefaultController extends Controller
 		'type' => 'range',
 		'currency' => '1',
 		'add_taxes' => '1',
-		'add_symbol' => ' €',
 		'step' => '0.01'),
             array(
 		'name' => 'size',
                 'label' => 'Talla',
 		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
-		'type' => 'range',
-		'currency' => '0',
-		'add_taxes' => '0',
-		'add_symbol' => false,
-		'step' => '1'),
+		'type' => 'checkbox')
         );
 
 

@@ -24,7 +24,6 @@ class FilterType extends AbstractType
                         'max' => $column['values']['max'],
                         'step' => $column['step'], // 0.01 if we are a working with two __decimals___, 1 if we're working with no decimals
                         'add_taxes' => $column['add_taxes'],
-                        'add_symbol' => $column['add_symbol'],
                         'currency' => $column['currency'],
 			'mapped' => false, 
 			'label' => $column['label'], 

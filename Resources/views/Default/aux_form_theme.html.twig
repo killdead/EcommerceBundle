@@ -30,18 +30,9 @@
 
 	  },
 	  stop: function(event, ui) {
-	    var clar = $('form[name="filter"]').serialize().replace(/%5B/g, '[').replace(/%5D/g, ']');
-	    var url_parameters = $.deparam(clar);
  
+            filter();
 
-	    $.ajax({
-		  type: "POST",
-		  url: "{{ path('filter') }}",
-		  data: {'filter': url_parameters, 'category_product': "{{ app.request.get('categoryProduct') }}" },
-		  success: function(response) {
-		      $('.card-columns').html(response);
-		  }
-	    });
 	  } 
 	});
 

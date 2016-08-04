@@ -23,7 +23,6 @@ class JqueryUiRangeType extends AbstractType
         $view->vars['step'] = $options['step']; 
         $view->vars['currency'] = $options['currency']; 
         $view->vars['add_taxes'] = $options['add_taxes']; 
-        $view->vars['add_symbol'] = $options['add_symbol']; 
     }
 
     /**
@@ -38,7 +37,6 @@ class JqueryUiRangeType extends AbstractType
             'step' => null,
             'currency' => null,
             'add_taxes' => null,
-            'add_symbol' => null,
         ));
     }
 } 
