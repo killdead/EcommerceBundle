@@ -53,6 +53,13 @@ class ProductVersion
     protected $color;
 
     /**
+     * @ORM\Column(type="string", name="color_code", nullable=true)
+     *
+     * @var string $colorCode
+     */
+    protected $colorCode;
+
+    /**
      * @ORM\Column(type="boolean", name="enabled", nullable=true)
      *
      * @var string $enabled
@@ -403,5 +410,29 @@ class ProductVersion
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * Set colorCode
+     *
+     * @param string $colorCode
+     *
+     * @return ProductVersion
+     */
+    public function setColorCode($colorCode)
+    {
+        $this->colorCode = $colorCode;
+
+        return $this;
+    }
+
+    /**
+     * Get colorCode
+     *
+     * @return string
+     */
+    public function getColorCode()
+    {
+        return $this->colorCode;
     }
 }

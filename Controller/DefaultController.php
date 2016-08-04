@@ -44,6 +44,14 @@ class DefaultController extends Controller
 		'name' => 'size',
                 'label' => 'Talla',
 		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
+		'type' => 'range',
+		'currency' => '0',
+		'add_taxes' => '0',
+		'step' => '1'),
+            array(
+		'name' => 'color',
+                'label' => 'Color',
+		'class' => 'ZiiwebEcommerceBundle:ProductVersion',
 		'type' => 'checkbox')
         );
 
@@ -102,9 +110,31 @@ class DefaultController extends Controller
             //CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - 
             } else if ($column['type'] == 'checkbox') {
                 //ProductVersion
-                if ($column['class'] == 'ZiwiebEcommerceBundle:ProductVersion') {
-                /////////////////////////////////////
-                /////////////////////////////////////
+                if ($column['class'] == 'ZiiwebEcommerceBundle:ProductVersion') {
+
+		    $qb = $this->getDoctrine()->getManager()->createQueryBuilder()
+			->select('DISTINCT pv.' . $column['name'])
+			->from('ZiiwebEcommerceBundle:ProductVersion', 'pv', 'pv.' . $column['name'])
+			->join('pv.product', 'p')
+			->join('pv.productVersionSizes', 'pvs')
+			//enabled
+			->where('pv.enabled = true')
+			->andWhere('p.categoryProduct IN (:categoryProduct)')
+			//stock
+			->andWhere('pvs.stock > 0')
+			->orderBy('pv.' . $column['name'], 'ASC')
+			->setParameter('categoryProduct', $res)
+		    ;
+
+		    $query = $qb->getQuery();
+		    $result = $query->getResult();
+
+       
+		    //construct an array being the key and value the same values
+		    foreach ($result as $key => $value) {
+			$column['values'][$key] = $key;
+		    }
+
                 //ProductVersionSize 
 		} else if ($column['class'] == 'ZiiwebEcommerceBundle:ProductVersionSize') {
 		    $qb = $this->getDoctrine()->getManager()->createQueryBuilder()
@@ -131,6 +161,7 @@ class DefaultController extends Controller
                 }
             }
         }
+
 
 
         $filter = $this->createForm(FilterType::class, null, array('filter_config' => $filterColumns));
@@ -161,10 +192,16 @@ class DefaultController extends Controller
 		'name' => 'size',
                 'label' => 'Talla',
 		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
+		'type' => 'range',
+		'currency' => '0',
+		'add_taxes' => '0',
+		'step' => '1'),
+            array(
+		'name' => 'color',
+                'label' => 'Color',
+		'class' => 'ZiiwebEcommerceBundle:ProductVersion',
 		'type' => 'checkbox')
         );
-
-
 
         //retrieve the columns for those where there is a filter value 
         foreach ($filter['filter'] as $key => $filterValue) {
@@ -187,39 +224,35 @@ class DefaultController extends Controller
           ->andWhere('cp.slug = :categoryProduct')
           ->andWhere('pv.enabled = ?1')
 	  ->andWhere('pvs.stock > ?2')
-          ->setParameter('categoryProduct', 'ropa')
+          ->setParameter('categoryProduct', $categoryProduct)
           ->setParameter(1, 1)
           ->setParameter(2, 0)
        ;
 
-       //$joinPvs = false;
-       foreach ($filterColumnsConfig as $filterColumnConfig) {
+       foreach ($filterColumnsConfig as $key => $filterColumnConfig) {
            if ($filterColumnConfig['class'] == 'ZiiwebEcommerceBundle:ProductVersion') {
 	       if ($filterColumnConfig['type'] == 'range') {
 		   $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' >= :min AND pv.' . $filterColumnConfig['name'] . ' <= :max');
 		   $qb->setParameter('min', $filterColumnConfig['values']['min']);
 		   $qb->setParameter('max', $filterColumnConfig['values']['max']);
 	       } else if ($filterColumnConfig['type'] == 'checkbox') {
-		   $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' IN (:values)');
-		   $qb->setParameter('values', $filterColumnConfig['values']);
+		   $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' IN (:values' . $key . ')');
+		   $qb->setParameter('values' . $key, $filterColumnConfig['values']);
 	       }
            } else if ($filterColumnConfig['class'] == 'ZiiwebEcommerceBundle:ProductVersionSize') {
-/*
-               if ($joinPvs == false) {
-                   $qb->join('pv.productVersionSizes', 'pvs');
-                   $joinPvs = true; 
-               }
-*/
 	       if ($filterColumnConfig['type'] == 'range') {
-		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' >= ' . $filterColumnConfig['values']['min']);
-		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' <= ' . $filterColumnConfig['values']['max']);
+		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' >= :min' . $key . ' AND pvs.' . $filterColumnConfig['name'] . ' <= :max' . $key);
+		   $qb->setParameter('min' . $key, $filterColumnConfig['values']['min']);
+		   $qb->setParameter('max' . $key, $filterColumnConfig['values']['max']);
 	       } else if ($filterColumnConfig['type'] == 'checkbox') {
-		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' IN (:values)');
-		   $qb->setParameter('values', $filterColumnConfig['values']);
+		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' IN (:values' . $key . ')');
+		   $qb->setParameter('values' . $key, $filterColumnConfig['values']);
 	       }
            }
        }
      
+       //var_dump($query->getDql);
+
        $query = $qb->getQuery();
        $result = $query->getResult();
 
