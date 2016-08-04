@@ -1,17 +1,3 @@
-accounting.settings = {
-	currency: {
-		symbol : "€",   // default currency symbol is '$'
-		format: "%v %s", // controls output: %s = symbol, %v = value/number (can be object: see below)
-		decimal : ",",  // decimal point separator
-		thousand: ".",  // thousands separator
-		precision : 2   // decimal places
-	},
-	number: {
-		precision : 0,  // default precision on numbers is 0
-		thousand: ",",
-		decimal : "."
-	}
-}
 
 //escodemos la flecha hacia abajo si la cantidad es 1
 $(document).on('change', '.cart-qty', function() {
@@ -142,10 +128,7 @@ $('body').on('click', '.anadir_subitem', function(){
      return false;
   }
 
-
   var product_version_size_id = $("#size input[type='radio']:checked").data("product_version_size_id");
-
-  console.log($("#cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length);
 
   if ($("#cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length) {
     clander(
@@ -164,6 +147,8 @@ $('body').on('click', '.anadir_subitem', function(){
   var producto_qty = $('.producto-qty').val();
   var url_anadir = $("#cart").data("url_anadir");
   var size = $('#size input[type="radio"]:checked').val();
+
+console.log($('.producto-qty'));
 
   $.ajax({
     type: "POST",
@@ -231,13 +216,12 @@ $('body').on('click', '.anadir_subitem', function(){
             '" data-size="' + size + '"' +
             ' data-color_id="' + response.color_id + '">' + 
             '<div class="pull-left img-trash"><img src="/uploads/xs/' + response.image_path + '"></div>' +
-              '<p>' + product_name + size_string + '</p>' + precio + '&nbsp&nbsp&nbsp' + 
-              '<i class="down subitem-qty fa fa-minus-circle "></i>&nbsp' + 
-              '<div class="col-xs-5">' +
-              '<input type="text" class="form-control cart-qty" min="1" max="100" size="1" value="' + response.productoQty + '">' + 
-              '</div>' + 
-              '&nbsp<div style="display: inline-block; width: 20px; height: 12px">' +
-                '<i class="up subitem-qty fa fa-plus-circle "></i>' + 
+              product_name + size_string +  
+              '<div class="form-inline">' +
+                precio + 
+                ' <i class="down subitem-qty fa fa-minus-circle "></i> ' + 
+                '<input class="form-control cart-qty" type="text" min="1" max="100" size="1" value="' + response.productoQty + '"> ' + 
+                '<i class="up subitem-qty fa fa-plus-circle "></i> ' + 
                 arrow_down +
               '</div>' +
               '<btn class="eliminar" title="Eliminar"><i class="fa fa-trash-o aria-hidden="true"></i></span>' + 

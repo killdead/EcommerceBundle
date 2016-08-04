@@ -1,37 +1,3 @@
-{% extends 'ZiiwebEcommerceBundle:Default:layout.html.twig' %}
-
 {% block body %}
-{% for product_version in product_versions %}
-  <div class="col-md-4">
-    <a href="{{ path('product_show', {'product_slug': product_version.product.slug, 'product_version_slug': product_version.slug }) }}"><img src="/uploads/m/{{ product_version.productVersionImages[0].file }}"></a><br>
-    <p>
-      {{ product_version.product.name ~ ' ' ~ product_version.color|lower }}
-      <p>
-      {{ product_version.price|number_format(2, ',', '.') }} €
-      </p>
-    </p>
-    <p>
-    {% if not(product_version.productVersionSizes[0].size is null and product_version.productVersionSizes|length == 1) %}
-      Tallas disponibles:
-    {% endif %} 
-    {% for size in product_version.productVersionSizes %}
-      {% if size.stock > 0 %}
-	{{ size.size }}
-      {% endif %}
-    {% endfor %}
-    </p>
-
-    {#
-    <div class="anadir-qty">
-      <input min="0" value="1" class="producto-qty" size="2">
-      <span data-producto_id="{{ product_version.id }}" class="anadir_subitem ">
-	<button>Añadir</button>
-      </span>
-    </div>
-    #}
-    <p>
-    <a class="wish" href="#"><i class="fa fa-heart" aria-hidden="true"></i>&nbspAñadir a mi lista de deseos</a>
-    </p>
-  </div>
-{% endfor %}
+  {% include 'ZiiwebEcommerceBundle:Default:product_list_inner.html.twig' %}
 {% endblock %}

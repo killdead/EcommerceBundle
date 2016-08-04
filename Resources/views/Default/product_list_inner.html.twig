@@ -1,0 +1,72 @@
+{% for product_version in product_versions %}
+{% if app.user is not null %}
+  {% set wishlist = app.user.productVersions %}
+{% endif %}
+<div class="{% if pedido != null %}col-md-9{% else %}col-md-12{% endif %} card-columns">
+{% for product_version in product_versions %}
+<div >
+
+
+    <div class="card" data-product_version_id="{{ product_version.id }}">
+      <a href="{{ path('product_show', {'product_slug': product_version.product.slug, 'product_version_slug': product_version.slug }) }}">
+        <img class="img-fluid card-img-top" src="/uploads/l/{{ product_version.productVersionImages[0].file }}">
+      </a>
+      <div class="caption card-block">
+	<p>
+	  {{ product_version.product.name ~ ' ' ~ product_version.color|lower }}
+	  <p>
+	  {{ product_version.price|number_format(2, ',', '.') }} €
+	  </p>
+	</p>
+	<p>
+	{% if not(product_version.productVersionSizes[0].size is null and product_version.productVersionSizes|length == 1) %}
+	  Tallas: 
+	{% endif %} 
+	{% for size in product_version.productVersionSizes %}
+	  {% if size.stock > 0 %}
+	    {{ size.size }}
+	  {% endif %}
+	{% endfor %}
+	</p>
+
+
+	{#
+	<div class="anadir-qty">
+	  <input min="0" value="1" class="producto-qty" size="2">
+	  <span data-producto_id="{{ product_version.id }}" class="anadir_subitem ">
+	    <button>Añadir</button>
+	  </span>
+	</div>
+	#}
+
+
+
+	<p>
+	  <a class="wishlist" data-status="{% if product_version in wishlist %}wished{% else %}unwished{% endif %}" href="#">
+	    {% if product_version in wishlist %}
+	    <i class="fa fa-heart text-danger" aria-hidden="true"></i>&nbspEliminar de mi lista de deseos
+	    {% else %}
+	    <i class="fa fa-heart" aria-hidden="true"></i>&nbspAñadir a mi lista de deseos</a>
+	    {% endif %}
+	  </a>
+	</p>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+
+
+
+{% if pedido != null %}
+  {# CARRO - CARRO - CARRO - CARRO #}
+  <div class="col-md-3 hidden-xs hidden-sm pull-right">
+    {% include 'ZiiwebEcommerceBundle:Default:carro.html.twig' %}
+  </div>
+{% endif %}
+
+{# FILTER - FILTER - FILTER - FILTER - FILTER #}
+  {{ render(controller('ZiiwebEcommerceBundle:Default:generateFilter', { 'category_id': product_versions[0].product.categoryProduct.id })) }}
+
+
+{% endfor %}

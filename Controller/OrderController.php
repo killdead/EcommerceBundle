@@ -179,13 +179,9 @@ class OrderController extends Controller
     }
 
     $productVersionIdPlusSize = $productVersionSizeId;
-/*
     //>>>> PRODUCTO YA EN CARRO <<<<
-    if (isset($pedido['subitems'][$productVersionIdPlusSize])) 
-    {
-      $pedido['subitems'][$productVersionIdPlusSize]['qty'] = $pedido['subitems'][$productVersionIdPlusSize]['qty'] + $productoQty; 
-      $pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'] = $pedido['subitems'][$productVersionIdPlusSize]['precio'] * $pedido['subitems'][$productVersionIdPlusSize]['qty'];
-      $enCarro = 'true';
+    //if (isset($pedido['subitems'][$productVersionIdPlusSize])) 
+    //{
 
 /*
       $maxPedido = $subitemColor->getMaxPedido();
@@ -200,9 +196,9 @@ class OrderController extends Controller
       }
 
 
-    //>>>> PRODUCTO NUEVO EN CARRO <<<<
-    } else {
 */
+    //>>>> PRODUCTO NUEVO EN CARRO <<<<
+    //} else {
       $enCarro = 'false';
 
       $color = '';
@@ -221,6 +217,9 @@ class OrderController extends Controller
       if (!isset($pedido['subitems'])) {
           $pedido['subitems'] = array();
       }
+      //$pedido['subitems'][$productVersionIdPlusSize]['qty'] = $pedido['subitems'][$productVersionIdPlusSize]['qty'] + $productoQty; 
+      //$pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'] = $pedido['subitems'][$productVersionIdPlusSize]['precio'] * $pedido['subitems'][$productVersionIdPlusSize]['qty'];
+      //$enCarro = 'true';
 
       $imagePath = $productVersionSize->getProductVersion()->getProductVersionImages()[0]->getFile();
 
@@ -231,7 +230,8 @@ class OrderController extends Controller
         'nombre' => $name,
         'size' => $size,
         'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty),
-        'image_path' => $imagePath
+        'image_path' => $imagePath,
+        'qty' => $productoQty
       );
 
       $pedido['subitems'][$productVersionIdPlusSize] = array_merge($aux, $pedido['subitems']);
@@ -250,7 +250,11 @@ class OrderController extends Controller
       $colorName =  null;
     }
 
-
+/*
+var_dump($pedido['subitems'][$productVersionIdPlusSize]['qty']);
+var_dump($pedido['subitems'][$productVersionIdPlusSize]['qty']);
+die("ljfa");
+*/
     $response = array(
       'subtotal' => $pedido['subtotal'],
       'iva' => $pedido['iva'],

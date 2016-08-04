@@ -6,33 +6,36 @@
     <a class="navbar-brand" href="{{ path('index') }}">MiTienda</a>
     <ul class="nav navbar-nav">
     {% for item in navbar %}
-	{% if item.__children is not empty %}
+
+        {# NO SUBCATEGORIES #}
+	{% if item.__children is empty %}
+
+	  <li class="nav-item nav-link">
+
+            {# ITEM NAME #}
+	    <a href="{{ path('product_list', {'categoryProduct': (item.slug) }) }}">
+	    {{ item.name }}
+	    </a>
+
+	  </li>
+
+	{% else %}
 
 	  <li class="nav-item active dropdown">
 
            {# ITEM NAME #}
 	    <a class="nav-link dropdown-toggle" href="{{ path('product_list', {'categoryProduct': (item.slug)} ) }}">{{ item.name }}</a>
 
+           {# DROPDOWN #}
 	    <ul class="dropdown-menu">
 	      {% for subitem in item.__children %}
 	      <li>
-		<a class="dropdown-item" href="#" >
+		<a class="dropdown-item" href="{{ path('product_list', {categoryProduct: subitem.slug}) }}" >
 		{{ subitem.name }}
 		</a>
 	      </li>
 	      {% endfor %}
 	    </ul>
-
-	  </li>
-
-	{% else %}
-
-	  <li class="nav-item">
-
-            {# ITEM NAME #}
-	    <a href="#">
-	    {{ item.name }}
-	    </a>
 
 	  </li>
 

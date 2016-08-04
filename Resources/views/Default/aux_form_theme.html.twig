@@ -1,0 +1,76 @@
+
+{%- block jquery_ui_range_row -%}
+  {% set amount_id = form.vars.name ~ '-amount' %}
+  {% set slider_range_id = form.vars.name ~ '-slider-range' %}
+  <p>
+    <label for="amount">{{ form.vars.label }}</label>
+    <input type="text" id="{{ amount_id }}" readonly style="border:0; color:#f6931f; font-weight:bold;">
+    <input type="text" id="{{ amount_id }}-min" hidden name="filter[{{ form.vars.name }}]['min']">
+    <input type="text" id="{{ amount_id }}-max" hidden name="filter[{{ form.vars.name }}]['max']">
+  </p>
+  <div id="{{ slider_range_id }}"></div>
+   
+  <script type="text/javascript">
+    //this "r" function is equivalent to $(document).ready(function() when jquery is not loaded
+    //http://stackoverflow.com/questions/799981/document-ready-equivalent-without-jquery
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    r(function(){
+      $(function() {
+	$( "#{{ slider_range_id }}" ).slider({
+	  step: {{ step }},
+	  range: true,
+	  min: {{ min }},
+	  max: {{ max }},
+	  values: [ {{ min }}, {{ max }} ],
+	  slide: function( event, ui ) {
+
+	    $( "#{{ amount_id }}" ).val(amount(ui.values[0], ui.values[1], {{ currency}}, {{ add_taxes}}));
+
+	  },
+	  stop: function(event, ui) {
+	    var clar = $('form[name="filter"]').serialize().replace(/%5B/g, '[').replace(/%5D/g, ']');
+	    var url_parameters = $.deparam(clar);
+ 
+            $({{ slider_range_id  ~ '-min'}}).val();
+
+	    $.ajax({
+		  type: "POST",
+		  url: "{{ path('filter') }}",
+		  data: {'filter': url_parameters, 'category_product': "{{ app.request.get('categoryProduct') }}" },
+		  success: function(response) {
+		      $('.card-columns').html(response);
+		  }
+	    });
+	  } 
+	});
+
+
+	$( "#{{ amount_id }}" ).val(amount( {{ min }}, {{ max }}, {{ currency }}, {{ add_taxes }} ));
+
+      } );
+    });
+
+    function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
+
+    function amount(min, max, currency, add_taxes) {
+    
+        var min_taxes = 1;
+        var max_taxes = 1;
+        if (add_taxes == 1) {
+            min_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
+            max_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
+        }
+
+        var min = min * min_taxes; 
+        var max = max * max_taxes; 
+
+        if (currency == 1) {
+          min = accounting.formatMoney(min);
+          max = accounting.formatMoney(max);
+        }
+   
+        return min + ' - ' + max;
+    }
+  </script>
+
+{%- endblock -%}

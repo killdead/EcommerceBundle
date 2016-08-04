@@ -7,9 +7,250 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Ziiweb\EcommerceBundle\Filter\FilterType;
+use Ziiweb\EcommerceBundle\Entity\TaxRates;
 
 class DefaultController extends Controller
 {
+    /**
+     * @Route("/generateFilter/{category_id}", name="generate-filter") 
+     */
+    public function generateFilterAction($category_id)
+    {
+        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('id' => $category_id));
+
+        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+        $childrenHierarchy = $repository->childrenHierarchy($categoryProduct, false, array(), true);
+
+        //get the id's of the children categories
+	$res = array();
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($childrenHierarchy), \RecursiveIteratorIterator::SELF_FIRST);
+	foreach ($iterator as $k => $v) {
+	    if ($k === 'id') {
+		$res[] = $v;
+	    }
+	}
+
+        $filterColumns = array(
+            array(
+		'name' => 'price',
+                'label' => 'Precio',
+		'class' => 'ZiiwebEcommerceBundle:ProductVersion',
+		'type' => 'range',
+		'currency' => '1',
+		'add_taxes' => '1',
+		'add_symbol' => ' €',
+		'step' => '0.01'),
+            array(
+		'name' => 'size',
+                'label' => 'Talla',
+		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
+		'type' => 'range',
+		'currency' => '0',
+		'add_taxes' => '0',
+		'add_symbol' => false,
+		'step' => '1'),
+        );
+
+        $options = array();
+
+	//max an min values of each column
+        foreach ($filterColumns as &$column) {
+            //RANGE - RANGE - RANGE - RANGE - RANGE - RANGE - RANGE - RANGE - RANGE - 
+            if ($column['type'] == 'range') {
+		//ProductVersion
+		if ($column['class'] == 'ZiiwebEcommerceBundle:ProductVersion') {
+		    $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+		    $qb = $repository->createQueryBuilder('pv')
+			->select('MAX(pv.' . $column['name']  . ') AS max_value, MIN(pv.' . $column['name'] .') AS min_value')
+			->join('pv.product', 'p')
+			->join('pv.productVersionSizes', 'pvs')
+			//enabled
+			->where('pv.enabled = true')
+			->andWhere('p.categoryProduct IN (:categoryProduct)')
+			//stock
+			->andWhere('pvs.stock > 0')
+			->setParameter('categoryProduct', $res)
+		    ;
+
+		    $query = $qb->getQuery();
+		    $result = $query->getSingleResult();
+     
+		    $column['values'] =  array(
+                        'min' => round($result['min_value'], 2),
+                        'max' => round($result['max_value'], 2)
+                    );
+
+		//ProductVersionSize
+		} else if ($column['class'] == 'ZiiwebEcommerceBundle:ProductVersionSize') {
+		    $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+		    $qb = $repository->createQueryBuilder('pvs')
+			->select('MAX(pvs.' . $column['name']  . ') AS max_value, MIN(pvs.' . $column['name'] .') AS min_value')
+			->join('pvs.productVersion', 'pv')
+			->join('pv.product', 'p')
+			//enabled
+			->where('pv.enabled = true')
+			->andWhere('p.categoryProduct IN (:categoryProduct)')
+			//stock
+			->andWhere('pvs.stock > 0')
+			->setParameter('categoryProduct', $res)
+		    ;
+
+		    $query = $qb->getQuery();
+		    $result = $query->getSingleResult();
+     
+		    $column['values'] =  array(
+                        'min' => round($result['min_value'], 2),
+                        'max' => round($result['max_value'], 2)
+                    );
+		}
+            //CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - 
+            } else if ($column['type'] == 'checkbox') {
+                //ProductVersion
+                if ($column['class'] == 'ZiwiebEcommerceBundle:ProductVersion') {
+                /////////////////////////////////////
+                /////////////////////////////////////
+                //ProductVersionSize 
+		} else if ($column['class'] == 'ZiiwebEcommerceBundle:ProductVersionSize') {
+		    $qb = $this->getDoctrine()->getManager()->createQueryBuilder()
+			->select('DISTINCT pvs.' . $column['name'])
+                        ->from('ZiiwebEcommerceBundle:ProductVersionSize', 'pvs', 'pvs.' . $column['name'])
+			->join('pvs.productVersion', 'pv')
+			->join('pv.product', 'p')
+			//enabled
+			->where('pv.enabled = true')
+			->andWhere('p.categoryProduct IN (:categoryProduct)')
+			//stock
+			->andWhere('pvs.stock > 0')
+                        ->orderBy('pvs.' . $column['name'], 'ASC')
+			->setParameter('categoryProduct', $res)
+		    ;
+
+		    $query = $qb->getQuery();
+		    $result = $query->getResult();
+     
+                    //construct an array being the key and value the same values
+                    foreach ($result as $key => $value) {
+		      $column['values'][$key] = $key;
+                    }
+                }
+            }
+        }
+
+
+        $filter = $this->createForm(FilterType::class, null, array('filter_config' => $filterColumns));
+
+        return $this->render('ZiiwebEcommerceBundle:Default:filter_generator.html.twig', array(
+            'filter' => $filter->createView()
+        ));
+    }
+   
+    /**
+     * @Route("/filter", name="filter") 
+     */
+    public function filterAction(Request $request)
+    {
+        $filter = $request->request->get('filter');
+        $categoryProduct = $request->request->get('category_product');
+
+        $filterColumns = array(
+            array(
+		'name' => 'price',
+                'label' => 'Precio',
+		'class' => 'ZiiwebEcommerceBundle:ProductVersion',
+		'type' => 'range',
+		'currency' => '1',
+		'add_taxes' => '1',
+		'add_symbol' => ' €',
+		'step' => '0.01'),
+            array(
+		'name' => 'size',
+                'label' => 'Talla',
+		'class' => 'ZiiwebEcommerceBundle:ProductVersionSize',
+		'type' => 'range',
+		'currency' => '0',
+		'add_taxes' => '0',
+		'add_symbol' => false,
+		'step' => '1'),
+        );
+
+
+
+        //retrieve the columns for those where there is a filter value 
+        foreach ($filter['filter'] as $key => $filterValue) {
+            $aux = array_values(array_filter($filterColumns, function($value) use ($key) {
+                    return $value['name'] == $key;  
+                }
+            ))[0];
+            //add the filter values
+            $aux['values'] = $filterValue;
+            $filterColumnsConfig[] = $aux;
+        }
+
+        foreach ($filterColumnsConfig as $key => &$filterColumnConfig) {
+            if ($filterColumnConfig['type'] == 'range') {
+		preg_match_all('!\d+(?:\.\d+)?!', $filterColumnConfig['values'], $matches);
+		$floats = array_map('floatval', $matches[0]);
+                $filterColumnConfig['values'] = array();
+                $filterColumnConfig['values']['min'] = $floats[0];
+                $filterColumnConfig['values']['max'] = $floats[1];
+            }
+        } 
+
+        //query
+        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+        $qb = $repository->createQueryBuilder('pv')
+          ->select('pv')
+          ->join('pv.product', 'p')
+          ->join('p.categoryProduct', 'cp')
+          ->join('pv.productVersionSizes', 'pvs')
+          ->andWhere('cp.slug = :categoryProduct')
+          ->andWhere('pv.enabled = ?1')
+	  ->andWhere('pvs.stock > ?2')
+          ->setParameter('categoryProduct', 'ropa')
+          ->setParameter(1, 1)
+          ->setParameter(2, 0)
+       ;
+
+       //$joinPvs = false;
+       foreach ($filterColumnsConfig as $filterColumnConfig) {
+           if ($filterColumnConfig['class'] == 'ZiiwebEcommerceBundle:ProductVersion') {
+	       if ($filterColumnConfig['type'] == 'range') {
+		   $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' >= :min AND pv.' . $filterColumnConfig['name'] . ' <= :max');
+                   if ($filterColumnConfig['add_taxes'] == true) {
+                       $filterColumnConfig['values']['min'] /= (1 + TaxRates::VAT_RATE);
+                       $filterColumnConfig['values']['max'] /= (1 + TaxRates::VAT_RATE);
+                   }
+		   $qb->setParameter('min', $filterColumnConfig['values']['min']);
+		   $qb->setParameter('max', $filterColumnConfig['values']['max']);
+	       } else if ($filterColumnConfig['type'] == 'checkbox') {
+		   $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' IN (:values)');
+		   $qb->setParameter('values', $filterColumnConfig['values']);
+	       }
+           } else if ($filterColumnConfig['class'] == 'ZiiwebEcommerceBundle:ProductVersionSize') {
+/*
+               if ($joinPvs == false) {
+                   $qb->join('pv.productVersionSizes', 'pvs');
+                   $joinPvs = true; 
+               }
+*/
+	       if ($filterColumnConfig['type'] == 'range') {
+		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' >= ' . $filterColumnConfig['values']['min']);
+		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' <= ' . $filterColumnConfig['values']['max']);
+	       } else if ($filterColumnConfig['type'] == 'checkbox') {
+		   $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' IN (:values)');
+		   $qb->setParameter('values', $filterColumnConfig['values']);
+	       }
+           }
+       }
+     
+       $query = $qb->getQuery();
+       $result = $query->getResult();
+
+       return $this->render('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array(
+            'product_versions' => $result
+       ));
+    }
 
     /**
      * @Route("/", name="index") 
@@ -48,15 +289,26 @@ class DefaultController extends Controller
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
         $categoryProduct = $repo->findOneBy(array('slug' => $categoryProduct));
 
+        $childrenHierarchy = $repo->childrenHierarchy($categoryProduct, false, array(), true);
+
+        //get the id's of the children categories
+	$res = array();
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($childrenHierarchy), \RecursiveIteratorIterator::SELF_FIRST);
+	foreach ($iterator as $k => $v) {
+	    if ($k === 'id') {
+		$res[] = $v;
+	    }
+	}
+
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
 
         $qb = $repo->createQueryBuilder('pv')
           ->join('pv.product', 'p')
           ->join('pv.productVersionSizes', 'pvs')
-          ->where('p.categoryProduct = :category_product')
+          ->where('p.categoryProduct IN (:categoryProduct)')
           ->andWhere('pvs.stock > 0')
           ->andWhere('pv.enabled = 1')
-          ->setParameter('category_product', $categoryProduct->getId());
+          ->setParameter('categoryProduct', $res);
 
 
         $query = $qb->getQuery();
@@ -159,6 +411,29 @@ class DefaultController extends Controller
        $response = $response->setData(array('status' => 'removed'));
 
        return $response;
+    }
+
+
+    /**
+     * @Route("/lista-deseos", name="wishlist") 
+     */
+    public function wishlistAction(Request $request)
+    {
+       $repo = $this->getDoctrine()->getRepository('DefaultBundle:User');
+       $user = $repo->findOneBy(array('id' => $this->getUser()->getId()));
+
+       $productVersions = $user->getProductVersions();
+
+       $session = $this->get('session');
+       $pedido = null;
+       if ($session->has('pedido')) {
+           $pedido = $session->get('pedido'); 
+       } 
+
+       return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
+           'product_versions' => $productVersions,
+           'pedido' => $pedido,
+       ));
     }
 }
 
