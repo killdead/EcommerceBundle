@@ -13,12 +13,12 @@ use Ziiweb\EcommerceBundle\Entity\TaxRates;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/generateFilter/{category_id}", name="generate-filter") 
+     * @Route("/generateFilter/{category_product}", name="generate-filter") 
      */
-    public function generateFilterAction($category_id)
+    public function generateFilterAction($category_product)
     {
         //get the id's of the children categories
-        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('id' => $category_id));
+        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('slug' => $category_product));
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
         $childrenHierarchy = $repository->childrenHierarchy($categoryProduct, false, array(), true);
 	$res = array();
@@ -28,6 +28,8 @@ class DefaultController extends Controller
 		$res[] = $v;
 	    }
 	}
+
+	var_dump($res);
 
         $filterColumns = array(
             array(
@@ -64,11 +66,13 @@ class DefaultController extends Controller
 			->join('pv.product', 'p')
 			->join('pv.productVersionSizes', 'pvs')
 			//enabled
-			->where('pv.enabled = true')
+			->where('pv.enabled = ?1')
 			->andWhere('p.categoryProduct IN (:categoryProduct)')
 			//stock
-			->andWhere('pvs.stock > 0')
+			->andWhere('pvs.stock > ?2')
 			->setParameter('categoryProduct', $res)
+			->setParameter(1, 1)
+			->setParameter(2, 0)
 		    ;
 
 		    $query = $qb->getQuery();
@@ -87,11 +91,13 @@ class DefaultController extends Controller
 			->join('pvs.productVersion', 'pv')
 			->join('pv.product', 'p')
 			//enabled
-			->where('pv.enabled = true')
+			->where('pv.enabled = ?1')
 			->andWhere('p.categoryProduct IN (:categoryProduct)')
 			//stock
-			->andWhere('pvs.stock > 0')
+			->andWhere('pvs.stock > ?2')
 			->setParameter('categoryProduct', $res)
+			->setParameter(1, 1)
+			->setParameter(2, 0)
 		    ;
 
 		    $query = $qb->getQuery();
@@ -113,12 +119,14 @@ class DefaultController extends Controller
 			->join('pv.product', 'p')
 			->join('pv.productVersionSizes', 'pvs')
 			//enabled
-			->where('pv.enabled = true')
+			->where('pv.enabled = ?1')
 			->andWhere('p.categoryProduct IN (:categoryProduct)')
 			//stock
-			->andWhere('pvs.stock > 0')
+			->andWhere('pvs.stock > ?2')
 			->orderBy('pv.' . $column['name'], 'ASC')
 			->setParameter('categoryProduct', $res)
+			->setParameter(1, 1)
+			->setParameter(2, 0)
 		    ;
 
 		    $query = $qb->getQuery();
@@ -138,12 +146,14 @@ class DefaultController extends Controller
 			->join('pvs.productVersion', 'pv')
 			->join('pv.product', 'p')
 			//enabled
-			->where('pv.enabled = true')
+			->where('pv.enabled = ?1')
 			->andWhere('p.categoryProduct IN (:categoryProduct)')
 			//stock
-			->andWhere('pvs.stock > 0')
+			->andWhere('pvs.stock > ?2')
                         ->orderBy('pvs.' . $column['name'], 'ASC')
 			->setParameter('categoryProduct', $res)
+			->setParameter(1, 1)
+			->setParameter(2, 0)
 		    ;
 
 		    $query = $qb->getQuery();
