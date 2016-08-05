@@ -29,8 +29,6 @@ class DefaultController extends Controller
 	    }
 	}
 
-	var_dump($res);
-
         $filterColumns = array(
             array(
 		'name' => 'price',
@@ -227,6 +225,7 @@ class DefaultController extends Controller
             $aux['values'] = $filterValue;
             $filterColumnsConfig[] = $aux;
         }
+
 
         //query
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');

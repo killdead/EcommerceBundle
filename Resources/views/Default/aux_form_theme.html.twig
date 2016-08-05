@@ -11,11 +11,8 @@
   <div id="{{ slider_range_id }}"></div>
    
   <script type="text/javascript">
-    //this "r" function is equivalent to $(document).ready(function() when jquery is not loaded
-    //http://stackoverflow.com/questions/799981/document-ready-equivalent-without-jquery
-    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    r(function(){
-      $(function() {
+    //this will called inside a windows.onload() call, because we need jQuery and jQuery UI loaded
+    function setupFilter() { 
 	$( "#{{ slider_range_id }}" ).slider({
 	  step: {{ step }},
 	  range: true,
@@ -40,10 +37,8 @@
         $('#{{ amount_id ~ "-min" }}').val({{ min }});
         $('#{{ amount_id ~ "-max" }}').val({{ max }});
 
-      } );
-    });
+    }
 
-    function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
 
     function amount(min, max, currency, add_taxes) {
     
@@ -62,7 +57,6 @@
           max = accounting.formatMoney(max);
         }
    
-
         return min + ' - ' + max;
     }
   </script>
