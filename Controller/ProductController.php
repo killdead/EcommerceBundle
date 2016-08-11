@@ -89,6 +89,62 @@ class ProductController extends Controller
     }
 
     /**
+     * Add a new Product to a CategoryProduct.
+     *
+     * @Route("/add-product", name="product_add_child")
+     * @Method({"GET", "POST"})
+     */
+    public function addChildAction(Request $request)
+    {
+	$categoryProductId = $request->query->get('parent_id');
+	$repository = $this->getDoctrine()->getManager()->getRepository('DefaultBundle:Category');
+	$categoryProduct = $repository->findOneBy(array('id' => $categoryProductId));
+
+        $product = new Product();
+        $product->setCategoryProduct($categoryProduct);
+
+        if ($request->getMethod() == 'GET') {
+            $productVersionImage = new ProductVersionImage();
+            $productVersionSize = new ProductVersionSize();
+            $productVersion = new ProductVersion();
+
+            $productVersion->addProductVersionImage($productVersionImage);
+            $productVersion->addProductVersionSize($productVersionSize);
+
+	    $product->addProductVersion($productVersion);
+
+        } else {
+            //I CAN COMMENT THESE LINES BECAUSE I HAVE ADDED 'by_reference => false' TO ProductType > ProductVersions
+            /*
+            foreach ($requestParameters['product']['productVersions'] as $key => $value) {
+		${'productVersion' . $key} = new ProductVersion();
+		$product->addProductVersion(${'productVersion' . $key});
+            }
+            */
+        }
+
+        $form = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            return $this->redirectToRoute('product_edit', array(
+		'id' => $product->getId()
+            ));
+        }
+
+        return $this->render('ZiiwebEcommerceBundle:Product:new.html.twig', array(
+            'product' => $product,
+            'form' => $form->createView()
+        ));
+    }
+
+    /**
      * Finds and displays a Product entity.
      *
      * @Route("/{id}", name="product_show")

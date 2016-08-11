@@ -91,6 +91,7 @@ class DefaultController extends Controller
 			//enabled
 			->where('pv.enabled = ?1')
 			->andWhere('p.categoryProduct IN (:categoryProduct)')
+                        //->setMaxResults(4)
 			//stock
 			->andWhere('pvs.stock > ?2')
 			->setParameter('categoryProduct', $res)
@@ -115,7 +116,7 @@ class DefaultController extends Controller
 			->select('DISTINCT pv.' . $column['name'])
 			->from('ZiiwebEcommerceBundle:ProductVersion', 'pv', 'pv.' . $column['name'])
 			->join('pv.product', 'p')
-			->join('pv.productVersionSizes', 'pvs')
+			->leftJoin('pv.productVersionSizes', 'pvs')
 			//enabled
 			->where('pv.enabled = ?1')
 			->andWhere('p.categoryProduct IN (:categoryProduct)')
@@ -230,13 +231,14 @@ class DefaultController extends Controller
         //query
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
         $qb = $repository->createQueryBuilder('pv')
-          ->select('pv')
+          ->select('DISTINCT pv')
           ->join('pv.product', 'p')
           ->join('p.categoryProduct', 'cp')
           ->join('pv.productVersionSizes', 'pvs')
           ->andWhere('cp.id IN (:categoryProduct)')
           ->andWhere('pv.enabled = ?1')
 	  ->andWhere('pvs.stock > ?2')
+	  //->setFirstResult(0)
           ->setParameter('categoryProduct', $res)
           ->setParameter(1, 1)
           ->setParameter(2, 0)
@@ -264,14 +266,30 @@ class DefaultController extends Controller
            }
        }
      
-       //var_dump($query->getDql);
+       $query = $qb->getQuery();
+       $totalProductVersions = $query->getResult();
+
+       $maxResults = 12;
+       $page = $request->request->get('page');
+       $firstResult = $maxResults * $page;
+
+       $qb
+	  ->setMaxResults($maxResults)
+	  ->setFirstResult($firstResult)
+       ;
 
        $query = $qb->getQuery();
        $result = $query->getResult();
+       
+       $result = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
 
-       return $this->render('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array(
-            'product_versions' => $result
+       $response = new JsonResponse();
+       $response->setData(array(
+           'product_versions' => $result,
+           'total_product_versions' => count($totalProductVersions)
        ));
+
+       return $response;
     }
 
     /**

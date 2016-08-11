@@ -2,8 +2,9 @@
 {% if app.user is not null %}
   {% set wishlist = app.user.productVersions %}
 {% endif %}
-<div class="{% if pedido != null %}col-md-9{% else %}col-md-12{% endif %} card-columns">
+<div class="{% if pedido != null %}col-md-9{% else %}col-md-12{% endif %}">
 {% for product_version in product_versions %}
+
 <div >
 
 
