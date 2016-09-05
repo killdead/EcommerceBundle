@@ -306,7 +306,7 @@ class DefaultController extends Controller
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
         $productVersions = $repo->findBy(array('featured' => true));
 
-        return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
+        return $this->render('ZiiwebEcommerceBundle:Default:index.html.twig', array(
             'pedido' => $pedido,
             'product_versions' => $productVersions
         ));
@@ -460,7 +460,7 @@ class DefaultController extends Controller
     public function wishlistAction(Request $request)
     {
        $repo = $this->getDoctrine()->getRepository('DefaultBundle:User');
-       $user = $repo->findOneBy(array('id' => $this->getUser()->getId()));
+       $user = $repo->findBy(array('id' => $this->getUser()->getId()));
 
        $productVersions = $user->getProductVersions();
 
@@ -471,6 +471,26 @@ class DefaultController extends Controller
        } 
 
        return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
+           'product_versions' => $productVersions,
+           'pedido' => $pedido,
+       ));
+    }
+
+    /**
+     * @Route("/featured", name="featured") 
+     */
+    public function featuredAction(Request $request)
+    {
+       $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+       $productVersions = $repo->findBy(array('featured' => true, 'enabled' => true));
+
+       $session = $this->get('session');
+       $pedido = null;
+       if ($session->has('pedido')) {
+           $pedido = $session->get('pedido'); 
+       } 
+
+       return $this->render('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array(
            'product_versions' => $productVersions,
            'pedido' => $pedido,
        ));

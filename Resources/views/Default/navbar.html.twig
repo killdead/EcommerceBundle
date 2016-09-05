@@ -14,7 +14,7 @@
 
             {# ITEM NAME #}
 	    <a href="{{ path('product_list', {'categoryProduct': (item.slug) }) }}">
-	    {{ item.name }}
+	    {{ item.name | upper }}
 	    </a>
 
 	  </li>
@@ -24,7 +24,7 @@
 	  <li class="nav-item active dropdown">
 
            {# ITEM NAME #}
-	    <a class="nav-link dropdown-toggle" href="{{ path('product_list', {'categoryProduct': (item.slug)} ) }}">{{ item.name }}</a>
+	    <a class="nav-link dropdown-toggle" href="{{ path('product_list', {'categoryProduct': (item.slug)} ) }}">{{ item.name | upper }}</a>
 
            {# DROPDOWN #}
 	    <ul class="dropdown-menu">
