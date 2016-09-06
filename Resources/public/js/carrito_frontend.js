@@ -8,21 +8,21 @@ $(document).on('change', '.cart-qty', function() {
     }
 });
 
-//REMOVE PRODUCT
+//REMOVE PRODUCT - REMOVE PRODUCT - REMOVE PRODUCT
 $('body').on('click', '.eliminar', function(){
-  var subitem = $(this).parents('.subitem');
+  var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
+  var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
   var product_version_size_id = subitem.data("product_version_size_id");
   var size = subitem.data("size");
   var color_id = subitem.data("color_id");
   var element_collection_id = subitem.data("element_collection_id");
-  var url_eliminar = $('#cart').data("url_eliminar");
+  var url_eliminar = $('.cart').data("url_eliminar");
 
   $.ajax({
     type: "POST",
     url: url_eliminar, 
     data: { product_version_size_id: product_version_size_id, size: size},
     success: function(response) {
-      var subitem_id = subitem.data('subitem_color_id');
       response = JSON.parse(response);
       $('.subitem[data-product_version_size_id="' + product_version_size_id + '_' + size + '"]').find('.anadir-qty').html(
           '<button class="verde">Añadir al carro</button>' 
@@ -32,19 +32,22 @@ $('body').on('click', '.eliminar', function(){
     },
   });
 });
-
+//MODIFY QUANTITY PRODUCT BY INPUT - MODIFY QUANTITY PRODUCT BY INPUT 
 $("body").on('keyup', '.cart-qty', function() {
 
+    var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
+    var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
+
   if ($(this).val() == '') {
-    clander($(this).parents('.subitem'), 0);
+    clander(subitem, 0);
   } else {
-    clander($(this).parents('.subitem'), $(this).val());
+    clander(subitem, $(this).val());
   }
 });
 
 
-//cambia la cantidad de un producto
-$("body").on('click', '#cart .subitem .up, .down', function() {
+//MODIFY QUANTITY PRODUCT BY +/- -  MODIFY QUANTITY PRODUCT BY +/- - MODIFY QUANTITY PRODUCT BY +/-
+$("body").on('click', '.cart .subitem .up, .down', function() {
   //aumentamos o disminuimos la cantidad
   if ($(this).hasClass('up')) {
     var new_producto_qty = parseInt($(this).parents('.subitem').find('input').val()) + 1;
@@ -52,7 +55,9 @@ $("body").on('click', '#cart .subitem .up, .down', function() {
     var new_producto_qty = parseInt($(this).parents('.subitem').find('input').val()) - 1;
   }
 
-  var subitem = $(this).parents('.subitem');
+  var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
+  var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
+ 
   clander(subitem, new_producto_qty);
 });
 
@@ -64,7 +69,7 @@ function clander(aux, new_producto_qty) {
 
   var input_qty = aux.find('input');
   var actual_li = aux;
-  var url_cantidad = $('#cart').data("url_cantidad");
+  var url_cantidad = $('.cart').data("url_cantidad");
 
   $.ajax({
     type: "POST",
@@ -80,7 +85,7 @@ function clander(aux, new_producto_qty) {
         //establecemos la nueva cantidad del producto en el carrito
         //la llamada a "change()" es para que detecte el "1" cuando pulsamos la fecla hacia abajo
         if (new_producto_qty != 0) {
-          input_qty.val(new_producto_qty).change();
+          input_qty.val(new_producto_qty).change(); //<<<<<< change()
         }
 
         jander(response, product_version_size_id);
@@ -120,6 +125,7 @@ function jander(response, product_version_size_id) {
 }
 
 
+//ADD PRODUCT - ADD PRODUCT - ADD PRODUCT 
 $('body').on('click', '.anadir_subitem', function(){
 
   //check if the user can select a size and one of them is selected
@@ -130,10 +136,10 @@ $('body').on('click', '.anadir_subitem', function(){
 
   var product_version_size_id = $("#size input[type='radio']:checked").data("product_version_size_id");
 
-  if ($("#cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length) {
+  if ($(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length) {
     clander(
-      $("#cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']"),
-      parseInt($(this).closest('.anadir-qty').find('.producto-qty').val()) +  parseInt($("#cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").find('.cart-qty').val())
+      $(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']"),
+      parseInt($(this).closest('.anadir-qty').find('.producto-qty').val()) +  parseInt($(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").find('.cart-qty').val())
     );
     return false;
   }
@@ -145,10 +151,8 @@ $('body').on('click', '.anadir_subitem', function(){
 
   var producto_color = $(this).find('.cuadrado-container').data('color');
   var producto_qty = $('.producto-qty').val();
-  var url_anadir = $("#cart").data("url_anadir");
+  var url_anadir = $(".cart").data("url_anadir");
   var size = $('#size input[type="radio"]:checked').val();
-
-console.log($('.producto-qty'));
 
   $.ajax({
     type: "POST",
@@ -168,7 +172,7 @@ console.log($('.producto-qty'));
       }
       
       else {
-        $("#cart").show();
+        $(".cart").show();
         $(".totales").show();
      
         if (response.stock == 0) {
@@ -182,7 +186,7 @@ console.log($('.producto-qty'));
 
         precio_total_subitem = accounting.formatMoney(precio_total_subitem);
 
-        var items_in_cart = $('#cart ul li').first();
+        var items_in_cart = $('.cart ul li').first();
         if (items_in_cart.hasClass('odd'))
         {
           var clase = 'even';
@@ -209,8 +213,8 @@ console.log($('.producto-qty'));
           }
 
           var size = $('#size input[type="radio"]:checked').val();
-          $('#cart .products-list').prepend(
-            '<li class="list-group-item subitem ' +  clase + '" '  +
+          $('.cart .products-list').prepend(
+            '<li class="subitem ' +  clase + '" '  +
             '" data-element_collection_id="' + response.element_collection_id +
             '" data-product_version_size_id="' + product_version_size_id + '"' +
             '" data-size="' + size + '"' +
@@ -219,10 +223,12 @@ console.log($('.producto-qty'));
               product_name + size_string +  
               '<div class="form-inline">' +
                 precio + 
-                ' <i class="down subitem-qty fa fa-minus-circle "></i> ' + 
-                '<input class="form-control cart-qty" type="text" min="1" max="100" size="1" value="' + response.productoQty + '"> ' + 
-                '<i class="up subitem-qty fa fa-plus-circle "></i> ' + 
-                arrow_down +
+                '<div class="qty-container">' + 
+                  '<i class="down subitem-qty fa fa-minus-circle "></i> ' + 
+                  '<input class="form-control form-control-sm cart-qty" type="text" min="1" max="100" size="1" value="' + response.productoQty + '"> ' + 
+                  '<i class="up subitem-qty fa fa-plus-circle "></i> ' + 
+                  arrow_down +
+                '</div>' +
               '</div>' +
               '<btn class="eliminar" title="Eliminar"><i class="fa fa-trash-o aria-hidden="true"></i></span>' + 
             '</li>'
@@ -232,7 +238,7 @@ console.log($('.producto-qty'));
 
         //is already in the cart
         } else {
-          var subitem_en_carro = $("#cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
+          var subitem_en_carro = $(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
           subitem_en_carro.find('input').val(response.productoQty).change();
           subitem_en_carro.find('.precio_total_subitem').html(precio_total_subitem);
         }
@@ -244,7 +250,7 @@ console.log($('.producto-qty'));
 
 $('.envio').on('click',function(){
   var envio = $(".envio[name=envio]:checked").val();
-  var url_envio = $("#cart").data("url_envio"); 
+  var url_envio = $(".cart").data("url_envio"); 
   //si se elije "48 horas" la opcion Contrareembolso desaparece
 /*
   if(envio == 2)
@@ -271,7 +277,7 @@ $('.envio').on('click',function(){
 
 $('.pago').on('click', function(){
   var pago = $(".pago[name=pago]:checked").val();
-  var url_pago = $('#cart').data("url_pago");
+  var url_pago = $('.cart').data("url_pago");
   $.ajax({
     type: "POST",
     url: url_pago,
@@ -316,17 +322,17 @@ function updateTotals(response)
     var total = accounting.formatMoney(response.total);
 
     subtotal = accounting.formatMoney(response.subtotal);
-    $('#cart .subtotal').html(subtotal);
+    $('.cart .subtotal').html(subtotal);
 
-    $('#cart .iva.etiq').html('IVA ' + tasa_iva + '%');
-    $('#cart .iva_del_subtotal').html(iva_string);
+    $('.cart .iva.etiq').html('IVA ' + tasa_iva + '%');
+    $('.cart .iva_del_subtotal').html(iva_string);
 
-    $('#cart .re.etiq').html('R.E. ' + tasa_re + '%');
-    $('#cart .re_del_subtotal').html(re_string);
+    $('.cart .re.etiq').html('R.E. ' + tasa_re + '%');
+    $('.cart .re_del_subtotal').html(re_string);
 
-    $('#cart .contrareembolso .cantidad').html(contrareembolso);
+    $('.cart .contrareembolso .cantidad').html(contrareembolso);
 
-    $('#cart .total').html(total);
+    $('.cart .total').html(total);
 
 /*
     if(response.metodo_envio == 3)

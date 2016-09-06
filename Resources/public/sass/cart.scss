@@ -2,6 +2,11 @@
 //hover the pill and move down the mouse _slowly_ here: https://jsfiddle.net/tirengarfio/1c781L0o/
 .dropdown-menu {
   margin: 0 !important;
+  border: none;
+  padding-top: 0;
+  .list-group-item:first-child {
+    display: none;
+  }
 }
 .products-list {
   .subitem {
@@ -17,8 +22,47 @@
     }
   }
 }
-#cart {
+.cart {
   .list-group-item {
     padding: 0.40rem;
+    &:first-child {
+      padding-top: 15px;
+    }
+  }
+  .products-list {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 !important;
+    list-style: none;
+    li {
+      padding: 15px 10px;
+      border-bottom: 1px solid #ddd;
+      &:last-child {
+        border-bottom: none;
+      }
+      .eliminar {
+        cursor: pointer;
+        &:hover {
+          color: lighten(#000, 35%);
+        }
+      }
+      .qty-container { 
+        float: right;
+        i {
+          cursor: pointer;
+        }
+        input {
+          width: 35px;
+          text-align: right;
+        }
+      }
+    }
+  }
+  a.enviar-pedido {
+    text-decoration: none !important;
+  }
+  .ultima {
+    font-weight: bold !important;
   }
 }

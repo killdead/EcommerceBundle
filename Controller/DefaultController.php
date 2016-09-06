@@ -17,6 +17,12 @@ class DefaultController extends Controller
      */
     public function generateFilterAction($category_product)
     {
+        $session = $this->get('session');
+        $pedido = null;
+        if ($session->has('pedido')) {
+          $pedido = $session->get('pedido'); 
+        } 
+
         //get the id's of the children categories
         $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('slug' => $category_product));
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
@@ -171,7 +177,8 @@ class DefaultController extends Controller
         $filter = $this->createForm(FilterType::class, null, array('filter_config' => $filterColumns));
 
         return $this->render('ZiiwebEcommerceBundle:Default:filter_generator.html.twig', array(
-            'filter' => $filter->createView()
+            'filter' => $filter->createView(),
+            'pedido' => $pedido
         ));
     }
    
