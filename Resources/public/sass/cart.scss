@@ -62,7 +62,12 @@
   a.enviar-pedido {
     text-decoration: none !important;
   }
-  .ultima {
-    font-weight: bold !important;
+  .totales {
+    border-top: 2px solid #d7d7d7;
+    .ultima {
+      font-weight: bold !important;
+      padding-top: 9px;
+      padding-bottom: 7px;
+    }
   }
 }

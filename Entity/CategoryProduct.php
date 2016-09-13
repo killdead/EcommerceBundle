@@ -70,6 +70,12 @@ class CategoryProduct
      */
     private $children;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Product", mappedBy="categoryProduct")
+     */
+    private $products;
+
+
     public function __toString() 
     {
         return $this->name;
@@ -254,5 +260,39 @@ class CategoryProduct
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Add product
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\Product $product
+     *
+     * @return CategoryProduct
+     */
+    public function addProduct(\Ziiweb\EcommerceBundle\Entity\Product $product)
+    {
+        $this->products[] = $product;
+
+        return $this;
+    }
+
+    /**
+     * Remove product
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\Product $product
+     */
+    public function removeProduct(\Ziiweb\EcommerceBundle\Entity\Product $product)
+    {
+        $this->products->removeElement($product);
+    }
+
+    /**
+     * Get products
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getProducts()
+    {
+        return $this->products;
     }
 }

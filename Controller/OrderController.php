@@ -237,9 +237,6 @@ class OrderController extends Controller
       $pedido['subitems'][$productVersionIdPlusSize] = array_merge($aux, $pedido['subitems']);
     //}
 
-    //////////////////////
-    //////////////////////
-    //////////////////////
     $pedido = $this->calcularTotales2($pedido);
 
     $session->set('pedido', $pedido);
@@ -249,12 +246,13 @@ class OrderController extends Controller
     } else {
       $colorName =  null;
     }
+   
+    //total number of products
+    $totalNumberProducts = 0;
+    foreach ($pedido['subitems'] as $subitem) {
+      $totalNumberProducts += intval($subitem['qty']);
+    }
 
-/*
-var_dump($pedido['subitems'][$productVersionIdPlusSize]['qty']);
-var_dump($pedido['subitems'][$productVersionIdPlusSize]['qty']);
-die("ljfa");
-*/
     $response = array(
       'subtotal' => $pedido['subtotal'],
       'iva' => $pedido['iva'],
@@ -272,7 +270,8 @@ die("ljfa");
       'tasa_iva' => $pedido['tasa_iva'],
       //'tasa_re' => $pedido['tasa_re'],
       'contrareembolso' => $pedido['contrareembolso'],
-      'image_path' => $imagePath
+      'image_path' => $imagePath,
+      'total_number_products' => $totalNumberProducts
     );
 
     //tras la actulización de la variable de session, devolvemos el pedido serializado
@@ -367,6 +366,7 @@ die("ljfa");
 /*
       }
 */
+
       //asignamos un metodo de pago por defecto: la transferencia.
       $pedido['metodo_pago'] = 1;
       $pedido['subtotal'] = 0;
@@ -376,6 +376,12 @@ die("ljfa");
 
     }
 
+    //total number of products
+    $totalNumberProducts = 0;
+    foreach ($pedido['subitems'] as $subitem) {
+      $totalNumberProducts += intval($subitem['qty']);
+    }
+
     $response = array(
       'subtotal' => $pedido['subtotal'],
       'iva' => $pedido['iva'], 'tasa_iva' => $pedido['tasa_iva'],
@@ -383,7 +389,8 @@ die("ljfa");
       'total' => $pedido['total'],
       'metodo_envio' => $pedido['metodo_envio'],
       'metodo_pago' => $pedido['metodo_pago'],
-      'contrareembolso' => $pedido['contrareembolso']
+      'contrareembolso' => $pedido['contrareembolso'],
+      'total_number_products' => $totalNumberProducts
     );
 
     $session->set('pedido', $pedido); 
@@ -460,6 +467,12 @@ die("ljfa");
 
     $session->set('pedido', $pedido); 
 
+    //total number of products
+    $totalNumberProducts = 0;
+    foreach ($pedido['subitems'] as $subitem) {
+      $totalNumberProducts += intval($subitem['qty']);
+    }
+
     $response = array(
       'precio_total_subitem' => $pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'],
       'subtotal' => $pedido['subtotal'],
@@ -470,6 +483,7 @@ die("ljfa");
       'stock_qty' => $newStock,
       'metodo_envio' => $pedido['metodo_envio'],
       'contrareembolso' => $pedido['contrareembolso'],
+      'total_number_products' => $totalNumberProducts
     );
 
     $serializer = $this->container->get('jms_serializer');

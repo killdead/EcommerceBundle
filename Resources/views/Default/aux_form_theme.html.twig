@@ -13,51 +13,53 @@
   <script type="text/javascript">
     //this will called inside a windows.onload() call, because we need jQuery and jQuery UI loaded
     function setupFilter() { 
-	$( "#{{ slider_range_id }}" ).slider({
-	  step: {{ step }},
-	  range: true,
-	  min: {{ min }},
-	  max: {{ max }},
-	  values: [ {{ min }}, {{ max }} ],
-	  slide: function( event, ui ) {
+      $( "#{{ slider_range_id }}" ).slider({
+	step: {{ step }},
+	range: true,
+	min: {{ min }},
+	max: {{ max }},
+	values: [ {{ min }}, {{ max }} ],
+	slide: function( event, ui ) {
 
-	    $( "#{{ amount_id }}" ).val(amount(ui.values[0], ui.values[1], {{ currency}}, {{ add_taxes}}));
-	    $('#{{ amount_id ~ "-min" }}').val(ui.values[0]);
-	    $('#{{ amount_id ~ "-max" }}').val(ui.values[1]);
+          page = 1;
+      filter_clicked = true;
+	  $( "#{{ amount_id }}" ).val(amount(ui.values[0], ui.values[1], {{ currency}}, {{ add_taxes}}));
+	  $('#{{ amount_id ~ "-min" }}').val(ui.values[0]);
+	  $('#{{ amount_id ~ "-max" }}').val(ui.values[1]);
 
-	  },
-	  stop: function(event, ui) {
- 
-            filter();
+	},
+	stop: function(event, ui) {
 
-	  } 
-	});
+	  filter();
 
-	$( "#{{ amount_id }}" ).val(amount( {{ min }}, {{ max }}, {{ currency }}, {{ add_taxes }} ));
-        $('#{{ amount_id ~ "-min" }}').val({{ min }});
-        $('#{{ amount_id ~ "-max" }}').val({{ max }});
+	} 
+      });
+
+      $( "#{{ amount_id }}" ).val(amount( {{ min }}, {{ max }}, {{ currency }}, {{ add_taxes }} ));
+      $('#{{ amount_id ~ "-min" }}').val({{ min }});
+      $('#{{ amount_id ~ "-max" }}').val({{ max }});
 
     }
 
 
     function amount(min, max, currency, add_taxes) {
     
-        var min_taxes = 1;
-        var max_taxes = 1;
-        if (add_taxes == 1) {
-            min_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
-            max_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
-        }
+      var min_taxes = 1;
+      var max_taxes = 1;
+      if (add_taxes == 1) {
+	  min_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
+	  max_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
+      }
 
-        var min = min * min_taxes; 
-        var max = max * max_taxes; 
+      var min = min * min_taxes; 
+      var max = max * max_taxes; 
 
-        if (currency == 1) {
-          min = accounting.formatMoney(min);
-          max = accounting.formatMoney(max);
-        }
-   
-        return min + ' - ' + max;
+      if (currency == 1) {
+	min = accounting.formatMoney(min);
+	max = accounting.formatMoney(max);
+      }
+ 
+      return min + ' - ' + max;
     }
   </script>
 

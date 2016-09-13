@@ -27,6 +27,7 @@ $('body').on('click', '.eliminar', function(){
       $('.subitem[data-product_version_size_id="' + product_version_size_id + '_' + size + '"]').find('.anadir-qty').html(
           '<button class="verde">Añadir al carro</button>' 
       );
+      $('.nav .cart-item .tag-pill').text(response.total_number_products);
       updateTotals(response);
       subitem.remove();
     },
@@ -96,6 +97,9 @@ function clander(aux, new_producto_qty) {
         precio_total_subitem = accounting.formatMoney(precio_total_subitem);
 
         actual_li.find('.precio_total_subitem').html(precio_total_subitem);
+
+        $('.nav .cart-item .tag-pill').text(response.total_number_products);
+
         updateTotals(response);
       }
     }
@@ -235,18 +239,32 @@ $('body').on('click', '.anadir_subitem', function(){
           );
           $('.metodo-de-envio input[value=' + response.metodo_envio + ']').attr('checked', 'checked');
           $('.metodo-de-pago input[value=' + response.metodo_pago + ']').attr('checked', 'checked');
+ 
+ 
+          $('.nav .cart-item .tag-pill').text(response.total_number_products);
 
         //is already in the cart
         } else {
           var subitem_en_carro = $(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
           subitem_en_carro.find('input').val(response.productoQty).change();
           subitem_en_carro.find('.precio_total_subitem').html(precio_total_subitem);
+
+          $('.nav .cart-item .tag-pill').text(response.total_number_products);
         }
         updateTotals(response);
       }
     },
   });
 });
+
+function updateNavbar() {
+  var numberProducts;
+  $('.products-list').each(function() {
+    
+    numberProducts += parseInt($(this).find('input').val());
+  })
+  console.log(numberProducts);
+}
 
 $('.envio').on('click',function(){
   var envio = $(".envio[name=envio]:checked").val();

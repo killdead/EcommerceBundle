@@ -276,9 +276,10 @@ class DefaultController extends Controller
        $query = $qb->getQuery();
        $totalProductVersions = $query->getResult();
 
-       $maxResults = 12;
+       $maxResults = 8;
        $page = $request->request->get('page');
-       $firstResult = $maxResults * $page;
+
+       $firstResult = $maxResults * ($page - 1);
 
        $qb
 	  ->setMaxResults($maxResults)
@@ -287,6 +288,8 @@ class DefaultController extends Controller
 
        $query = $qb->getQuery();
        $result = $query->getResult();
+//var_dump($result);
+//die("jflas");
        
        $result = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
 
@@ -319,13 +322,53 @@ class DefaultController extends Controller
         ));
     }
 
+    /**
+     * @Route("/navbar", name="navbar") 
+     */
     public function navbarAction()
     {
-
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
 	$navbar = $repo->childrenHierarchy();
 
-        return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array('navbar' => $navbar));
+        //retrieve the categories that has products, are enabled and with stock > 0.
+        $query = $repo->createQueryBuilder('cp')         
+          ->leftJoin('cp.parent', 'cpi')
+          ->join('cp.products', 'p')
+          ->join('p.productVersions', 'pv')
+          ->join('pv.productVersionSizes', 'pvs')
+          ->where('pv.enabled = 1')
+          ->where('pvs.stock > 0')
+          ->distinct()
+          ->getQuery();
+         
+        $result = $query->getResult();
+
+        //retrieve the ANCESTORS IDs for each category
+        $nodeIds = array();
+        foreach ($result as $item) {
+	    if ($item->getParent() != null) {
+		$nodeIds[] = $item->getId(); 
+		do {
+		    $item = $item->getParent();
+		    $nodeIds[] = $item->getId();
+		} while ($item->getParent() != null) ;
+	    } else {
+		$nodeIds[] = $item->getId();
+	    }
+        }
+
+        //retrieve the ANCESTORS OBJECTS
+        $query = $repo->createQueryBuilder('cp')         
+          ->where('cp.id IN (:nodeIds)')
+          ->setParameter('nodeIds', $nodeIds)
+          ->getQuery();
+
+        $result = $query->getArrayResult();
+
+        //construct the TREE using the categories that has products, are enabled and with stock > 0 and their ANCESTORS
+	$tree = $repo->buildTreeArray($result);
+
+        return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array('navbar' => $tree));
     }
 
     /**
