@@ -874,8 +874,12 @@ class OrderController extends Controller
   {
       $registrationForm = $this->createForm(RegistrationType::class);
 
+      $session = $this->get('session'); 
+      $pedido = $session->get('pedido'); 
+
       return $this->render('ZiiwebEcommerceBundle:Order:registration_login.html.twig', array(
-	  'registration_form' => $registrationForm->createView()
+	  'registration_form' => $registrationForm->createView(),
+	  'pedido' => $pedido
       ));
   }
 
