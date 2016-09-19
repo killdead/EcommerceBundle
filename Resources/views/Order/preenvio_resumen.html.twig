@@ -36,71 +36,73 @@
     {% endfor %}
   </table>
   <br>
+
   {% set postalCode = app.user.postalCode %}
+
   {% if (postalCode matches '/^35/' or postalCode matches '/^38/' or postalCode matches '/^07/') and app.user.country|lower == 'españa' %}
-  <div class="metodo metodo-de-envio">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENVIO FUERA DE LA PENÍNSULA<br>&nbsp;(CONSULTA COSTE CON TU COMERCIAL)<br>
-  </div>
+    <div class="metodo metodo-de-envio">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENVIO FUERA DE LA PENÍNSULA<br>&nbsp;(CONSULTA COSTE CON TU COMERCIAL)<br>
+    </div>
   {% else %}
-  <div class="metodo metodo-de-envio">
-    <div class="opciones-envio">
-      <strong>Selecciona el método de envío:</strong>
-      <div class="triangle"></div>
-      <table>
-        <tr>
-          <td>
-            <label for="r1" style="font-weight: normal; {% if app.session.get('pedido').metodo_envio == 3 %}opacity: 0.5 {% endif %}" > Envio 24 horas (coste 5€, IVA no inc.)</label>
-          </td>
-          <td>
-            <input class="envio 24" id="r1" type="radio" name="envio" value="1" 
-            {% if app.session.get('pedido').metodo_envio == 1 %}
-              checked="checked"
-            {% elseif app.session.get('pedido').metodo_envio == 3 %}
-              disabled="disabled"
-            {% endif %}>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="r2" style="font-weight: normal; {% if app.session.get('pedido').metodo_envio == 3 %}opacity: 0.5 {% endif %}"> Envio 48 horas (coste 3,5€, IVA no inc.)</label>
-          </td>
-          <td>
-            <input class="envio 48" id="r2" type="radio" name="envio" value="2" 
-            {% if app.session.get('pedido').metodo_envio == 2 %}
-              checked="checked"
-            {% elseif app.session.get('pedido').metodo_envio == 3 %}
-              disabled="disabled"
-            {% endif %}>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="r4" style="font-weight: normal; {% if app.session.get('pedido').metodo_envio == 3 %}opacity: 0.5 {% endif %}">Envío fuera de la península (consultar coste con tu comercial)</label>
-          </td>
-          <td>
-            <input class="envio fuera-peninsula" id="r4" type="radio" name="envio" value="4" 
-            {% if app.session.get('pedido').metodo_envio == 4 %}
-              checked="checked"
-            {% elseif app.session.get('pedido').metodo_envio == 3 %}
-              disabled="disabled"
-            {% endif %}>
-          </td>
-        </tr>
-      </table>
+    <div class="metodo metodo-de-envio">
+      <div class="opciones-envio">
+	<strong>Selecciona el método de envío:</strong>
+	<div class="triangle"></div>
+	<table>
+	  <tr>
+	    <td>
+	      <label for="r1" style="font-weight: normal; {% if app.session.get('pedido').metodo_envio == 3 %}opacity: 0.5 {% endif %}" > Envio 24 horas (coste 5€, IVA no inc.)</label>
+	    </td>
+	    <td>
+	      <input class="envio 24" id="r1" type="radio" name="envio" value="1" 
+	      {% if app.session.get('pedido').metodo_envio == 1 %}
+		checked="checked"
+	      {% elseif app.session.get('pedido').metodo_envio == 3 %}
+		disabled="disabled"
+	      {% endif %}>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td>
+	      <label for="r2" style="font-weight: normal; {% if app.session.get('pedido').metodo_envio == 3 %}opacity: 0.5 {% endif %}"> Envio 48 horas (coste 3,5€, IVA no inc.)</label>
+	    </td>
+	    <td>
+	      <input class="envio 48" id="r2" type="radio" name="envio" value="2" 
+	      {% if app.session.get('pedido').metodo_envio == 2 %}
+		checked="checked"
+	      {% elseif app.session.get('pedido').metodo_envio == 3 %}
+		disabled="disabled"
+	      {% endif %}>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td>
+	      <label for="r4" style="font-weight: normal; {% if app.session.get('pedido').metodo_envio == 3 %}opacity: 0.5 {% endif %}">Envío fuera de la península (consultar coste con tu comercial)</label>
+	    </td>
+	    <td>
+	      <input class="envio fuera-peninsula" id="r4" type="radio" name="envio" value="4" 
+	      {% if app.session.get('pedido').metodo_envio == 4 %}
+		checked="checked"
+	      {% elseif app.session.get('pedido').metodo_envio == 3 %}
+		disabled="disabled"
+	      {% endif %}>
+	    </td>
+	  </tr>
+	</table>
+      </div>
+      <div class="aviso">
+	<span class="depago" 
+	  {% if app.session.get('pedido').subtotal >= 250 %}
+	  style="display: none"
+	  {% endif %}
+	  >Los gastos de envío serán gratuitos si el pedido supera los 250€ (sin IVA). Te faltan <span class="faltan">{{ ((250 - app.session.get('pedido').subtotal)) | number_format(2, ',', '.') ~ ' ' ~ euro() }}</span></span>
+	<p class="gratis" 
+	{% if app.session.get('pedido').subtotal <= 250 %}
+	style="display: none"
+	{% endif %}
+	>Tu pedido <u>es superior a 250 € (sin IVA)</u>, asi que no te cobraremos los gastos de envío.</p>
+      </div>
     </div>
-    <div class="aviso">
-      <span class="depago" 
-        {% if app.session.get('pedido').subtotal >= 250 %}
-        style="display: none"
-        {% endif %}
-        >Los gastos de envío serán gratuitos si el pedido supera los 250€ (sin IVA). Te faltan <span class="faltan">{{ ((250 - app.session.get('pedido').subtotal)) | number_format(2, ',', '.') ~ ' ' ~ euro() }}</span></span>
-      <p class="gratis" 
-      {% if app.session.get('pedido').subtotal <= 250 %}
-      style="display: none"
-      {% endif %}
-      >Tu pedido <u>es superior a 250 € (sin IVA)</u>, asi que no te cobraremos los gastos de envío.</p>
-    </div>
-  </div>
   {% endif %}
   <br><br>
   <div class="metodo metodo-de-pago">

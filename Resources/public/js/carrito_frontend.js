@@ -35,7 +35,6 @@ $('body').on('click', '.eliminar', function(){
 });
 //MODIFY QUANTITY PRODUCT BY INPUT - MODIFY QUANTITY PRODUCT BY INPUT 
 $("body").on('keyup', '.cart-qty', function() {
-
     var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
     var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
 

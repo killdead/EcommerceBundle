@@ -148,6 +148,7 @@ class OrderController extends Controller
     $user = $this->getUser();
     $session = $this->get('session'); 
 
+    //THERE IS ---NOT--- AN ORDER YET
     if(!$session->has('pedido')) {
 
       $pedido = array();
@@ -168,11 +169,7 @@ class OrderController extends Controller
 
       $session->set('pedido', $pedido);
     }
-    // ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN 
-    // ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN 
-    // BACKEND: AQUÍ ENTRA CUANDO ACTUALIZAMOS EL PEDIDO DESDE EL ADMIN: ver pedidoUpdateAction() en el BackendController
-    // ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN 
-    // ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN - ADMIN 
+    //THERE IS ---ALREADY--- AN ORDER
     else 
     {
       $pedido = $session->get('pedido');
