@@ -16,7 +16,7 @@ $('body').on('click', '.eliminar', function(){
   var size = subitem.data("size");
   var color_id = subitem.data("color_id");
   var element_collection_id = subitem.data("element_collection_id");
-  var url_eliminar = $('.cart').data("url_eliminar");
+  var url_eliminar = $('.products-list').data("url_eliminar");
 
   $.ajax({
     type: "POST",
@@ -33,7 +33,7 @@ $('body').on('click', '.eliminar', function(){
     },
   });
 });
-//MODIFY QUANTITY PRODUCT BY INPUT - MODIFY QUANTITY PRODUCT BY INPUT 
+//MODIFY QUANTITY PRODUCT BY ----INPUT---- - MODIFY QUANTITY PRODUCT BY ----INPUT-----
 $("body").on('keyup', '.cart-qty', function() {
     var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
     var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
@@ -47,7 +47,7 @@ $("body").on('keyup', '.cart-qty', function() {
 
 
 //MODIFY QUANTITY PRODUCT BY +/- -  MODIFY QUANTITY PRODUCT BY +/- - MODIFY QUANTITY PRODUCT BY +/-
-$("body").on('click', '.cart .subitem .up, .down', function() {
+$("body").on('click', '.products-list .subitem .up, .down', function() {
   //aumentamos o disminuimos la cantidad
   if ($(this).hasClass('up')) {
     var new_producto_qty = parseInt($(this).parents('.subitem').find('input').val()) + 1;
@@ -69,7 +69,7 @@ function clander(aux, new_producto_qty) {
 
   var input_qty = aux.find('input');
   var actual_li = aux;
-  var url_cantidad = $('.cart').data("url_cantidad");
+  var url_cantidad = $('.products-list').data("url_cantidad");
 
   $.ajax({
     type: "POST",
@@ -139,10 +139,10 @@ $('body').on('click', '.anadir_subitem', function(){
 
   var product_version_size_id = $("#size input[type='radio']:checked").data("product_version_size_id");
 
-  if ($(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length) {
+  if ($(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length) {
     clander(
-      $(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']"),
-      parseInt($(this).closest('.anadir-qty').find('.producto-qty').val()) +  parseInt($(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']").find('.cart-qty').val())
+      $(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']"),
+      parseInt($(this).closest('.anadir-qty').find('.producto-qty').val()) +  parseInt($(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']").find('.cart-qty').val())
     );
     return false;
   }
@@ -154,7 +154,7 @@ $('body').on('click', '.anadir_subitem', function(){
 
   var producto_color = $(this).find('.cuadrado-container').data('color');
   var producto_qty = $('.producto-qty').val();
-  var url_anadir = $(".cart").data("url_anadir");
+  var url_anadir = $(".products-list").data("url_anadir");
   var size = $('#size input[type="radio"]:checked').val();
 
   $.ajax({
@@ -176,6 +176,7 @@ $('body').on('click', '.anadir_subitem', function(){
       
       else {
         $(".cart").show();
+        $(".products-list").show();
         $(".totales").show();
      
         if (response.stock == 0) {
@@ -189,7 +190,7 @@ $('body').on('click', '.anadir_subitem', function(){
 
         precio_total_subitem = accounting.formatMoney(precio_total_subitem);
 
-        var items_in_cart = $('.cart ul li').first();
+        var items_in_cart = $('.products-list li').first();
         if (items_in_cart.hasClass('odd'))
         {
           var clase = 'even';
@@ -216,7 +217,7 @@ $('body').on('click', '.anadir_subitem', function(){
           }
 
           var size = $('#size input[type="radio"]:checked').val();
-          $('.cart .products-list').prepend(
+          $('.products-list').prepend(
             '<li class="subitem ' +  clase + '" '  +
             '" data-element_collection_id="' + response.element_collection_id +
             '" data-product_version_size_id="' + product_version_size_id + '"' +
@@ -244,7 +245,7 @@ $('body').on('click', '.anadir_subitem', function(){
 
         //is already in the cart
         } else {
-          var subitem_en_carro = $(".cart .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
+          var subitem_en_carro = $(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
           subitem_en_carro.find('input').val(response.productoQty).change();
           subitem_en_carro.find('.precio_total_subitem').html(precio_total_subitem);
 
@@ -267,7 +268,7 @@ function updateNavbar() {
 
 $('.envio').on('click',function(){
   var envio = $(".envio[name=envio]:checked").val();
-  var url_envio = $(".cart").data("url_envio"); 
+  var url_envio = $(".products-list").data("url_envio"); 
   //si se elije "48 horas" la opcion Contrareembolso desaparece
 /*
   if(envio == 2)
@@ -294,7 +295,7 @@ $('.envio').on('click',function(){
 
 $('.pago').on('click', function(){
   var pago = $(".pago[name=pago]:checked").val();
-  var url_pago = $('.cart').data("url_pago");
+  var url_pago = $('.products-list').data("url_pago");
   $.ajax({
     type: "POST",
     url: url_pago,
@@ -339,17 +340,17 @@ function updateTotals(response)
     var total = accounting.formatMoney(response.total);
 
     subtotal = accounting.formatMoney(response.subtotal);
-    $('.cart .subtotal').html(subtotal);
+    $('.totales .subtotal').html(subtotal);
 
-    $('.cart .iva.etiq').html('IVA ' + tasa_iva + '%');
-    $('.cart .iva_del_subtotal').html(iva_string);
+    $('.totales .iva.etiq').html('IVA ' + tasa_iva + '%');
+    $('.totales .iva_del_subtotal').html(iva_string);
 
-    $('.cart .re.etiq').html('R.E. ' + tasa_re + '%');
-    $('.cart .re_del_subtotal').html(re_string);
+    $('.totales .re.etiq').html('R.E. ' + tasa_re + '%');
+    $('.totales .re_del_subtotal').html(re_string);
 
-    $('.cart .contrareembolso .cantidad').html(contrareembolso);
+    $('.totales .contrareembolso .cantidad').html(contrareembolso);
 
-    $('.cart .total').html(total);
+    $('.totales .total').html(total);
 
 /*
     if(response.metodo_envio == 3)
