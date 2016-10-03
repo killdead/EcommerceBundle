@@ -15,7 +15,12 @@ class ShippingDataType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email')
+            ->add('name', null, array('label' => 'Nombre y apellidos'))
+            ->add('address', null, array('label' => 'Dirección'))
+            ->add('town', null, array('label' => 'Población'))
+            ->add('province', null, array('label' => 'Provincia'))
+            ->add('postal_code', null, array('label' => 'Código postal'))
+            ->add('country', null, array('label' => 'País'))
         ;
     }
     
