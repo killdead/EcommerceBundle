@@ -112,20 +112,18 @@ class ManufacturerController extends Controller
      * Deletes a Manufacturer entity.
      *
      * @Route("/{id}", name="manufacturer_delete")
-     * @Method("DELETE")
      */
     public function deleteAction(Request $request, Manufacturer $manufacturer)
     {
         $form = $this->createDeleteForm($manufacturer);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($manufacturer);
-            $em->flush();
-        }
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($manufacturer);
+        $em->flush();
 
-        return $this->redirectToRoute('manufacturer_index');
+        $referer = $request->headers->get('referer');
+        return new RedirectResponse($referer); 
     }
 
     /**
