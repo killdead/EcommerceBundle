@@ -50,7 +50,10 @@ class ManufacturerController extends Controller
             $em->persist($manufacturer);
             $em->flush();
 
-            return $this->render('ZiiwebEcommerceBundle:Manufacturer:edit.html.twig', array('id' => $manufacturer->getId()));
+            return $this->render('ZiiwebEcommerceBundle:Manufacturer:edit.html.twig', array(
+                'id' => $manufacturer->getId(),
+                'edit_form' => $form->createView()
+            ));
         }
 
         return $this->render('ZiiwebEcommerceBundle:Manufacturer:new.html.twig', array(
