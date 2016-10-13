@@ -16,7 +16,7 @@
     },
     "autoload" : {
         "psr-0" : {
-            "Ziiweb\\FrontendBundle" : ""
+            "Ziiweb\\EcommerceBundle" : ""
         }
     },
     "target-dir" : "Ziiweb/EcommerceBundle",
