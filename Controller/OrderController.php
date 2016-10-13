@@ -2,6 +2,7 @@
 
 namespace Ziiweb\EcommerceBundle\Controller;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Ziiweb\EcommerceBundle\Entity\TaxRates;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -563,6 +564,7 @@ class OrderController extends Controller
     {
       $metodoPagoId = $request->request->get('metodo_pago');
 
+var_dump($metodoPagoId);
       $session = $this->get('session'); 
       $pedido = $session->get('pedido'); 
 
@@ -584,6 +586,7 @@ class OrderController extends Controller
 	'contrareembolso' => $pedido['contrareembolso']
       );
 
+var_dump($response);
       $session->set('pedido', $pedido); 
 
       $serializer = $this->container->get('jms_serializer');
@@ -898,7 +901,8 @@ class OrderController extends Controller
 	      $em->persist($user); 
 	      $em->flush($user); 
 	      
-	      return false;
+	      return $this->redirectToRoute('redsys_payment');
+            
 	  }
 
 	  return $this->render('ZiiwebEcommerceBundle:Order:shipping_data.html.twig', array(
@@ -926,29 +930,34 @@ class OrderController extends Controller
     }
 
     /**
-     * @Route("/ok", name="redsys_ok")
+     * @Route("/payment-ok", name="payment_ok")
      */
     function redsysOkAction() {
-       return new Response("ok");
+        return $this->render('ZiiwebEcommerceBundle:Order:payment_ok.html.twig');
     }
 
     /**
-     * @Route("/ko", name="redsys_ko")
+     * @Route("/payment-ko", name="payment_ko")
      */
     function redsysKoAction() {
-       return new Response("ko");
+        return $this->render('ZiiwebEcommerceBundle:Order:payment_ko.html.twig');
     }
 
     /**
      * @Route("/redsys-payment", name="redsys_payment")
      */
-    function redsysPayment() {
+    function redsysPaymentAction() {
+
+
+        $session = $this->get('session');
+        $pedido = $session->get('pedido');
+
 	try{
 	    //Key de ejemplo
 	    $key = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7';
 
 	    $redsys = new Tpv();
-	    $redsys->setAmount(rand(10,600));
+	    $redsys->setAmount($pedido['total']);
 	    $redsys->setOrder(time());
 	    $redsys->setMerchantcode('092536168'); //Reemplazar por el código que proporciona el banco
 	    $redsys->setCurrency('978');
@@ -958,11 +967,11 @@ class OrderController extends Controller
 	    //$redsys->setNotification('http://localhost/noti.php'); //Url de notificacion
 	    $redsys->setNotification('http://my_bundles/app_dev.php/noti'); //Url de notificacion
 	    //$redsys->setUrlOk('http://localhost/ok.php'); //Url OK
-	    $redsys->setUrlOk('http://my_bundles/app_dev.php/ok'); //Url OK
+	    $redsys->setUrlOk($this->generateUrl('payment_ok', array(), UrlGeneratorInterface::ABSOLUTE_URL)); //Url OK
 	    //$redsys->setUrlKo('http://localhost/ko.php'); //Url KO
-	    $redsys->setUrlKo('http://my_bundles/app_dev.php/ko'); //Url KO
+	    $redsys->setUrlKo($this->generateUrl('payment_ko', array(), UrlGeneratorInterface::ABSOLUTE_URL)); //Url KO
 	    $redsys->setVersion('HMAC_SHA256_V1');
-	    $redsys->setTradeName('Tienda S.L');
+	    $redsys->setTradeName('Sugar');
 	    $redsys->setTitular('Pedro Risco');
 	    $redsys->setProductDescription('Compras varias');
 	    $redsys->setEnviroment('test'); //Entorno test
@@ -970,12 +979,11 @@ class OrderController extends Controller
 	    $signature = $redsys->generateMerchantSignature($key);
 	    $redsys->setMerchantSignature($signature);
 
+	    $redsys->executeRedirection();
 	    $form = $redsys->createForm();
 	}
 	catch(Exception $e){
 	    echo $e->getMessage();
 	}
-	//echo $form;
-        return new Response($form);
     }
 }
