@@ -9,7 +9,7 @@
 
 
     <div class="card" data-product_version_id="{{ product_version.id }}">
-      <a href="{{ path('product_show', {'product_slug': product_version.product.slug, 'product_version_slug': product_version.slug }) }}">
+      <a href="{{ path('frontend_product_show', {'product_slug': product_version.product.slug, 'product_version_slug': product_version.slug }) }}">
         <img class="img-fluid card-img-top" src="/uploads/l/{{ product_version.productVersionImages[0].file }}">
       </a>
       <div class="caption card-block">
