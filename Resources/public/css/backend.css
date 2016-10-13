@@ -1,0 +1,10 @@
+.nav:not(.navbar-right) li.dropdown > a {
+  color: #eee !important; }
+
+.nav:not(.navbar-right) .dropdown {
+  cursor: default; }
+
+.nav:not(.navbar-right) .dropdown:hover .dropdown-menu {
+  display: block; }
+
+/*# sourceMappingURL=backend.css.map */

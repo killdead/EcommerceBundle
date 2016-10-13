@@ -1,0 +1,80 @@
+html {
+  min-height: 100% !important;
+  position: relative !important; }
+  html body header {
+    border-bottom: 1px solid #ccc; }
+    html body header .navbar-first {
+      color: #7F6860;
+      background-color: #F2D2E1 !important; }
+      html body header .navbar-first .search {
+        display: inline; }
+        html body header .navbar-first .search input {
+          width: 70px; }
+      html body header .navbar-first a {
+        color: #7F6860 !important; }
+      html body header .navbar-first .cart-item {
+        cursor: pointer; }
+        html body header .navbar-first .cart-item .dropdown-menu {
+          width: 270px !important; }
+        html body header .navbar-first .cart-item:hover .dropdown-menu {
+          display: block; }
+        html body header .navbar-first .cart-item .dropdown-menu {
+          width: 458px; }
+          html body header .navbar-first .cart-item .dropdown-menu ul {
+            list-style: none; }
+    html body header .navbar-second {
+      background: #fff; }
+      html body header .navbar-second .root-ul > li > a {
+        height: 70px;
+        line-height: 70px;
+        color: #7F6860 !important; }
+      html body header .navbar-second .dropdown-menu {
+        border-radius: 0;
+        border: 1px solid #ccc;
+        padding-top: 10px; }
+        @media screen and (max-width: 990px) {
+          html body header .navbar-second .dropdown-menu {
+            position: relative;
+            float: none; } }
+        html body header .navbar-second .dropdown-menu li {
+          line-height: 35px; }
+          html body header .navbar-second .dropdown-menu li a {
+            color: #7F6860 !important; }
+  html body main {
+    margin-top: 145px; }
+    html body main .products-container {
+      overflow-x: hidden;
+      overflow-y: hidden;
+      display: flex; }
+      html body main .products-container .filter-container {
+        width: 150px;
+        margin-right: 20px;
+        transition: margin 500ms; }
+        @media screen and (max-width: 990px) {
+          html body main .products-container .filter-container {
+            margin-left: -175px; } }
+        html body main .products-container .filter-container #filter p label {
+          font-weight: bold; }
+        html body main .products-container .filter-container #filter .form-group {
+          margin-top: 15px; }
+          html body main .products-container .filter-container #filter .form-group > label {
+            font-weight: bold; }
+      html body main .products-container .products {
+        transition: width 500ms; }
+        html body main .products-container .products .grid-item {
+          padding-left: 6px !important;
+          padding-right: 6px !important; }
+  html body footer {
+    color: #8F7268;
+    width: 100%;
+    position: absolute !important;
+    bottom: 0 !important;
+    background: #F2D2E1; }
+    html body footer .condiciones {
+      font-size: 12px; }
+    html body footer a {
+      color: #8F7268 !important; }
+      html body footer a.email {
+        font-size: 23px; }
+
+/*# sourceMappingURL=frontend.css.map */

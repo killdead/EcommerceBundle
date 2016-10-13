@@ -1,0 +1,10 @@
+main .cart .subitem-qty-container {
+  width: 20px;
+  cursor: pointer;
+  display: inline-block; }
+
+main .cart input {
+  width: 45px;
+  display: inline; }
+
+/*# sourceMappingURL=preenvio_resumen.css.map */

@@ -1,0 +1,13 @@
+.nav:not(.navbar-right) {
+  li.dropdown {
+    &> a {
+      color: #eee !important;
+    }
+  }
+  .dropdown {
+     cursor: default;
+   }
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+}

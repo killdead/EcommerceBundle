@@ -1,0 +1,13 @@
+main {
+  .cart {
+    .subitem-qty-container {
+      width: 20px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    input {
+      width: 45px; 
+      display: inline;
+    }
+  }
+}

@@ -1,0 +1,119 @@
+html {
+  min-height: 100% !important;
+  position: relative !important;
+  body {
+    header {
+      border-bottom: 1px solid #ccc;
+      .navbar-first {
+        .search { 
+          display: inline;
+          input {
+            width: 70px;
+          }
+        }
+        color: #7F6860;
+        background-color: #F2D2E1 !important;
+	a {
+	  color: #7F6860 !important;
+	}
+	.cart-item {
+	  cursor: pointer; 
+	    .dropdown-menu {
+	       width: 270px !important;
+	    }
+	  &:hover {
+	    .dropdown-menu {
+	       display: block;
+	    }
+	  }
+          .dropdown-menu {
+            width: 458px;
+            ul { list-style: none }
+          }
+	}
+      }
+      .navbar-second {
+	background: #fff;
+	.root-ul > li > a{
+	  height: 70px;
+	  line-height: 70px; 
+          color: #7F6860 !important;
+	}
+	.dropdown-menu {
+	  //to show the dropdown menus correctly in small devices
+	  @media screen and (max-width: 990px) {
+	    position: relative;
+	    float: none;
+	  } 
+          border-radius: 0;
+          border: 1px solid #ccc;
+          padding-top: 10px;
+          li {
+            line-height: 35px;
+            a {
+              color: #7F6860 !important;
+            }
+          }
+	}  
+      }
+    }
+    /////////////////////////
+    main {
+      margin-top: 145px;
+      //height: 200px;
+      .products-container {
+        overflow-x: hidden; //FILTER TOGGLING (https://cdn.rawgit.com/nunof07/bootstrap-collapsible-sidebar/v0.1.0/left.html)
+        overflow-y: hidden;
+        display: flex;
+	.filter-container {
+          width: 150px;
+          margin-right: 20px;
+	  transition: margin 500ms; //FILTER TOGGLING
+	  //margin-left: -175px !important; //FILTER TOGGLING
+	  @media screen and (max-width: 990px) {
+	    margin-left: -175px; 
+	  }
+	  #filter {
+	    p label {
+		font-weight: bold;
+	    }
+	    .form-group {
+	      margin-top: 15px;
+	      &>label {
+		font-weight: bold;
+	      }
+	    }
+	  }
+	}
+        .products {
+	  transition: width 500ms; //replace 200ms with time of your choice
+	  .grid-item { 
+	    padding-left: 6px !important;
+	    padding-right: 6px !important;
+	  }
+        }
+      }
+    }
+    //////////////////////////
+    footer {
+      color: #8F7268 ;
+      width: 100%;
+      position: absolute !important; 
+      bottom: 0 !important;
+      background: #F2D2E1;
+      .condiciones {
+        font-size: 12px;
+      }
+      a {
+        color: #8F7268 !important;
+        &.email {
+          font-size: 23px;
+        }
+      }
+    }
+  }
+}
+
+
+ 
+
