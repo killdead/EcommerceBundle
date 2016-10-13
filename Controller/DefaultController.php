@@ -414,7 +414,7 @@ class DefaultController extends Controller
     }    
 
     /**
-     * @Route("/producto/{product_slug}/{product_version_slug}", name="product_show", defaults={"product_version_slug" = null}) 
+     * @Route("/producto/{product_slug}/{product_version_slug}", name="frontend_product_show", defaults={"product_version_slug" = null}) 
      */
     public function productShowAction($product_slug, $product_version_slug) {
 
