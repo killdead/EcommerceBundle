@@ -302,15 +302,12 @@ class DefaultController extends Controller
 
        $query = $qb->getQuery();
        $result = $query->getResult();
-//var_dump($result);
-//die("jflas");
        
-       $result = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
-
        $response = new JsonResponse();
+       $renderedView = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
        $response->setData(array(
-           'product_versions' => $result,
-           'total_product_versions' => count($totalProductVersions)
+           'rendered_view' => $renderedView,
+           'count_product_versions' => count($totalProductVersions)
        ));
 
        return $response;
