@@ -111,7 +111,7 @@ class ManufacturerController extends Controller
     /**
      * Deletes a Manufacturer entity.
      *
-     * @Route("/{id}", name="manufacturer_delete")
+     * @Route("/delete/{id}", name="manufacturer_delete")
      */
     public function deleteAction(Request $request, Manufacturer $manufacturer)
     {
