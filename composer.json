@@ -1,0 +1,30 @@
+{
+    "name" : "ziiweb/ecommerce-bundle",
+    "description" : "Simple e-commerce bundle form Symfony 2/3",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Javier García",
+        "email" : "info@ziiweb.com"
+    }],
+    "keywords" : [
+        "ecommerce bundle"
+    ],
+    "license" : [
+        "GPL v3"
+    ],
+    "require" : {
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Ziiweb\\FrontendBundle" : ""
+        }
+    },
+    "target-dir" : "Ziiweb/EcommerceBundle",
+    "repositories" : [{
+    }],
+    "extra" : {
+    "branch-alias" : {
+            "dev-master" : "0.1-dev"
+        }
+    }
+}
