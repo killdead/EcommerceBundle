@@ -30,7 +30,7 @@ class ProductVersionImage
     private $productVersion;
 
     /**
-     * @ORM\Column(type="string", length=255, name="file")
+     * @ORM\Column(type="string", length=255, name="file", nullable=true)
      *
      * @Assert\File(
      *     maxSize = "40M",
