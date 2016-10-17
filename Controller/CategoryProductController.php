@@ -55,7 +55,7 @@ class CategoryProductController extends Controller
             $em->persist($categoryProduct);
             $em->flush();
 
-            return $this->render('ZiiwebEcommerceBundle:CategoryProduct:edit.html.twig', array(
+            return $this->redirectToRoute('categoryproduct_edit', array(
                 'id' => $categoryProduct->getId(),
                 'edit_form' => $form->createView()
             ));
@@ -131,8 +131,13 @@ class CategoryProductController extends Controller
         $em->remove($categoryProduct);
         $em->flush();
 
-        $referer = $request->headers->get('referer');
-        return new RedirectResponse($referer); 
+        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+            $url = $request->headers->get('referer');
+        } else {
+            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'CategoryProduct'));
+        }
+
+        return new RedirectResponse($url); 
     }
 
     /**

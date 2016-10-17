@@ -117,8 +117,13 @@ class ProductVersionController extends Controller
         $em->remove($productVersion);
         $em->flush();
 
-        $referer = $request->headers->get('referer');
-        return new RedirectResponse($referer); 
+        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+            $url = $request->headers->get('referer');
+        } else {
+            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'ProductVersion'));
+        }
+
+        return new RedirectResponse($url); 
     }
 
     /**

@@ -51,7 +51,7 @@ class ManufacturerController extends Controller
             $em->persist($manufacturer);
             $em->flush();
 
-            return $this->render('ZiiwebEcommerceBundle:Manufacturer:edit.html.twig', array(
+            return $this->redirectToRoute('manufacturer_edit', array(
                 'id' => $manufacturer->getId(),
                 'edit_form' => $form->createView()
             ));
@@ -123,8 +123,13 @@ class ManufacturerController extends Controller
         $em->remove($manufacturer);
         $em->flush();
 
-        $referer = $request->headers->get('referer');
-        return new RedirectResponse($referer); 
+        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+            $url = $request->headers->get('referer');
+        } else {
+            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'Manufacturer'));
+        }
+
+        return new RedirectResponse($url); 
     }
 
     /**

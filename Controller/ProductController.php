@@ -2,6 +2,7 @@
 
 namespace Ziiweb\EcommerceBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -225,21 +226,24 @@ class ProductController extends Controller
     /**
      * Deletes a Product entity.
      *
-     * @Route("/{id}", name="product_delete")
-     * @Method("DELETE")
+     * @Route("/delete/{id}", name="product_delete")
      */
     public function deleteAction(Request $request, Product $product)
     {
         $form = $this->createDeleteForm($product);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($product);
-            $em->flush();
+	$em = $this->getDoctrine()->getManager();
+	$em->remove($product);
+	$em->flush();
+
+        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+            $url = $request->headers->get('referer');
+        } else {
+            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'ProductVersion'));
         }
 
-        return $this->redirectToRoute('product_index');
+        return new RedirectResponse($url); 
     }
 
     /**
