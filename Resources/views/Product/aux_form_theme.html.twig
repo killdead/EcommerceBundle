@@ -4,16 +4,21 @@
     <a class="add-product" href="#">Añadir versión de producto</a>
   {% elseif form.vars.name == 'productVersionImages' %}
     <a class="add-image" href="#">Añadir imagen</a>
+    <div style="clear: left"></div>
+    <br>
   {% elseif form.vars.name == 'productVersionSizes' %}
     <a class="add-image" href="#">Añadir talla</a>
   {% endif %}
 {% endblock %}
 
 {% block product_version_row %}
-  <div class="form-group">
-    {{ form_widget(form) }}
-    <a href="#" class="delete-product">Eliminar version del producto</a>
-  </div>
+    <h4><b>Version del producto</b></h4>
+    <div class="panel panel-default form-group">
+      <div class="panel-body">
+      {{ form_widget(form) }}
+      <a href="#" class="delete-product">Eliminar version del producto</a>
+    </div>
+    </div>
 {% endblock %}
 
 {% block file_row %}
@@ -25,8 +30,17 @@
 {% endblock %}
 
 {% block product_version_size_row %}
-  <div class="form-group">
+  <div class="panel panel-default form-group">
+    <div class="panel-body">
     {{ form_widget(form) }}
     <a href="#" class="delete-product">Eliminar talla</a>
+    </div>
   </div>
 {% endblock %}
+
+{% block product_version_image_row %}
+  <div class="pull-left">
+    {{ form_widget(form) }}
+  </div>
+{% endblock %}
+
