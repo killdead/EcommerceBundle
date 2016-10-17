@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Ziiweb\EcommerceBundle\Form\ProductVersionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ProductType extends AbstractType
 {
@@ -18,7 +19,7 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', null, array('label' => 'Nombre'))
+            ->add('name', null, array('label' => 'Nombre (sin añadir el color)'))
             //->add('description', null, array('label' => 'Descripción'))
             ->add('manufacturer', EntityType::class, array(
                 'label' => 'Marca/Fabricante',
@@ -35,6 +36,7 @@ class ProductType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
             ))
+            ->add('Guardar', SubmitType::class)
         ;
     }
     
