@@ -1,0 +1,16 @@
+{% extends 'Zii' %}
+
+{% block body %}
+    <h1>Nuevo Proveedor</h1>
+
+    {{ form_start(edit_form) }}
+        {% include 'ZiiwebEcommerceBundle:Supplier:form.html.twig' %}
+        <input type="submit" value="Guardar" />
+    {{ form_end(edit_form) }}
+
+    <ul>
+        <li>
+            <a href="{{ path('manufacturer_index') }}">Volver a la lista</a>
+        </li>
+    </ul>
+{% endblock %}
