@@ -61,6 +61,17 @@ html {
     main {
       margin-top: 145px;
       //height: 200px;
+      .filter-button {
+        cursor: pointer;
+	.text-filter-button::after {
+	    @media screen and (max-width: 990px) {
+	      content: 'Mostrar filtro'; 
+	    }
+	    @media screen and (min-width: 990px) {
+	      content: 'Ocultar filtro'; 
+	    }
+	}
+      }
       .products-container {
         overflow-x: hidden; //FILTER TOGGLING (https://cdn.rawgit.com/nunof07/bootstrap-collapsible-sidebar/v0.1.0/left.html)
         overflow-y: hidden;

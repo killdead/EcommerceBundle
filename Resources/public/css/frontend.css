@@ -42,6 +42,14 @@ html {
             color: #7F6860 !important; }
   html body main {
     margin-top: 145px; }
+    html body main .filter-button {
+      cursor: pointer; }
+      @media screen and (max-width: 990px) {
+        html body main .filter-button .text-filter-button::after {
+          content: 'Mostrar filtro'; } }
+      @media screen and (min-width: 990px) {
+        html body main .filter-button .text-filter-button::after {
+          content: 'Ocultar filtro'; } }
     html body main .products-container {
       overflow-x: hidden;
       overflow-y: hidden;
