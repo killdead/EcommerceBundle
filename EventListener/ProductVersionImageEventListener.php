@@ -11,6 +11,15 @@ class ProductVersionImageEventListener
 
     public function prePersist(LifecycleEventArgs $args) 
     {
+        $this->aux($args);
+    }
+
+    public function preUpdate(LifecycleEventArgs $args) 
+    {
+        $this->aux($args);
+    }
+
+    public function aux(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
 
         if ($entity instanceof ProductVersionImage) {
@@ -37,5 +46,4 @@ class ProductVersionImageEventListener
             $entity->setFile($filename);
         }
     }
-
 }
