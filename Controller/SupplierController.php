@@ -51,7 +51,7 @@ class SupplierController extends Controller
             $em->persist($supplier);
             $em->flush();
 
-            return $this->render('ZiiwebEcommerceBundle:Supplier:edit.html.twig', array(
+            return $this->redirectToRoute('supplier_edit', array(
                 'id' => $supplier->getId(),
                 'edit_form' => $form->createView()
             ));
@@ -123,8 +123,13 @@ class SupplierController extends Controller
 	$em->remove($supplier);
 	$em->flush();
 
-        $referer = $request->headers->get('referer');
-        return new RedirectResponse($referer); 
+        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+            $url = $request->headers->get('referer');
+        } else {
+            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'Supplier'));
+        }
+
+        return new RedirectResponse($url); 
     }
 
     /**
