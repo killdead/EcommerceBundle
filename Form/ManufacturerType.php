@@ -5,6 +5,7 @@ namespace Ziiweb\EcommerceBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ManufacturerType extends AbstractType
 {
@@ -16,6 +17,7 @@ class ManufacturerType extends AbstractType
     {
         $builder
             ->add('name', null, array('label' => 'Nombre'))
+            ->add('Guardar', SubmitType::class)
         ;
     }
     

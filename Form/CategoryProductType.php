@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class CategoryProductType extends AbstractType
 {
@@ -25,6 +26,7 @@ class CategoryProductType extends AbstractType
                 'required' => false
             ))
             ->add('name', null, array('label' => 'Categoría'))
+            ->add('Guardar', SubmitType::class)
         ;
     }
     
