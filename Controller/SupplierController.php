@@ -57,7 +57,7 @@ class SupplierController extends Controller
             ));
         }
 
-        return $this->render('ZiiwebEcommerceBundle:Manufacturer:new.html.twig', array(
+        return $this->render('ZiiwebEcommerceBundle:Supplier:new.html.twig', array(
             'supplier' => $supplier,
             'form' => $form->createView(),
         ));
