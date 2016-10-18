@@ -52,6 +52,12 @@ class Product
     private $categoryProduct;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Supplier", inversedBy="products")
+     * @ORM\JoinColumn(name="supplier_id", referencedColumnName="id", nullable=true)
+     **/
+    protected $supplier;
+
+    /**
      * @ORM\OneToMany(targetEntity="ProductVersion", mappedBy="product", cascade={"persist", "remove"})
      **/
     private $productVersions;
@@ -231,5 +237,29 @@ class Product
     public function getProductVersions()
     {
         return $this->productVersions;
+    }
+
+    /**
+     * Set supplier
+     *
+     * @param \Ziiweb\EcommerceBundle\Entity\Supplier $supplier
+     *
+     * @return Product
+     */
+    public function setSupplier(\Ziiweb\EcommerceBundle\Entity\Supplier $supplier = null)
+    {
+        $this->supplier = $supplier;
+
+        return $this;
+    }
+
+    /**
+     * Get supplier
+     *
+     * @return \Ziiweb\EcommerceBundle\Entity\Supplier
+     */
+    public function getSupplier()
+    {
+        return $this->supplier;
     }
 }

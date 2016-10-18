@@ -29,6 +29,10 @@ class ProductType extends AbstractType
                 'label' => 'Categoría',
                 'class' => 'ZiiwebEcommerceBundle:CategoryProduct',
             ))
+            ->add('supplier', EntityType::class, array(
+                'label' => 'Proveedor',
+                'class' => 'ZiiwebEcommerceBundle:Supplier',
+            ))
             ->add('productVersions', CollectionType::class, array(
                 'entry_type' => ProductVersionType::class, 
                 'label' => 'Versiones del producto',
