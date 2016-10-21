@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Ziiweb\EcommerceBundle\Filter\FilterType;
 use Ziiweb\EcommerceBundle\Entity\TaxRates;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class DefaultController extends Controller
 {
@@ -181,9 +185,6 @@ class DefaultController extends Controller
      */
     public function filterAction(Request $request)
     {
-        //if ($request->) {
-        //}
-
         $filter = $request->request->get('filter');
         $categoryProduct = $request->request->get('category_product');
 
@@ -219,7 +220,6 @@ class DefaultController extends Controller
 		'class' => 'ZiiwebEcommerceBundle:ProductVersion',
 		'type' => 'checkbox')
         );
-
 
         //query taking into account if we are in the ---WISHLIST---
 	$repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
@@ -291,7 +291,7 @@ class DefaultController extends Controller
        $totalProductVersions = $query->getResult();
 
        $maxResults = 8;
-       $page = $request->request->get('page');
+       $page = $request->request->get('page') ? : 1;
 
        $firstResult = $maxResults * ($page - 1);
 
@@ -302,8 +302,19 @@ class DefaultController extends Controller
 
        $query = $qb->getQuery();
        $result = $query->getResult();
+
+       //$query->;
+       $arrayResult = $query->getArrayResult();
+       var_dump($arrayResult);
+die("jlfa");
        
+       $serializer = $container->get('jms_serializer');
+       $serializer->serialize($data);
+
+       $serializedResult = JmsSerialize($result);
+
        $response = new JsonResponse();
+
        $renderedView = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
        $response->setData(array(
            'rendered_view' => $renderedView,
@@ -311,6 +322,36 @@ class DefaultController extends Controller
        ));
 
        return $response;
+    }
+
+    /**
+     * @Route("/autocomplete", name="autocomplete") 
+     */
+    public function autocompleteAction(Request $request)
+    {
+        $keyword = $request->query->get('term'); 
+
+	$encoders = array(new XmlEncoder(), new JsonEncoder());
+	$normalizers = array(new ObjectNormalizer());
+
+	$serializer = new Serializer($normalizers, $encoders);
+
+        //RETRIEVE THE PRODUCTS
+        $repository = $this->getDoctrine()->getManager()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+        $qb = $repository->createQueryBuilder('pvs')
+            ->select("pv.id, pv.price AS price, CONCAT(m.name, ' - ', p.name, ' ', pv.color, ' ', pvs.size) AS label")
+            ->join('pvs.productVersion', 'pv')
+            ->join('pv.product', 'p')
+            ->join('p.manufacturer', 'm')
+            ->having('label LIKE :keyword')
+            ->setParameter('keyword', '%' . $keyword . '%');
+
+        $result = $qb->getQuery()->getResult();
+         
+        $json = json_encode($result);
+
+
+        return new Response($json);
     }
 
     /**
