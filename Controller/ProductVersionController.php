@@ -18,6 +18,21 @@ use Ziiweb\EcommerceBundle\Form\ProductVersionType;
 class ProductVersionController extends Controller
 {
     /**
+     * Creates a form to delete a ProductVersion entity.
+     *
+     * @Route("/clar", name="clar")
+     * @Method({"GET"})
+     */
+    public function clarAction(ProductVersion $productVersion)
+    {
+die("jlfa");
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('productversion_delete', array('id' => $productVersion->getId())))
+            ->setMethod('DELETE')
+            ->getForm()
+        ;
+    }
+    /**
      * Lists all ProductVersion entities.
      *
      * @Route("/", name="productversion_index")
@@ -61,22 +76,6 @@ class ProductVersionController extends Controller
     }
 
     /**
-     * Finds and displays a ProductVersion entity.
-     *
-     * @Route("/{id}", name="productversion_show")
-     * @Method("GET")
-     */
-    public function showAction(ProductVersion $productVersion)
-    {
-        $deleteForm = $this->createDeleteForm($productVersion);
-
-        return $this->render('productversion/show.html.twig', array(
-            'productVersion' => $productVersion,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing ProductVersion entity.
      *
      * @Route("/{id}/edit", name="productversion_edit")
@@ -84,7 +83,6 @@ class ProductVersionController extends Controller
      */
     public function editAction(Request $request, ProductVersion $productVersion)
     {
-        $deleteForm = $this->createDeleteForm($productVersion);
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductVersionType', $productVersion);
         $editForm->handleRequest($request);
 
@@ -99,7 +97,6 @@ class ProductVersionController extends Controller
         return $this->render('productversion/edit.html.twig', array(
             'productVersion' => $productVersion,
             'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -110,9 +107,6 @@ class ProductVersionController extends Controller
      */
     public function deleteAction(Request $request, ProductVersion $productVersion)
     {
-        $form = $this->createDeleteForm($productVersion);
-        $form->handleRequest($request);
-
         $em = $this->getDoctrine()->getManager();
         $em->remove($productVersion);
         $em->flush();
@@ -120,25 +114,10 @@ class ProductVersionController extends Controller
         if ($request->headers->get('referer') == 'ziiweb_admin_list') {
             $url = $request->headers->get('referer');
         } else {
-            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'ProductVersion'));
+            $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'ProductVersion'));
         }
 
         return new RedirectResponse($url); 
     }
 
-    /**
-     * Creates a form to delete a ProductVersion entity.
-     *
-     * @param ProductVersion $productVersion The ProductVersion entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(ProductVersion $productVersion)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('productversion_delete', array('id' => $productVersion->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
-    }
 }
