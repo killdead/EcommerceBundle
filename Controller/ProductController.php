@@ -146,22 +146,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Finds and displays a Product entity.
-     *
-     * @Route("/{id}", name="product_show")
-     * @Method("GET")
-     */
-    public function showAction(Product $product)
-    {
-        $deleteForm = $this->createDeleteForm($product);
-
-        return $this->render('product/show.html.twig', array(
-            'product' => $product,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing Product entity.
      *
      * @Route("/{id}/edit", name="product_edit")
@@ -169,7 +153,6 @@ class ProductController extends Controller
      */
     public function editAction(Request $request, Product $product)
     {
-        $deleteForm = $this->createDeleteForm($product);
 
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\ProductType', $product);
 
@@ -219,7 +202,6 @@ class ProductController extends Controller
         return $this->render('ZiiwebEcommerceBundle:Product:edit.html.twig', array(
             'product' => $product,
             'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -230,9 +212,6 @@ class ProductController extends Controller
      */
     public function deleteAction(Request $request, Product $product)
     {
-        $form = $this->createDeleteForm($product);
-        $form->handleRequest($request);
-
 	$em = $this->getDoctrine()->getManager();
 	$em->remove($product);
 	$em->flush();
@@ -240,25 +219,9 @@ class ProductController extends Controller
         if ($request->headers->get('referer') == 'ziiweb_admin_list') {
             $url = $request->headers->get('referer');
         } else {
-            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'ProductVersion'));
+            $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'ProductVersion'));
         }
 
         return new RedirectResponse($url); 
-    }
-
-    /**
-     * Creates a form to delete a Product entity.
-     *
-     * @param Product $product The Product entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Product $product)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('product_delete', array('id' => $product->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 }
