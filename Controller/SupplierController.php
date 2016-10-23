@@ -64,22 +64,6 @@ class SupplierController extends Controller
     }
 
     /**
-     * Finds and displays a Supplier entity.
-     *
-     * @Route("/{id}", name="supplier_show")
-     * @Method("GET")
-     */
-    public function showAction(Supplier $supplier)
-    {
-        $deleteForm = $this->createDeleteForm($supplier);
-
-        return $this->render('supplier/show.html.twig', array(
-            'supplier' => $supplier,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing Supplier entity.
      *
      * @Route("/{id}/edit", name="supplier_edit")
@@ -87,7 +71,6 @@ class SupplierController extends Controller
      */
     public function editAction(Request $request, Supplier $supplier)
     {
-        $deleteForm = $this->createDeleteForm($supplier);
         $editForm = $this->createForm('Ziiweb\EcommerceBundle\Form\SupplierType', $supplier);
         $editForm->handleRequest($request);
 
@@ -105,7 +88,6 @@ class SupplierController extends Controller
         return $this->render('ZiiwebEcommerceBundle:Supplier:edit.html.twig', array(
             'supplier' => $supplier,
             'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -116,35 +98,17 @@ class SupplierController extends Controller
      */
     public function deleteAction(Request $request, Supplier $supplier)
     {
-        $form = $this->createDeleteForm($supplier);
-        $form->handleRequest($request);
-
 	$em = $this->getDoctrine()->getManager();
 	$em->remove($supplier);
 	$em->flush();
 
-        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+        if ($request->headers->get('referer') == 'ziiweb_admin_default_list') {
             $url = $request->headers->get('referer');
         } else {
-            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'Supplier'));
+            $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'Supplier'));
         }
 
         return new RedirectResponse($url); 
     }
 
-    /**
-     * Creates a form to delete a Supplier entity.
-     *
-     * @param Supplier $supplier The Supplier entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Supplier $supplier)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('supplier_delete', array('id' => $supplier->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
-    }
 }
