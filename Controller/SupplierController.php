@@ -20,7 +20,7 @@ class SupplierController extends Controller
     /**
      * Lists all Supplier entities.
      *
-     * @Route("/", name="supplier_index")
+     * @Route("/", name="ziiweb_ecommerce_supplier_index")
      * @Method("GET")
      */
     public function indexAction()
@@ -37,7 +37,7 @@ class SupplierController extends Controller
     /**
      * Creates a new Supplier entity.
      *
-     * @Route("/new", name="supplier_new")
+     * @Route("/new", name="ziiweb_ecommerce_supplier_new")
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
@@ -66,7 +66,7 @@ class SupplierController extends Controller
     /**
      * Displays a form to edit an existing Supplier entity.
      *
-     * @Route("/{id}/edit", name="supplier_edit")
+     * @Route("/{id}/edit", name="ziiweb_ecommerce_supplier_edit")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Supplier $supplier)
@@ -94,7 +94,7 @@ class SupplierController extends Controller
     /**
      * Deletes a Supplier entity.
      *
-     * @Route("/delete/{id}", name="supplier_delete")
+     * @Route("/delete/{id}", name="ziiweb_ecommerce_supplier_delete")
      */
     public function deleteAction(Request $request, Supplier $supplier)
     {
