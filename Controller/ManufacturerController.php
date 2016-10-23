@@ -116,17 +116,14 @@ class ManufacturerController extends Controller
      */
     public function deleteAction(Request $request, Manufacturer $manufacturer)
     {
-        $form = $this->createDeleteForm($manufacturer);
-        $form->handleRequest($request);
-
         $em = $this->getDoctrine()->getManager();
         $em->remove($manufacturer);
         $em->flush();
 
-        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+        if ($request->headers->get('referer') == 'ziiweb_admin_default_list') {
             $url = $request->headers->get('referer');
         } else {
-            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'Manufacturer'));
+            $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'Manufacturer'));
         }
 
         return new RedirectResponse($url); 
