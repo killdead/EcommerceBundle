@@ -51,7 +51,7 @@ class SupplierController extends Controller
             $em->persist($supplier);
             $em->flush();
 
-            return $this->redirectToRoute('supplier_edit', array(
+            return $this->redirectToRoute('ziiweb_ecommerce_supplier_edit', array(
                 'id' => $supplier->getId(),
                 'edit_form' => $form->createView()
             ));
