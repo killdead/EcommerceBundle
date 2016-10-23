@@ -68,22 +68,6 @@ class CategoryProductController extends Controller
     }
 
     /**
-     * Finds and displays a CategoryProduct entity.
-     *
-     * @Route("/{id}", name="categoryproduct_show")
-     * @Method("GET")
-     */
-    public function showAction(CategoryProduct $categoryProduct)
-    {
-        $deleteForm = $this->createDeleteForm($categoryProduct);
-
-        return $this->render('categoryproduct/show.html.twig', array(
-            'categoryProduct' => $categoryProduct,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
      * Displays a form to edit an existing CategoryProduct entity.
      *
      * @Route("/{id}/edit", name="categoryproduct_edit")
@@ -91,8 +75,6 @@ class CategoryProductController extends Controller
      */
     public function editAction(Request $request, CategoryProduct $categoryProduct)
     {
-        $deleteForm = $this->createDeleteForm($categoryProduct);
-
         $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
         $categories = $repository->findAll();
 
@@ -113,7 +95,6 @@ class CategoryProductController extends Controller
         return $this->render('ZiiwebEcommerceBundle:CategoryProduct:edit.html.twig', array(
             'categoryProduct' => $categoryProduct,
             'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -124,9 +105,6 @@ class CategoryProductController extends Controller
      */
     public function deleteAction(Request $request, CategoryProduct $categoryProduct)
     {
-        $form = $this->createDeleteForm($categoryProduct);
-        $form->handleRequest($request);
-
         $em = $this->getDoctrine()->getManager();
         $em->remove($categoryProduct);
         $em->flush();
@@ -134,25 +112,10 @@ class CategoryProductController extends Controller
         if ($request->headers->get('referer') == 'ziiweb_admin_list') {
             $url = $request->headers->get('referer');
         } else {
-            $url = $this->generateUrl('ziiweb_admin_list', array('entity' => 'CategoryProduct'));
+            $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'CategoryProduct'));
         }
 
         return new RedirectResponse($url); 
     }
 
-    /**
-     * Creates a form to delete a CategoryProduct entity.
-     *
-     * @param CategoryProduct $categoryProduct The CategoryProduct entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(CategoryProduct $categoryProduct)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('categoryproduct_delete', array('id' => $categoryProduct->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
-    }
 }
