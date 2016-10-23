@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/generateFilter/{category_product}", name="generate-filter") 
+     * @Route("/generateFilter/{category_product}", name="ziiweb_ecommerce_default_generate_filter") 
      */
     public function generateFilterAction($category_product)
     {
@@ -355,7 +355,7 @@ die("jlfa");
     }
 
     /**
-     * @Route("/", name="index") 
+     * @Route("/", name="ziiweb_ecommerce_default_index") 
      */
     public function indexAction()
     {
