@@ -303,16 +303,6 @@ class DefaultController extends Controller
        $query = $qb->getQuery();
        $result = $query->getResult();
 
-       //$query->;
-       $arrayResult = $query->getArrayResult();
-       var_dump($arrayResult);
-die("jlfa");
-       
-       $serializer = $container->get('jms_serializer');
-       $serializer->serialize($data);
-
-       $serializedResult = JmsSerialize($result);
-
        $response = new JsonResponse();
 
        $renderedView = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
