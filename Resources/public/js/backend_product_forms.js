@@ -17,7 +17,7 @@ $(document).on('click', '.delete-product', function(event) {
 ///////////////////////////////////////////////////////////////
 
 //ADD PRODUCT VERSION IMAGE - ADD PRODUCT VERSION IMAGE 
-$('.add-image').on('click', function(event) {
+$(document).on('click', '.add-image', function(event) {
   event.preventDefault();
 
   var prototype = $(this).prev().data('prototype');
@@ -32,24 +32,26 @@ $(document).on('click', '.delete-image', function(event) {
   $(this).parent().parent().remove();
 });
 
-///////////////////////////////////////////////////////////////
+////////////////////// PRICES /////////////////////////////
 
 //DETECT CHANGES ON "PRICE"
 $(document).ready(function() {
-  $('.price').on('change key paste keyup', function() {
+  $(document).on('change key paste keyup', "[id^=product_productVersions][id$='price']", function() {
     var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
     var tax_rate = $(this).data('tax-rate'); 
     var price_plus_taxes =  price_with_dots * tax_rate; 
-    $('.price_plus_taxes').val(accounting.formatNumber(price_plus_taxes, 2, '', ',')); 
+    var index_collection = $(this).attr('id').match(/\d+/);
+    $('#product_productVersions_' + index_collection + '_price_plus_taxes').val(accounting.formatNumber(price_plus_taxes, 2, '', ',')); 
   }).trigger('change');
 });
 
 //DETECT CHANGES ON "PRICE PLUS TAXES"
-$('.price_plus_taxes').on('change key paste keyup', function() {
+$(document).on('change key paste keyup', "[id^=product_productVersions][id$='price_plus_taxes']", function() {
   var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
   var tax_rate = $(this).data('tax-rate'); 
   var price =  price_with_dots / tax_rate; 
-  $('.price').val(accounting.formatNumber(price, 2, '', ',')); 
+  var index_collection = $(this).attr('id').match(/\d+/);
+  $('#product_productVersions_' + index_collection + '_price').val(accounting.formatNumber(price, 2, '', ',')); 
 });
 
 ///////////////////////////////////////////////
