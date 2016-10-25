@@ -25,7 +25,6 @@ class ProductVersionController extends Controller
      */
     public function clarAction(ProductVersion $productVersion)
     {
-die("jlfa");
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('productversion_delete', array('id' => $productVersion->getId())))
             ->setMethod('DELETE')
@@ -111,8 +110,14 @@ die("jlfa");
         $em->remove($productVersion);
         $em->flush();
 
-        if ($request->headers->get('referer') == 'ziiweb_admin_list') {
+        //DELETE THE REFERER ROUTE TO...
+	$ref = str_replace("app_dev.php/", "", parse_url($request->headers->get('referer'),PHP_URL_PATH ));
+	$route = $this->container->get('router')->match($ref)['_route'];
+
+        //... DELETE FROM THE LIST ..
+        if ($route == 'ziiweb_admin_default_list') {
             $url = $request->headers->get('referer');
+        //.. OR DELETE FROM EDIT FORM 
         } else {
             $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'ProductVersion'));
         }
