@@ -102,8 +102,14 @@ class SupplierController extends Controller
 	$em->remove($supplier);
 	$em->flush();
 
-        if ($request->headers->get('referer') == 'ziiweb_admin_default_list') {
+        //DELETE THE REFERER ROUTE TO...
+	$ref = str_replace("app_dev.php/", "", parse_url($request->headers->get('referer'),PHP_URL_PATH ));
+	$route = $this->container->get('router')->match($ref)['_route'];
+
+        //... DELETE FROM THE LIST ..
+        if ($route == 'ziiweb_admin_default_list') {
             $url = $request->headers->get('referer');
+        //.. OR DELETE FROM EDIT FORM 
         } else {
             $url = $this->generateUrl('ziiweb_admin_default_list', array('entity' => 'Supplier'));
         }
