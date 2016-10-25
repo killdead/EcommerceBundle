@@ -99,6 +99,7 @@ class ProductVersion
 
     public function __construct() {
         $this->productVersionImages = new ArrayCollection();
+        $this->productVersionSizes = new ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
