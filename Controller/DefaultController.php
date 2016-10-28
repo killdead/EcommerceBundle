@@ -315,36 +315,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/autocomplete", name="autocomplete") 
-     */
-    public function autocompleteAction(Request $request)
-    {
-        $keyword = $request->query->get('term'); 
-
-	$encoders = array(new XmlEncoder(), new JsonEncoder());
-	$normalizers = array(new ObjectNormalizer());
-
-	$serializer = new Serializer($normalizers, $encoders);
-
-        //RETRIEVE THE PRODUCTS
-        $repository = $this->getDoctrine()->getManager()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
-        $qb = $repository->createQueryBuilder('pvs')
-            ->select("pv.id, pv.price AS price, CONCAT(m.name, ' - ', p.name, ' ', pv.color, ' ', pvs.size) AS label")
-            ->join('pvs.productVersion', 'pv')
-            ->join('pv.product', 'p')
-            ->join('p.manufacturer', 'm')
-            ->having('label LIKE :keyword')
-            ->setParameter('keyword', '%' . $keyword . '%');
-
-        $result = $qb->getQuery()->getResult();
-         
-        $json = json_encode($result);
-
-
-        return new Response($json);
-    }
-
-    /**
      * @Route("/", name="ziiweb_ecommerce_default_index") 
      */
     public function indexAction()
