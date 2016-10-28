@@ -3,6 +3,7 @@
 namespace Ziiweb\EcommerceBundle\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -229,5 +230,30 @@ class ProductController extends Controller
         }
 
         return new RedirectResponse($url); 
+    }
+
+    /**
+     * @Route("/product-autocomplete", name="ziiweb_ecommerce_product_autocomplete") 
+     */
+    public function autocompleteAction(Request $request)
+    {
+        $keyword = $request->query->get('term'); 
+
+        //RETRIEVE THE PRODUCTS
+        $repository = $this->getDoctrine()->getManager()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+        $qb = $repository->createQueryBuilder('pvs')
+            ->select("pv.id, pv.price AS price, CONCAT(m.name, ' - ', p.name, ' ', pv.color, ' ', pvs.size) AS label")
+            ->join('pvs.productVersion', 'pv')
+            ->join('pv.product', 'p')
+            ->join('p.manufacturer', 'm')
+            ->having('label LIKE :keyword')
+            ->setParameter('keyword', '%' . $keyword . '%');
+
+        $result = $qb->getQuery()->getResult();
+         
+        $json = json_encode($result);
+
+
+        return new Response($json);
     }
 }
