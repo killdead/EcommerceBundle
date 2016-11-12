@@ -24,7 +24,7 @@ class Manufacturer
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=255, name="name")
+     * @ORM\Column(type="string", length=255, name="name", nullable=true)
      */
     protected $name;
   

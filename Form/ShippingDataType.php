@@ -5,6 +5,7 @@ namespace Ziiweb\EcommerceBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class ShippingDataType extends AbstractType
 {
@@ -19,8 +20,9 @@ class ShippingDataType extends AbstractType
             ->add('address', null, array('label' => 'Dirección *', 'required' => true))
             ->add('town', null, array('label' => 'Población *', 'required' => true))
             ->add('province', null, array('label' => 'Provincia *', 'required' => true))
-            ->add('postal_code', null, array('label' => 'Código postal *', 'required' => true))
+            ->add('postal_code', TextType::class, array('label' => 'Código postal *', 'required' => true))
             ->add('country', null, array('label' => 'País *', 'required' => true))
+            ->add('phone1', null, array('label' => 'Teléfono *', 'required' => true))
         ;
     }
     

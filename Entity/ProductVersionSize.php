@@ -33,6 +33,11 @@ class ProductVersionSize
     /**
      * @ORM\Column(type="string", nullable=true)
      */
+    protected $code;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected $size;
 
     /**
@@ -48,6 +53,30 @@ class ProductVersionSize
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return ProductVersionSize
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 
     /**

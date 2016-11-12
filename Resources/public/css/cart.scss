@@ -16,7 +16,8 @@
     }
   }
 }
-.products-list {
+//FOR CSS RELATED TO "PREENVIO RESUMEN", GO BELOW ("table.products-list")
+ul.products-list {
   max-height: 250px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -24,8 +25,9 @@
   list-style: none;
   li {
     position: relative;
-    padding: 15px 10px;
+    padding: 6px 10px;
     border-bottom: 1px solid #ddd;
+    overflow: hidden;
     &:last-child {
       border-bottom: none;
     }
@@ -52,6 +54,13 @@
 	text-align: right;
       }
     }
+  }
+}
+table.products-list {
+  margin-bottom: 0 !important;
+  .qty {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 }
 a.enviar-pedido {

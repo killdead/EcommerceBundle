@@ -1,3 +1,0 @@
-ziiweb_ecommerce_homepage:
-    path:     /
-    defaults: { _controller: ZiiwebEcommerceBundle:Default:index }

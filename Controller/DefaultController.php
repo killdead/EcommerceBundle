@@ -17,6 +17,38 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 class DefaultController extends Controller
 {
     /**
+     * @Route("/breadcrumbs", name="ziiweb_ecommerce_default_breadcrumbs") 
+     */
+    public function breadcrumbsAction($categoryProduct)
+    {
+        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('slug' => $categoryProduct));
+
+        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+
+        $index = 0;
+        $parentCategories[$index]['slug'] = $categoryProduct->getSlug();
+        $parentCategories[$index]['name'] = $categoryProduct->getName();
+
+        $categoryAux = $categoryProduct;
+
+        while ($categoryAux->getParent() != NULL){
+          $index++;
+
+          $categoryAux = $categoryProduct->getParent();
+
+          $aux = array();
+          $aux['slug'] = $categoryAux->getSlug();
+          $aux['name'] = $categoryAux->getName();
+ 
+          array_unshift($parentCategories, $aux);
+        }; 
+
+        return $this->render('ZiiwebEcommerceBundle:Default:breadcrumbs.html.twig', array(
+            'parentCategories' => $parentCategories,
+        ));
+    } 
+
+    /**
      * @Route("/generateFilter/{category_product}", name="ziiweb_ecommerce_default_generate_filter") 
      */
     public function generateFilterAction($category_product)
@@ -238,6 +270,12 @@ class DefaultController extends Controller
              ->where('u.id = :u_id')
              ->setParameter('u_id', $this->getUser()->getId())
           ;
+        //FEATURED - FEATURED - FEATURED - FEATURED - FEATURED - 
+        } else if ($categoryProduct == 'ziiweb_ecommerce_default_featured_products') {
+	  $qb = $repository->createQueryBuilder('pv')
+             ->where('pv.featured = :pv_featured')
+             ->setParameter('pv_featured', 1)
+          ;
         } else {
 	    //retrieve the columns for those where there is a filter value 
 	    foreach ($filter['filter'] as $key => $filterValue) {
@@ -328,11 +366,14 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/navbar", name="navbar") 
+     * @Route("/navbar/", name="navbar") 
      */
-    public function navbarAction()
+    public function navbarAction(Request $request)
     {
 	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+
+        //$currentCategoryProduct = $request-get('current_category_product');
+
 	$navbar = $repo->childrenHierarchy();
 
         //retrieve the categories that has products, are enabled and with stock > 0.
@@ -373,11 +414,15 @@ class DefaultController extends Controller
         //construct the TREE using the categories that has products, are enabled and with stock > 0 and their ANCESTORS
 	$tree = $repo->buildTreeArray($result);
 
-        return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array('navbar' => $tree));
+        return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array(
+            'navbar' => $tree,
+            'current_route' => $request->get('current_route'),
+            'current_category_product' => $request->get('current_category_product')
+        ));
     }
 
     /**
-     * @Route("/categoria/{categoryProduct}", name="product_list") 
+     * @Route("/categoria/{categoryProduct}", name="ziiweb_ecommerce_default_product_list") 
      */
     public function listProductsAction($categoryProduct) {
 
@@ -411,11 +456,12 @@ class DefaultController extends Controller
 
         return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
             'product_versions' => $productVersions,
+            'current_category_product' => $categoryProduct,
         ));
     }    
 
     /**
-     * @Route("/producto/{product_slug}/{product_version_slug}", name="frontend_product_show", defaults={"product_version_slug" = null}) 
+     * @Route("/producto/{product_slug}/{product_version_slug}", name="ziiweb_ecommerce_default_product_show", defaults={"product_version_slug" = null}) 
      */
     public function productShowAction($product_slug, $product_version_slug) {
 
@@ -496,7 +542,7 @@ class DefaultController extends Controller
 
 
     /**
-     * @Route("/lista-deseos", name="wishlist") 
+     * @Route("/lista-deseos", name="ziiweb_ecommerce_default_wishlist") 
      */
     public function wishlistAction(Request $request)
     {
@@ -504,16 +550,11 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/featured", name="featured") 
+     * @Route("/novedades", name="ziiweb_ecommerce_default_featured_products") 
      */
     public function featuredAction(Request $request)
     {
-       $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
-       $productVersions = $repo->findBy(array('featured' => true, 'enabled' => true));
-
-       return $this->render('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array(
-           'product_versions' => $productVersions,
-       ));
+       return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig');
     }
 
     /**
@@ -526,6 +567,38 @@ class DefaultController extends Controller
        return $this->render('ZiiwebEcommerceBundle:Default:product_list.html.twig', array(
            'keyword' => $keyword
        ));
+    }
+
+    /**
+     * @Route("/aviso-legal", name="ziiweb_ecommerce_default_legal_advice") 
+     */
+    public function legalAdvice(Request $request) 
+    {
+       return $this->render('ZiiwebEcommerceBundle:Default:legal_advice.html.twig', array());
+    }
+
+    /**
+     * @Route("/privacy_policiy", name="ziiweb_ecommerce_default_privacy_policy") 
+     */
+    public function privacyPolicy(Request $request) 
+    {
+       return $this->render('ZiiwebEcommerceBundle:Default:privacy_policy.html.twig', array());
+    }
+
+    /**
+     * @Route("/cookies_policy", name="ziiweb_ecommerce_default_cookies_policy") 
+     */
+    public function cookiesPolicy(Request $request) 
+    {
+       return $this->render('ZiiwebEcommerceBundle:Default:cookies_policy.html.twig', array());
+    }
+
+    /**
+     * @Route("/return_policy", name="ziiweb_ecommerce_default_return_policy") 
+     */
+    public function returnPolicy(Request $request) 
+    {
+       return $this->render('ZiiwebEcommerceBundle:Default:return_policy.html.twig', array());
     }
 }
 

@@ -10,35 +10,42 @@
   .cart .list-group-item:first-child {
     padding-top: 15px; }
 
-.products-list {
+ul.products-list {
   max-height: 250px;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 !important;
   list-style: none; }
-  .products-list li {
+  ul.products-list li {
     position: relative;
-    padding: 15px 10px;
-    border-bottom: 1px solid #ddd; }
-    .products-list li:last-child {
+    padding: 6px 10px;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden; }
+    ul.products-list li:last-child {
       border-bottom: none; }
-    .products-list li img {
+    ul.products-list li img {
       margin-right: 10px;
       height: 100%; }
-    .products-list li .eliminar {
+    ul.products-list li .eliminar {
       cursor: pointer;
       position: absolute;
       top: 0;
       right: 4px; }
-      .products-list li .eliminar:hover {
+      ul.products-list li .eliminar:hover {
         color: #595959; }
-    .products-list li .qty-container {
+    ul.products-list li .qty-container {
       float: right; }
-      .products-list li .qty-container i {
+      ul.products-list li .qty-container i {
         cursor: pointer; }
-      .products-list li .qty-container input {
+      ul.products-list li .qty-container input {
         width: 35px;
         text-align: right; }
+
+table.products-list {
+  margin-bottom: 0 !important; }
+  table.products-list .qty {
+    padding-left: 0 !important;
+    padding-right: 0 !important; }
 
 a.enviar-pedido {
   text-decoration: none !important; }

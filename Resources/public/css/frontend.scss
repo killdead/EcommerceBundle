@@ -2,26 +2,54 @@ html {
   min-height: 100% !important;
   position: relative !important;
   body {
+    color: #7F6860;
     header {
-      border-bottom: 1px solid #ccc;
+      position: relative;
+      .vertical-menu-left {
+	width: 300px;
+	//SHOW VERTICAL MENU INSTEAD OF HORIZONTAL - SHOW VERTICAL MENU INSTEAD OF HORIZONTAL - 
+	@media screen and (max-width: 768px) {
+	  position: absolute;
+	  top: 0;
+	  left: -300px;
+	  z-index: 100;
+	  transition: left 500ms;
+	  border: 1px solid #ccc;
+	  background: #fff;
+	}
+	.left-menu-close {
+	  position: absolute;
+	  right: 0; 
+	  top: 0;
+	  z-index: 2000;    
+	}
+	//HIDE VERTICAL MENU - HIDE VERTICAL MENU - HIDE VERTICAL MENU - 
+	&.hi {
+	  @media screen and (max-width: 768px) {
+	    left: 0px;
+	  }
+	}
+      }
       .navbar-first {
-        .search { 
-          display: inline;
-          input {
-            width: 70px;
-          }
-        }
         color: #7F6860;
         background-color: #F2D2E1 !important;
 	a {
 	  color: #7F6860 !important;
 	}
+        #_submit {
+          background-color: #7F6860 !important;
+          border: 0;
+          &:hover {
+	    background: lighten(#7F6860, 10%) !important;
+          }
+        }
 	.cart-item {
 	  cursor: pointer; 
-	    .dropdown-menu {
+          position: relative;
+	  .dropdown-menu {
 	       width: 270px !important;
 	    }
-	  &:hover {
+	    &:hover {
 	    .dropdown-menu {
 	       display: block;
 	    }
@@ -30,36 +58,206 @@ html {
             width: 458px;
             ul { list-style: none }
           }
+          .checkout {
+            position: absolute;
+            right: 5px;
+            bottom: -3px;
+            font-size: 15px;
+          }
 	}
       }
       .navbar-second {
 	background: #fff;
-	.root-ul > li > a{
-	  height: 70px;
-	  line-height: 70px; 
-          color: #7F6860 !important;
+        border-bottom: 1px solid #DACCC7;
+	@media screen and (max-width: 768px) {
+          border-top: 3px solid #F2D2E1;
 	}
-	.dropdown-menu {
-	  //to show the dropdown menus correctly in small devices
-	  @media screen and (max-width: 990px) {
-	    position: relative;
-	    float: none;
-	  } 
-          border-radius: 0;
-          border: 1px solid #ccc;
-          padding-top: 10px;
-          li {
-            line-height: 35px;
-            a {
-              color: #7F6860 !important;
-            }
-          }
-	}  
+        .container { 
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+	  .navbar {
+	    margin-left: 0 !important;
+	    margin-right: 0 !important;
+	    padding-left: 0 !important;
+	    padding-right: 0 !important;
+	    .nav-item {
+	      margin-left: 8px !important; 
+	      font-size: 15px;
+	      a {
+		&:hover {
+		  color: #000 !important;
+		}
+		&.current-route {
+		  color: #000 !important; 
+		}
+	      }
+	    }
+	  }
+	  .logo {
+	    width: 122px;
+	    @media screen and (max-width: 768px) {
+	      width: 110px;
+	    } 
+	    @media screen and (max-width: 768px) {
+	      width: 110px;
+	    } 
+	    @media screen and (max-width: 544px) {
+	      width: 80px;
+	    } 
+	  }
+	  .root-ul > li > a{
+	    height: 70px;
+	    line-height: 70px; 
+	    color: #7F6860 !important;
+	  }
+	  .dropdown-menu {
+	    //to show the dropdown menus correctly in small devices
+	    @media screen and (max-width: 990px) {
+	      position: relative;
+	      float: none;
+	    } 
+	    border-radius: 0;
+	    border: 1px solid #ccc;
+	    padding-top: 10px;
+	    li {
+	      line-height: 35px;
+	      a {
+		color: #7F6860 !important;
+	      }
+	    }
+	  }  
+	  .search {
+	    padding-top: 27px;
+	    width: 100px;
+	  }
+        }
       }
     }
     /////////////////////////
     main {
-      margin-top: 145px;
+      margin-top: 133px;
+      @media screen and (max-width: 992px) {
+	margin-top: 133px; 
+      }
+      @media screen and (max-width: 768px) {
+	margin-top: 86px; 
+      }
+      @media screen and (max-width: 544px) {
+	margin-top: 69px; 
+      }
+      .carousel-item{
+        height: 440px !important;
+	@media screen and (max-width: 992px) {
+	  height: 420px; 
+	}
+	@media screen and (max-width: 768px) {
+	  height: 260px !important; 
+	}
+	@media screen and (max-width: 544px) {
+	  height: 150px !important; 
+	}
+        img {
+	  width: 100% !important;
+        }
+      }
+      .free-shipping {
+        background: #F2D2E1;
+        padding: 15px;
+        .truck-container {
+          border-right: 1px solid #705947; 
+	  @media screen and (max-width: 992px) {
+            border-right: 0; 
+          }
+	  @media screen and (max-width: 544px) {
+            padding-right: 0 !important; 
+          }
+        }
+        .big-text {
+          padding: 10px 20px;
+          background: #705947;
+          color: #F2D2E1;
+          font-size: 37px;
+          display: inline-block;
+          margin-left: 4.1% !important;
+	  @media screen and (max-width: 1200px) {
+            font-size: 27px;
+	  }
+	  @media screen and (max-width: 992px) {
+            font-size: 24px;
+	  }
+	  @media screen and (max-width: 544px) {
+            font-size: 20px;
+            margin-top: 13px;
+	  }
+	  @media screen and (max-width: 450px) {
+            font-size: 17px;
+	  }
+        }
+        .devoluciones-container-first {
+	    border-left: 1px solid #705947;
+	    @media screen and (max-width: 992px) {
+	      border-left: 0;
+	    }
+	    .devoluciones {
+              font-size: 21px;
+	      @media screen and (max-width: 992px) {
+	        width: 30%;
+		float: left;
+	      }
+	    }
+	    .quince-dias {
+	      font-size: 15px;
+	      color: #705947;
+	      background: #F2D2E1;
+	      width: 75%;
+	      float: left;
+	      @media screen and (max-width: 992px) {
+		width: auto;
+	      }
+	    }
+	    .flecha {
+	      width: 25%;
+	      float: left;
+	      @media screen and (max-width: 992px) {
+		width: 35px;
+	      }
+	    }
+        }
+        .devoluciones-container-second {
+           span {
+             line-height: 60px;
+             height: 60px;
+	     @media screen and (max-width: 992px) {
+		font-size: 20px;
+	     }
+	     @media screen and (max-width: 544px) {
+		font-size: 15px;
+	     }
+	     @media screen and (max-width: 400px) {
+		font-size: 13px;
+	     }
+	     @media screen and (max-width: 350px) {
+		font-size: 12px;
+	     }
+           }
+	   img {
+	     width: 30px; 
+	   }
+        }
+      }
+      @media (min-width: 768px){
+	.carousel-inner{
+	  width: 100%;
+	  margin: 0;
+	}
+      }
+      .breadcrumbs-container {
+        padding: 10px 0;
+        background: #F2D2E1;
+        a {
+          color: #7F6860;
+        }
+      }
       //height: 200px;
       .filter-button {
         cursor: pointer;
@@ -102,8 +300,134 @@ html {
 	    padding-left: 6px !important;
 	    padding-right: 6px !important;
 	  }
+          .product-container {
+            padding: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #daccc7;
+	    .info-product {
+	      position: relative;
+	      .wishlist {
+		position: absolute;
+		top: 6px;
+		right: 6px;
+                color: #7F6860;
+                .wished {
+                  color: #EBB0CC !important;
+                }
+	      }
+	    }
+          }
         }
       }
+    }
+    .product-container {
+      .product-card {
+        border: 1px solid #daccc7;
+        padding: 5px;
+      }
+      .product-data {
+        .social {
+          padding-top: 20px;
+          height: 35px;
+	  .fb-share-button {
+	    float: left;
+	    margin-top: -4px;
+	    margin-right: 10px; 
+	  }
+        }
+	a {
+	  color: #7F6860 !important;
+	}
+        .quantity {
+          .sign {
+            color: #fff;
+            padding: 10px 17px;
+            background-color: #7F6860;
+            font-size: 15px;
+            cursor: pointer;
+	    &:hover {
+	      background: lighten(#7F6860, 10%)
+	    }
+            &.minus {
+	      -webkit-border-top-left-radius: 0.25rem;
+	      -webkit-border-bottom-left-radius: 0.25rem;
+	      -moz-border-radius-topleft: 0.25rem;
+	      -moz-border-radius-bottomleft: 0.25rem;
+	      border-top-left-radius: 0.25rem;
+	      border-bottom-left-radius: 0.25rem;
+              margin-left: 9px;
+            }
+            &.plus {
+	      -webkit-border-top-right-radius: 0.25rem;
+	      -webkit-border-bottom-right-radius: 0.25rem;
+	      -moz-border-radius-topright: 0.25rem;
+	      -moz-border-radius-bottomright: 0.25rem;
+	      border-top-right-radius: 0.25rem;
+	      border-bottom-right-radius: 0.25rem;
+            }
+          }
+          input {
+            width: 50px;
+            display: inline;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            border-left: 0;
+            border-right: 0;
+            margin: 0 !important;
+            height: 42px;
+          }
+        }
+	button {
+	  background: #7F6860;
+	  border: 0;
+	  &:hover {
+	    background: lighten(#7F6860, 10%)
+	  }
+	}
+	.wished {
+	  color: #EBB0CC !important;
+	}
+	.secondary-description {
+	  border-top: 1px solid #7F6860;
+	}
+      }
+    }
+    .physical-store-container {
+      img {
+        border: 1px solid #daccc7;
+        padding: 4px;
+      }
+    }
+    //preeenvio resumen
+    .arrow-container {
+      p {
+        padding: 0 !important;
+	.btn {
+	  background-color: #7F6860 !important;
+          color: #fff !important;
+	  &:hover {
+	    background: lighten(#7F6860, 10%) !important;
+	  }
+	}
+      }
+    }
+    .registration-login-container {
+	.btn {
+	  background-color: #7F6860 !important;
+          color: #fff !important;
+	  &:hover {
+	    background: lighten(#7F6860, 10%) !important;
+	  }
+	}
+    }
+    .contact-container {
+	button {
+	  background-color: #7F6860 !important;
+          color: #fff !important;
+	  &:hover {
+	    background: lighten(#7F6860, 10%) !important;
+	  }
+	}
     }
     //////////////////////////
     footer {
@@ -112,6 +436,10 @@ html {
       position: absolute !important; 
       bottom: 0 !important;
       background: #F2D2E1;
+      .facebook-icon {
+        color: #3b5998;
+        vertical-align: middle;
+      }
       .condiciones {
         font-size: 12px;
       }

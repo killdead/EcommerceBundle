@@ -9,10 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Project\BackendBundle\Entity\Pedido;
-use Project\BackendBundle\Form\PedidoType;
-use Project\BackendBundle\Entity\Subitem;
-use Project\BackendBundle\Entity\PedidoSubitem;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -20,6 +16,8 @@ use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use DefaultBundle\Form\RegistrationType;
 use Ziiweb\EcommerceBundle\Form\ShippingDataType;
 use Sermepa\Tpv\Tpv;
+use Ziiweb\EcommerceBundle\Entity\Purchase;
+use Ziiweb\EcommerceBundle\Entity\ProductVersionSizePurchase;
 
 class OrderController extends Controller
 {
@@ -596,6 +594,11 @@ var_dump($response);
     } 
 
 
+    /**
+     *  
+     *
+     * @Route("/pedido-realizar", name="ziiweb_ecommerce_order_pedido_realizar") 
+     */
     public function pedidoRealizarAction(Request $request)
     {  
       $em = $this->getDoctrine()->getManager();
@@ -603,69 +606,89 @@ var_dump($response);
       $session = $this->get('session'); 
       $pedido = $session->get('pedido'); 
 
-      $order = new Pedido();
-      $order->setSubtotal($pedido['subtotal']);
-      $order->setIva($pedido['iva']);
-      $order->setTasaIva($pedido['tasa_iva']);
-      $order->setRe($pedido['re']);
-      $order->setTasaRe($pedido['tasa_re']);
-      $order->setContrareembolso($pedido['contrareembolso']);
-      $order->setTotal($pedido['total']);
+      //SET DATA TO PURCHASE OBJECT - SET DATA TO PURCHASE OBJECT -
+      //SET DATA TO PURCHASE OBJECT - SET DATA TO PURCHASE OBJECT -
+      //SET DATA TO PURCHASE OBJECT - SET DATA TO PURCHASE OBJECT -
+      //SET DATA TO PURCHASE OBJECT - SET DATA TO PURCHASE OBJECT -
+      $purchase = new Purchase();
+      if ($user = $this->getUser()) {
+          $purchase->setUser($user);
+      }
 
-      $repositorySubitemColor = $this->getDoctrine()->getRepository('ProjectBackendBundle:SubitemColor');
+      //DATE COLLECTED IN: 
+      //1. THE REGISTER 
+      //2. OR IN THE SHIPPING DATA FORM
+      $purchase->setName($pedido['name']);
+      $purchase->setAddress($pedido['address']);
+      $purchase->setTown($pedido['town']);
+      $purchase->setProvince($pedido['province']);
+      $purchase->setPostalCode($pedido['postal_code']);
+      //$purchase->setPhone1($pedido['phone']);
 
 
+      $purchase->setSubtotal($pedido['subtotal']);
+      $purchase->setIva($pedido['iva']);
+      $purchase->setTasaIva($pedido['tasa_iva']);
+      //$order->setRe($pedido['re']);
+      //$order->setTasaRe($pedido['tasa_re']);
+      $purchase->setContrareembolso($pedido['contrareembolso']);
+      $purchase->setTotal($pedido['total']);
+
+
+
+      $repositoryProductVersionSize = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersionSize');
+
+
+      //STRING FOR TABLE (RESUME PURCHASE) -  STRING FOR TABLE (RESUME PURCHASE) - 
+      //STRING FOR TABLE (RESUME PURCHASE) -  STRING FOR TABLE (RESUME PURCHASE) - 
+      //STRING FOR TABLE (RESUME PURCHASE) -  STRING FOR TABLE (RESUME PURCHASE) - 
       $stringPedidos = '<table border="1"><tr><th>CÓDIGO PRODUCTO</th><th>CANTIDAD</th><th>MARCA</th><th>NOMBRE PRODUCTO</th><th>PRECIO UNIDAD (sin IVA)</th><th>PRECIO TOTAL (sin IVA)</th></tr>';
 
       foreach($pedido['subitems'] as $subitem)
       {
-	//$color = $repositoryColor->find($subitem['color_id']);
+	  $producto = $repositoryProductVersionSize->find($subitem['id']);
 
-	$producto = $repositorySubitemColor->find($subitem['id']);
+	  $productVersionSizePurchase = new ProductVersionSizePurchase();
 
-	$pedidoSubitem = new PedidoSubitem();
+	  $productVersionSizePurchase->setPurchase($purchase);
+	  $productVersionSizePurchase->setProductVersionSize($producto);
+	  $productVersionSizePurchase->setNumber($subitem['qty']);
+	  $productVersionSizePurchase->setPrecioTotalSubitem($subitem['precio_total_subitem']);
 
-	$pedidoSubitem->setPedido($order);
-	$pedidoSubitem->setSubitemColor($producto);
-	$pedidoSubitem->setNumber($subitem['qty']);
-	$pedidoSubitem->setPrecioTotalSubitem($subitem['precio_total_subitem']);
+	  $purchase->addProductVersionSizePurchase($productVersionSizePurchase);
 
-	$order->addPedidoSubitem($pedidoSubitem);
+	  $colorName = $producto->getProductVersion()->getColor(); 
 
-	if ($producto->getColor() != null) {
-	  $colorName = $producto->getColor()->getName();
-	} else {
-	  $colorName =  null;
-	}
-
-	$stringPedidos = $stringPedidos . 
-	  '<tr><td>' . $producto->getCode() . '</td>' . //codigo producto
-	  '<td align="right">' . $subitem['qty'] . '</td>' . //cantidad
-	  '<td>' . $producto->getSubitem()->getBrand()->getNombre() . '</td>' . //marca
-	  '<td>' . $producto->getSubitem()->getNombre() . ' ' . $colorName . '</td>' . //nombre
-	  '<td align="right">' . number_format($subitem['precio'], 2, ',', '') . ' €' . '</td>' .  //precio unidad (sin iva)
-	  '<td align="right">' . number_format(($subitem['precio_total_subitem']), 2, ',', '') . ' €</td></tr><br>'; //precio x cantidad (sin iva)
+	  $stringPedidos = $stringPedidos . 
+	    '<tr><td>' . $producto->getCode() . '</td>' . //codigo producto
+	    '<td align="right">' . $subitem['qty'] . '</td>' . //cantidad
+	    '<td>' . $producto->getProductVersion()->getProduct()->getManufacturer()->getName() . '</td>' . //marca
+	    '<td>' . $producto->getProductVersion()->getProduct()->getName() . ' ' . $colorName . '</td>' . //nombre
+	    '<td align="right">' . number_format($subitem['precio'], 2, ',', '') . ' €' . '</td>' .  //precio unidad (sin iva)
+	    '<td align="right">' . number_format(($subitem['precio_total_subitem']), 2, ',', '') . ' €</td></tr><br>'; //precio x cantidad (sin iva)
       }
 
       $stringPedidos = $stringPedidos . '</table>';
 
-      $repositoryMetodoEnvio = $this->getDoctrine()->getRepository('ProjectBackendBundle:MetodoEnvio');
+      $repositoryMetodoEnvio = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ShippingMethod');
       $metodoEnvio = $repositoryMetodoEnvio->find($pedido['metodo_envio']);
-      $order->setMetodoEnvio($metodoEnvio);
+      $purchase->setMetodoEnvio($metodoEnvio);
 
-      $repositoryMetodoPago = $this->getDoctrine()->getRepository('ProjectBackendBundle:MetodoPago');
+      $repositoryMetodoPago = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:PaymentMethod');
       $metodoPago = $repositoryMetodoPago->find($pedido['metodo_pago']);
-      $order->setMetodoPago($metodoPago);
+      $purchase->setMetodoPago($metodoPago);
 
 
       $stringPedidos = $stringPedidos .
-	'SUBTOTAL: ' . number_format((float)$order->getSubtotal() - $order->getMetodoEnvio()->getPrecio(), 2, ',', '') . ' €' . '<br>' .
-	'GASTOS DE ENVÍO: ' . number_format($order->getMetodoEnvio()->getPrecio(), 2, ',', '') . '€' . '<br>' .
+	'SUBTOTAL: ' . number_format((float)$purchase->getSubtotal() - $purchase->getMetodoEnvio()->getPrecio(), 2, ',', '') . ' €' . '<br>' .
+	'GASTOS DE ENVÍO: ' . number_format($purchase->getMetodoEnvio()->getPrecio(), 2, ',', '') . '€' . '<br>' .
 	'IVA General (' . (($pedido['tasa_iva'] - 1) * 100) . '%): ' . number_format($pedido['iva'] , 2, ',', '') . ' €' . '<br>';
 
+/*
       if ($pedido['re'] != 0) {
 	$stringPedidos = $stringPedidos . 'R.E. General (' . number_format((($pedido['tasa_re'] - 1) * 100), 1, ',', '') . '%): ' . number_format($pedido['re'] , 2, ',', '') . ' €' . '<br>';
       }
+*/
 
       if ($pedido['contrareembolso'] != 0) {
 	$stringPedidos = $stringPedidos . 'Contrareembolso: ' . number_format($pedido['contrareembolso'] , 2, ',', '') . ' €' . '<br>';
@@ -673,24 +696,9 @@ var_dump($response);
 
       $stringPedidos = $stringPedidos . 
 
-      'TOTAL (IVA inc): ' . number_format((float)$order->getTotal(), 2, ',', '') . ' €' . '<br>' . '<br>'; 
+      'TOTAL (IVA inc): ' . number_format((float)$purchase->getTotal(), 2, ',', '') . ' €' . '<br>' . '<br>'; 
 
-
-      $repositoryUser = $this->getDoctrine()->getRepository('ProjectBackendBundle:User');
-      $user = $repositoryUser->find($pedido['user']);
-      $order->setUser($user);
-
-
-      $order->setCompany($request->query->get('company'));
-      $order->setAddress($request->query->get('address'));
-      $order->setTown($request->query->get('town'));
-      $order->setPostalCode($request->query->get('postal_code'));
-      $order->setProvince($request->query->get('province'));
-      $order->setShopName($request->query->get('shop_name'));
-      $order->setPhone($request->query->get('phone'));
-      $order->setTimetable($request->query->get('timetable'));
-
-      $em->persist($order);
+      $em->persist($purchase);
       $em->flush();
 
       $message = \Swift_Message::newInstance()
@@ -700,7 +708,7 @@ var_dump($response);
 	->setTo(array(
 	  //'tirengarfio@gmail.com',
 	  //'pedidos@procomunicaciones.es'
-	  $user->getEmail()
+	  'info@ziiweb.com'
 	))
 	->setBody(
 	  'Estimado Cliente,<br><br>' . 
@@ -719,6 +727,7 @@ var_dump($response);
 
       $this->get('mailer')->send($message);
 
+/*
       $reseller = $user->getReseller() ? 'Sí' : 'No';
       $regimenIva = $user->getRegimenIva();
 
@@ -729,44 +738,56 @@ var_dump($response);
       } else {
 	$regimenIvaText = 'Recargo de equivalencia';
       }
+*/
 
+      //CHECK THE NEW ADDRESS (SHIPPING DATA FORM) IS DIFFERENT FROM THE ORIGINAL
       $nuevaDireccion = '';
-      if (
-	  $user->getCompany() != trim($order->getCompany()) || 
-	  $user->getShopName() != trim($order->getShopName()) || 
-	  $user->getAddress() != trim($order->getAddress()) || 
-	  $user->getTown() != trim($order->getTown()) || 
-	  $user->getPostalCode() != trim($order->getPostalCode()) || 
-	  $user->getProvince() != trim($order->getProvince()) || 
-	  $user->getPhone1() != trim($order->getPhone()) || 
-	  $user->getTimetable() != trim($order->getTimetable())
-      ) {
-      $nuevaDireccion = 
-	  '<strong><span style="color: #D51B1B">IMPORTANTE: el cliente solicita la entrega del pedido en una dirección diferente a la dirección de facturación, prefiere que se le contacte en otro número de teléfono o en otro horario diferente al de su información de registro:</span></strong>' . '<br><br>' . 
-	  'Empresa: ' . $order->getCompany() . '<br>'.
-	  'Nombre comercial (tienda/local): ' . $order->getShopName() . '<br>' .
-	  'Dirección:' . $order->getAddress() . '<br>' .
-	  'Localidad:' . $order->getTown() . '<br>' .
-	  'Código postal: ' . $order->getPostalCode() . '<br>' .
-	  'Provincia: ' . $order->getProvince() . '<br>' .
-	  'Teléfono: ' . $order->getPhone() . '<br>' .
-	  'Horario: ' . $order->getTimetable() . '<br><br>'; 
+      if ($this->getUser()) {
+	if (
+	    //$user->getCompany() != trim($purchase->getCompany()) || 
+	    //$user->getShopName() != trim($purchase->getShopName()) || 
+	    $user->getAddress() != trim($purchase->getAddress()) || 
+	    $user->getTown() != trim($purchase->getTown()) || 
+	    $user->getPostalCode() != trim($purchase->getPostalCode()) || 
+	    $user->getProvince() != trim($purchase->getProvince()) //|| 
+	    //$user->getPhone1() != trim($purchase->getPhone()) || 
+	    //$user->getTimetable() != trim($purchase->getTimetable()
+	) {
+	$nuevaDireccion = 
+	    '<strong><span style="color: #D51B1B">IMPORTANTE: el cliente solicita la entrega del pedido en una dirección diferente a la dirección de facturación, prefiere que se le contacte en otro número de teléfono o en otro horario diferente al de su información de registro:</span></strong>' . '<br><br>' . 
+	    'Empresa: ' . $purchase->getCompany() . '<br>'.
+	    'Nombre comercial (tienda/local): ' . $purchase->getShopName() . '<br>' .
+	    'Dirección:' . $purchase->getAddress() . '<br>' .
+	    'Localidad:' . $purchase->getTown() . '<br>' .
+	    'Código postal: ' . $purchase->getPostalCode() . '<br>' .
+	    'Provincia: ' . $purchase->getProvince() . '<br>' .
+	    'Teléfono: ' . $purchase->getPhone() . '<br>' .
+	    'Horario: ' . $purchase->getTimetable() . '<br><br>'; 
+	}
+
+      }
+
+      if ($this->getUser()) {
+	  $email = $this->getUser()->getEmail();
+      } else {
+	  $email = $pedido['email'];
       }
 
       $emailBody = 
-	  'Código cliente: ' . $user->getClientCode() . '<br>' . 
-	  'Empresa: ' . $user->getCompany() . '<br>' . 
-	  'Nombre comercial (tienda/local): ' . $user->getShopName() . '<br>' . 
-	  'NIF/CIF: ' . $user->getCif() . '<br>' . 
-	  'Dirección: ' . $user->getAddress() . '<br>' .
-	  'Código postal: ' . $user->getPostalCode() . '<br>' .
-	  'Provincia: ' . $user->getProvince() . '<br>' . 
-	  'Email: ' . $user->getEmail() . '<br>' . 
-	  'Localidad: ' . $user->getTown() . '<br>' .
-	  'Teléfono 1: ' . $user->getPhone1() . '<br>' .
-	  'Teléfono 2: ' . $user->getPhone2() . '<br>' . 
-	  'Régimen IVA: ' . $regimenIvaText . '<br>' .
-	  '¿Tiene la condición de revendedor?: ' . $reseller . '<br><br>' .
+	  //'Código cliente: ' . $user->getClientCode() . '<br>' . 
+	  //'Empresa: ' . $user->getCompany() . '<br>' . 
+	  //'Nombre comercial (tienda/local): ' . $user->getShopName() . '<br>' . 
+	  //'NIF/CIF: ' . $user->getCif() . '<br>' . 
+	  'Dirección: ' . $pedido['address'] . '<br>' .
+	  'Código postal: ' . $pedido['postal_code'] . '<br>' .
+	  'Provincia: ' . $pedido['province'] . '<br>' . 
+	  'Email: ' . $email . '<br>' . 
+	  'Localidad: ' . $pedido['town'] . '<br>' .
+	  'Tfno: ' . $pedido['phone'] . '<br>' .
+	  //'Teléfono 1: ' . $user->getPhone1() . '<br>' .
+	  //'Teléfono 2: ' . $user->getPhone2() . '<br>' . 
+	  //'Régimen IVA: ' . $regimenIvaText . '<br>' .
+	  //'¿Tiene la condición de revendedor?: ' . $reseller . '<br><br>' .
 	  $nuevaDireccion . 
 	  $stringPedidos . '<br>' .
 	  $metodoEnvio->getNombre() . '<br>' .
@@ -784,9 +805,14 @@ var_dump($response);
 
       $this->get('mailer')->send($message);
 
+      //SAVE "PAYMENT METHOD" ____TO SHOW ONE MESSAGE OR OTHER____ IN THE TEMPLATE DEPENDING ON THE PAYMENT METHOD CHOSEN
+      $paymentMethod = $pedido['metodo_pago'];
+
       $session->remove('pedido');
 
-      return $this->render('ProjectFrontendBundle:Pedido:pedido_realizar.html.twig');
+      return $this->render('ZiiwebEcommerceBundle:Order:pedido_realizar.html.twig', array(
+          'payment_method' => $paymentMethod
+      ));
     }
 
 
@@ -847,7 +873,7 @@ var_dump($response);
 
 
     /**
-     * @Route("/pedido-resumen", name="preenvio_resumen")
+     * @Route("/pedido-resumen", name="ziiweb_ecommerce_order_preenvio_resumen")
      */
     public function preenvioResumenAction() 
     {
@@ -885,29 +911,54 @@ var_dump($response);
     }
 
     /**
+     * The user is currently logged in: lets give the choice to ___change the shipping data___
+     * 
+     * GIVE THE CHANCE TO ___CHANGE THE SHIPPING DATA____ (IF THE USER IS CURRENTLY ___LOGGED IN___ DURING THE PURCHASE)
+     *
      * @Route("/direccion-envio", name="shipping_data")
      */
     public function shippingDataAction(Request $request) 
     {
 
-	  $form = $this->createForm(ShippingDataType::class, $this->getUser());
+	$form = $this->createForm(ShippingDataType::class, $this->getUser());
 
-	  $form->handleRequest($request);
+	$form->handleRequest($request);
 
-	  if ($form->isValid()) {
-	      $user = $form->getData();
-   
-	      $em = $this->getDoctrine()->getManager();
-	      $em->persist($user); 
-	      $em->flush($user); 
-	      
-	      return $this->redirectToRoute('redsys_payment');
-            
-	  }
+	if ($form->isValid()) {
+	    $user = $form->getData();
+ 
+	    $em = $this->getDoctrine()->getManager();
+	    $em->persist($user); 
+	    $em->flush($user); 
+	    
+	    $session = $this->get('session'); 
+	    $pedido = $session->get('pedido'); 
 
-	  return $this->render('ZiiwebEcommerceBundle:Order:shipping_data.html.twig', array(
-	      'form' => $form->createView()
-	  ));
+            //ADD TO "SESSION" THE DATA INSERTED IN THE FORM
+	    $pedido['name'] = $form->getData()->getName();
+	    $pedido['address'] = $form->getData()->getAddress();
+	    $pedido['town'] = $form->getData()->getTown();
+	    $pedido['postal_code'] = $form->getData()->getPostalCode();
+	    $pedido['province'] = $form->getData()->getProvince();
+	    $pedido['country'] = $form->getData()->getCountry();
+	    $pedido['phone'] = $form->getData()->getPhone1();
+
+            $session->set('pedido', $pedido); 
+
+	    //THE USER WANTS TO PAY WITH ___CREDIT CARD____: REDIRECT TO PAYMENT PLATFORM
+	    if ($pedido['metodo_pago'] == '3') {
+	        return $this->redirectToRoute('redsys_payment');
+	    //OTHER PAYMENTS 
+	    } else {
+	        return $this->redirectToRoute(
+                    'ziiweb_ecommerce_order_pedido_realizar'
+              );
+	    }
+	}
+
+	return $this->render('ZiiwebEcommerceBundle:Order:shipping_data.html.twig', array(
+	    'form' => $form->createView()
+	));
     }
 
 
@@ -933,7 +984,9 @@ var_dump($response);
      * @Route("/payment-ok", name="payment_ok")
      */
     function redsysOkAction() {
-        return $this->render('ZiiwebEcommerceBundle:Order:payment_ok.html.twig');
+
+        return $this->redirect();
+        //return $this->render('ZiiwebEcommerceBundle:Order:payment_ok.html.twig');
     }
 
     /**
@@ -953,7 +1006,7 @@ var_dump($response);
         $pedido = $session->get('pedido');
 
 	try{
-	    //Key de ejemplo
+	    //Key test
 	    $key = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7';
 
 	    $redsys = new Tpv();
@@ -963,18 +1016,30 @@ var_dump($response);
 	    $redsys->setCurrency('978');
 	    $redsys->setTransactiontype('0');
 	    $redsys->setTerminal('001');
+
+
 	    $redsys->setMethod('C'); //Solo pago con tarjeta, no mostramos iupay
 	    //$redsys->setNotification('http://localhost/noti.php'); //Url de notificacion
 	    $redsys->setNotification('http://my_bundles/app_dev.php/noti'); //Url de notificacion
 	    //$redsys->setUrlOk('http://localhost/ok.php'); //Url OK
-	    $redsys->setUrlOk($this->generateUrl('payment_ok', array(), UrlGeneratorInterface::ABSOLUTE_URL)); //Url OK
+	    $redsys->setUrlOk($this->generateUrl('ziiweb_ecommerce_order_pedido_realizar', array(), UrlGeneratorInterface::ABSOLUTE_URL)); //Url OK
 	    //$redsys->setUrlKo('http://localhost/ko.php'); //Url KO
 	    $redsys->setUrlKo($this->generateUrl('payment_ko', array(), UrlGeneratorInterface::ABSOLUTE_URL)); //Url KO
 	    $redsys->setVersion('HMAC_SHA256_V1');
 	    $redsys->setTradeName('Sugar');
 	    $redsys->setTitular('Pedro Risco');
 	    $redsys->setProductDescription('Compras varias');
+
+
+            ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
 	    $redsys->setEnviroment('test'); //Entorno test
+            ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
 
 	    $signature = $redsys->generateMerchantSignature($key);
 	    $redsys->setMerchantSignature($signature);

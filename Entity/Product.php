@@ -39,6 +39,11 @@ class Product
      */
     protected $description;
 
+     /**
+     * @ORM\Column(type="string", length=2000, nullable=true)
+     */
+    protected $secondaryDescription;
+
     /**
      * @ORM\ManyToOne(targetEntity="Manufacturer", inversedBy="products")
      * @ORM\JoinColumn(name="manufacturer_id", referencedColumnName="id", nullable=true)
@@ -127,6 +132,30 @@ class Product
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set secondaryDescription
+     *
+     * @param string $secondaryDescription
+     *
+     * @return Product
+     */
+    public function setSecondaryDescription($secondaryDescription)
+    {
+        $this->secondaryDescription = $secondaryDescription;
+
+        return $this;
+    }
+
+    /**
+     * Get secondaryDescription
+     *
+     * @return string
+     */
+    public function getSecondaryDescription()
+    {
+        return $this->secondaryDescription;
     }
 
     /**

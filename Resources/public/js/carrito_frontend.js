@@ -16,7 +16,7 @@ $('body').on('click', '.eliminar', function(){
   var size = subitem.data("size");
   var color_id = subitem.data("color_id");
   var element_collection_id = subitem.data("element_collection_id");
-  var url_eliminar = $('.products-list').data("url_eliminar");
+  var url_eliminar = $('.urls').data("url_eliminar");
 
   $.ajax({
     type: "POST",
@@ -33,10 +33,11 @@ $('body').on('click', '.eliminar', function(){
     },
   });
 });
+
 //MODIFY QUANTITY PRODUCT BY ----INPUT---- - MODIFY QUANTITY PRODUCT BY ----INPUT-----
 $("body").on('keyup', '.cart-qty', function() {
-    var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
-    var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
+  var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
+  var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
 
   if ($(this).val() == '') {
     clander(subitem, 0);
@@ -46,7 +47,7 @@ $("body").on('keyup', '.cart-qty', function() {
 });
 
 
-//MODIFY QUANTITY PRODUCT BY +/- -  MODIFY QUANTITY PRODUCT BY +/- - MODIFY QUANTITY PRODUCT BY +/-
+//MODIFY QUANTITY PRODUCT BY +/- IN INNER CARTS -  MODIFY QUANTITY PRODUCT BY +/- IN INNER CARTS  
 $("body").on('click', '.products-list .subitem .up, .down', function() {
   //aumentamos o disminuimos la cantidad
   if ($(this).hasClass('up')) {
@@ -56,8 +57,12 @@ $("body").on('click', '.products-list .subitem .up, .down', function() {
   }
 
   var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
+console.log(product_version_size_id);
   var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
+console.log(subitem);
+console.log(new_producto_qty);
  
+
   clander(subitem, new_producto_qty);
 });
 
@@ -69,7 +74,7 @@ function clander(aux, new_producto_qty) {
 
   var input_qty = aux.find('input');
   var actual_li = aux;
-  var url_cantidad = $('.products-list').data("url_cantidad");
+  var url_cantidad = $('.urls').data("url_cantidad");
 
   $.ajax({
     type: "POST",
@@ -128,21 +133,22 @@ function jander(response, product_version_size_id) {
 }
 
 
-//ADD PRODUCT - ADD PRODUCT - ADD PRODUCT 
-$('body').on('click', '.anadir_subitem', function(){
-
+//PRESS "ADD TO CART" BUTTON (TO ADD AS NEW OR TO MODIFY QUANTITY) 
+$('body').on('click', '.anadir_product', function(){
   //check if the user can select a size and one of them is selected
-  if ($('#size').is(':visible') && !$("#size input[name='size']:checked").val()) {
+  if ($('#size').find('input').length != 1 && !$("#size input[name='size']:checked").val()) {
      alert('Tienes que seleccionar una talla, por favor.');
      return false;
   }
 
   var product_version_size_id = $("#size input[type='radio']:checked").data("product_version_size_id");
 
+  //IF THE PRODUCT IS ALREADY IN THE CART, CALL THE FUNCTION TO UPDATE THE QUANTITY
   if ($(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']").length) {
+
     clander(
       $(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']"),
-      parseInt($(this).closest('.anadir-qty').find('.producto-qty').val()) +  parseInt($(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']").find('.cart-qty').val())
+      parseInt($(this).closest('.product-container').find('.producto-qty').val()) +  parseInt($(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']").find('.cart-qty').val())
     );
     return false;
   }
@@ -154,7 +160,7 @@ $('body').on('click', '.anadir_subitem', function(){
 
   var producto_color = $(this).find('.cuadrado-container').data('color');
   var producto_qty = $('.producto-qty').val();
-  var url_anadir = $(".products-list").data("url_anadir");
+  var url_anadir = $(".urls").data("url_anadir");
   var size = $('#size input[type="radio"]:checked').val();
 
   $.ajax({
@@ -263,12 +269,11 @@ function updateNavbar() {
     
     numberProducts += parseInt($(this).find('input').val());
   })
-  console.log(numberProducts);
 }
 
 $('.envio').on('click',function(){
   var envio = $(".envio[name=envio]:checked").val();
-  var url_envio = $(".products-list").data("url_envio"); 
+  var url_envio = $(".urls").data("url_envio"); 
   //si se elije "48 horas" la opcion Contrareembolso desaparece
 /*
   if(envio == 2)
@@ -295,7 +300,7 @@ $('.envio').on('click',function(){
 
 $('.pago').on('click', function(){
   var pago = $(".pago[name=pago]:checked").val();
-  var url_pago = $('.products-list').data("url_pago");
+  var url_pago = $('.urls').data("url_pago");
   $.ajax({
     type: "POST",
     url: url_pago,

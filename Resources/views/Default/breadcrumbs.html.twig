@@ -1,0 +1,6 @@
+{% for parentCategory in parentCategories %}
+  > 
+  <a href="{{ path('ziiweb_ecommerce_default_product_list', {'categoryProduct': parentCategory['slug']}) }}">
+    {{ parentCategory.name}} 
+  </a>
+{% endfor %}

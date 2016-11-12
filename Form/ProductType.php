@@ -20,6 +20,8 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('name', null, array('label' => 'Nombre (sin añadir el color)'))
+            ->add('description', null, array('label' => 'Descripción'))
+            ->add('secondaryDescription', null, array('label' => 'Descripción secundaria'))
             //->add('description', null, array('label' => 'Descripción'))
             ->add('manufacturer', EntityType::class, array(
                 'label' => 'Marca/Fabricante',
