@@ -403,16 +403,18 @@ class DefaultController extends Controller
 	    }
         }
 
-        //retrieve the ANCESTORS OBJECTS
-        $query = $repo->createQueryBuilder('cp')         
-          ->where('cp.id IN (:nodeIds)')
-          ->setParameter('nodeIds', $nodeIds)
-          ->getQuery();
+        //__plain array__ (without hierarchies)
+	$nodesHierarchy = $repo->getNodesHierarchy();
 
-        $result = $query->getArrayResult();
+        foreach ($nodesHierarchy as $key => $node) { 
+          if (!in_array($node['id'], $nodeIds)) { 
+            unset($nodesHierarchy[$key]);
+          }
+        }
 
         //construct the TREE using the categories that has products, are enabled and with stock > 0 and their ANCESTORS
-	$tree = $repo->buildTreeArray($result);
+	$options = array('decorate' => false);
+        $tree = $repo->buildTree($nodesHierarchy, $options);
 
         return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array(
             'navbar' => $tree,

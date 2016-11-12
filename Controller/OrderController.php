@@ -704,7 +704,7 @@ var_dump($response);
       $message = \Swift_Message::newInstance()
 	->setContentType('text/html')
 	->setSubject('Pedido realizado en la web de Pro Comunicaciones')
-	->setFrom(array('hola@procomunicaciones.es'))
+	->setFrom(array('info@ziiweb.com'))
 	->setTo(array(
 	  //'tirengarfio@gmail.com',
 	  //'pedidos@procomunicaciones.es'
@@ -718,7 +718,7 @@ var_dump($response);
 	  $metodoEnvio->getNombre() . '<br>' .
 	  $metodoPago->getNombre() . '<br><br>' .
 	  'En un plazo máximo de 24 horas hábiles, recibirás la factura proforma a través de tu correo electrónico.<br><br>' .
-	  'Para cualquier otra consulta escribenos a <a href="mailto:pedidos@procomunicaciones.es">pedidos@procomunicaciones.es</a><br><br>' .
+	  'Para cualquier otra consulta escribenos a <a href="mailto:info@ziiweb.com">info@ziiweb.com</a><br><br>' .
 	  'Gracias por confiar en nosotros.<br><br>' .
 	  'Atentamente,<br><br>' .
 	  'PRO COMUNICACIONES CB<br>' . 
@@ -796,9 +796,9 @@ var_dump($response);
       $message = \Swift_Message::newInstance()
 	->setContentType('text/html')
 	->setSubject('Nuevo pedido Pro Comunicaciones')
-	->setFrom(array('hola@procomunicaciones.es'))
+	->setFrom(array('info@ziiweb.com'))
 	->setTo(array(
-	  'pedidos@procomunicaciones.es'
+	  'info@ziiweb.com'
 	  //'tirengarfio@gmail.com'
 	))
 	->setBody($emailBody);
