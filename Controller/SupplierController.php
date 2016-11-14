@@ -53,7 +53,7 @@ class SupplierController extends Controller
 
             return $this->redirectToRoute('ziiweb_ecommerce_supplier_edit', array(
                 'id' => $supplier->getId(),
-                'edit_form' => $form->createView()
+                'edit_form' => $form
             ));
         }
 

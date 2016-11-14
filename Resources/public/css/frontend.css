@@ -2,7 +2,8 @@ html {
   min-height: 100% !important;
   position: relative !important; }
   html body {
-    color: #7F6860; }
+    color: #7F6860;
+    padding-bottom: 460px; }
     html body header {
       position: relative; }
       html body header .vertical-menu-left {

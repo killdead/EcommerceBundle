@@ -57,7 +57,7 @@ class CategoryProductController extends Controller
 
             return $this->redirectToRoute('categoryproduct_edit', array(
                 'id' => $categoryProduct->getId(),
-                'edit_form' => $form->createView()
+                'edit_form' => $form
             ));
         }
 

@@ -53,7 +53,7 @@ class ManufacturerController extends Controller
 
             return $this->redirectToRoute('manufacturer_edit', array(
                 'id' => $manufacturer->getId(),
-                'edit_form' => $form->createView()
+                'edit_form' => $form
             ));
         }
 
