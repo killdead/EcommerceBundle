@@ -35,24 +35,28 @@ $(document).on('click', '.delete-image', function(event) {
 ////////////////////// PRICES /////////////////////////////
 
 //DETECT CHANGES ON "PRICE"
-$(document).ready(function() {
+
   $(document).on('change key paste keyup', "[id^=product_productVersions][id$='price']", function() {
     var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
     var tax_rate = $(this).data('tax-rate'); 
     var price_plus_taxes =  price_with_dots * tax_rate; 
     var index_collection = $(this).attr('id').match(/\d+/);
-    $('#product_productVersions_' + index_collection + '_price_plus_taxes').val(accounting.formatNumber(price_plus_taxes, 2, '', ',')); 
-  }).trigger('change');
-});
+    $('#product_productVersions_' + index_collection + '_price_plus_taxes').val(accounting.formatNumber(price_plus_taxes, '2', '', ',')); 
+  });
+  //TRIGGER IT WHEN EDITING ALSO - TRIGGER IT WHEN EDITING ALSO - 
+  $("[id^=product_productVersions][id$='price']").trigger('change');
 
-//DETECT CHANGES ON "PRICE PLUS TAXES"
-$(document).on('change key paste keyup', "[id^=product_productVersions][id$='price_plus_taxes']", function() {
-  var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
-  var tax_rate = $(this).data('tax-rate'); 
-  var price =  price_with_dots / tax_rate; 
-  var index_collection = $(this).attr('id').match(/\d+/);
-  $('#product_productVersions_' + index_collection + '_price').val(accounting.formatNumber(price, 2, '', ',')); 
-});
+  console.log($("[id^=product_productVersions][id$='price_plus_taxes']"));
+
+  //DETECT CHANGES ON "PRICE PLUS TAXES"
+  $(document).on('change key paste keyup load', "[id^=product_productVersions][id$='price_plus_taxes']", function() {
+    var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
+    var tax_rate = $(this).data('tax-rate'); 
+    var price =  price_with_dots / tax_rate; 
+    var index_collection = $(this).attr('id').match(/\d+/);
+    $('#product_productVersions_' + index_collection + '_price').val(accounting.formatNumber(price, 40, '', ',')); 
+  }).trigger('change');
+
 
 ///////////////////////////////////////////////
 
