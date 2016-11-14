@@ -6,6 +6,9 @@
   {% endfor %}
   <h1>{{ product_version.product.name }}</h1>
   {{ product_version.price }} €
+  {#################
+  {{ (product_version.price * (constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') + 1)) |number_format(2, ',', '.') }}
+  ################}
   {% if product_version.productVersionSizes[0].size is not null %}
   Elige una talla:
   <form id="size">

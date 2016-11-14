@@ -154,7 +154,7 @@ html {
 	  height: 260px !important; 
 	}
 	@media screen and (max-width: 544px) {
-	  height: 150px !important; 
+	  height: 200px; 
 	}
         img {
 	  width: 100% !important;
@@ -326,6 +326,10 @@ html {
         padding: 5px;
       }
       .product-data {
+	padding-left: 48px; 
+	@media screen and (max-width: 990px) {
+	  padding-left: 14px; 
+	}
         .social {
           padding-top: 20px;
           height: 35px;
