@@ -57,11 +57,7 @@ $("body").on('click', '.products-list .subitem .up, .down', function() {
   }
 
   var product_version_size_id = $(this).parents('.subitem').attr('data-product_version_size_id');
-console.log(product_version_size_id);
   var subitem = $('.subitem[data-product_version_size_id="' + product_version_size_id + '"]');  
-console.log(subitem);
-console.log(new_producto_qty);
- 
 
   clander(subitem, new_producto_qty);
 });
@@ -248,6 +244,7 @@ $('body').on('click', '.anadir_product', function(){
  
  
           $('.nav .cart-item .tag-pill').text(response.total_number_products);
+          $('.left-menu-button .tag-pill').text(response.total_number_products);
 
         //is already in the cart
         } else {
