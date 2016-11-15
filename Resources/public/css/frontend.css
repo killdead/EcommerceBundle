@@ -46,11 +46,8 @@ html {
             width: 458px; }
             html body header .navbar-first .cart-item .dropdown-menu ul {
               list-style: none; }
-          html body header .navbar-first .cart-item .checkout {
-            position: absolute;
-            right: 5px;
-            bottom: -3px;
-            font-size: 15px; }
+          html body header .navbar-first .cart-item .bottom-links {
+            font-size: 14px; }
       html body header .navbar-second {
         background: #fff;
         border-bottom: 1px solid #DACCC7; }
