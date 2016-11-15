@@ -258,11 +258,18 @@ class DefaultController extends Controller
         //SEARCH - SEARCH - SEARCH - SEARCH - SEARCH - SEARCH - SEARCH - 
         if ($categoryProduct == 'search') {
 	  $qb = $repository->createQueryBuilder('pv')
+             ->select("pv, CONCAT(p.name, ' ', m.name, ' ', pv.colorCode) AS full_product_name")
 	     ->join('pv.product', 'p')
-             ->where('p.name LIKE :name')
-             //->where('u.name = :name')
-             ->setParameter('name', '%'. $filter . '%');
+	     ->join('p.manufacturer', 'm')
+	     ->join('pv.productVersionSizes', 'pvs')
+	     ->andWhere('pv.enabled = ?1')
+	     ->andWhere('pvs.stock > ?2')
+             ->having('full_product_name LIKE :name')
+             ->setParameter('name', '%'. $filter . '%')
+	     ->setParameter(1, 1)
+	     ->setParameter(2, 0)
           ;
+
         //WISHLIST - WISHLIST - WISHLIST - WISHLIST - WISHLIST - WISHLIST 
         } else if ($categoryProduct == 'wishlist') {
 	  $qb = $repository->createQueryBuilder('pv')
@@ -273,8 +280,14 @@ class DefaultController extends Controller
         //FEATURED - FEATURED - FEATURED - FEATURED - FEATURED - 
         } else if ($categoryProduct == 'ziiweb_ecommerce_default_featured_products') {
 	  $qb = $repository->createQueryBuilder('pv')
+	     ->join('pv.product', 'p')
+	     ->join('pv.productVersionSizes', 'pvs')
              ->where('pv.featured = :pv_featured')
+	     ->andWhere('pv.enabled = ?1')
+	     ->andWhere('pvs.stock > ?2')
              ->setParameter('pv_featured', 1)
+	     ->setParameter(1, 1)
+	     ->setParameter(2, 0)
           ;
         } else {
 	    //retrieve the columns for those where there is a filter value 
