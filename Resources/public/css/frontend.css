@@ -232,7 +232,9 @@ html {
             html body main .products-container .filter-container #filter .form-group > label {
               font-weight: bold; }
         html body main .products-container .products {
-          transition: width 500ms; }
+          transition: width 500ms;
+          flex-grow: 1;
+          min-height: 600px; }
           html body main .products-container .products .grid-item {
             padding-left: 6px !important;
             padding-right: 6px !important; }

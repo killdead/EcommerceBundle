@@ -294,6 +294,8 @@ html {
 	}
         .products {
 	  transition: width 500ms; //replace 200ms with time of your choice
+          flex-grow: 1;
+          min-height: 600px;
 	  .grid-item { 
 	    padding-left: 6px !important;
 	    padding-right: 6px !important;
