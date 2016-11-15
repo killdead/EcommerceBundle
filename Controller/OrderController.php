@@ -662,7 +662,7 @@ var_dump($response);
 	  $stringPedidos = $stringPedidos . 
 	    '<tr><td>' . $producto->getCode() . '</td>' . //codigo producto
 	    '<td align="right">' . $subitem['qty'] . '</td>' . //cantidad
-	    '<td>' . $producto->getProductVersion()->getProduct()->getManufacturer()->getName() . '</td>' . //marca
+	    '<td>' . $producto->getProductVersion()->getProduct()->getManufacturer() . '</td>' . //manufacturer
 	    '<td>' . $producto->getProductVersion()->getProduct()->getName() . ' ' . $colorName . '</td>' . //nombre
 	    '<td align="right">' . number_format($subitem['precio'], 2, ',', '') . ' €' . '</td>' .  //precio unidad (sin iva)
 	    '<td align="right">' . number_format(($subitem['precio_total_subitem']), 2, ',', '') . ' €</td></tr><br>'; //precio x cantidad (sin iva)
