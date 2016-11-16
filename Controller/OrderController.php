@@ -472,6 +472,7 @@ class OrderController extends Controller
 
       $response = array(
 	'precio_total_subitem' => $pedido['subitems'][$productVersionIdPlusSize]['precio_total_subitem'],
+	'productoQty' => $pedido['subitems'][$productVersionIdPlusSize]['qty'],
 	'subtotal' => $pedido['subtotal'],
 	'iva' => $pedido['iva'],
 	'tasa_iva' => $pedido['tasa_iva'],
