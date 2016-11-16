@@ -54,7 +54,7 @@ $(document).on('click', '.delete-image', function(event) {
     var tax_rate = $(this).data('tax-rate'); 
     var price =  price_with_dots / tax_rate; 
     var index_collection = $(this).attr('id').match(/\d+/);
-    $('#product_productVersions_' + index_collection + '_price').val(accounting.formatNumber(price, 40, '', ',')); 
+    $('#product_productVersions_' + index_collection + '_price').val(accounting.formatNumber(price, 20, '', ',')); 
   }).trigger('change');
 
 
