@@ -876,7 +876,7 @@ var_dump($response);
     /**
      * @Route("/pedido-resumen", name="ziiweb_ecommerce_order_preenvio_resumen")
      */
-    public function preenvioResumenAction() 
+    public function preenvioResumenAction(Request $request) 
     {
       $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ShippingMethod');
       $shippingMethods = $repository->findBy(array('enabled' => true));
@@ -886,7 +886,16 @@ var_dump($response);
 
       $session = $this->get('session'); 
       $pedido = $session->get('pedido'); 
-      
+
+      $lastProductPage = $request->headers->get('referer');
+
+      $ref = str_replace("app_dev.php/", "", parse_url($request->headers->get('referer'),PHP_URL_PATH ));
+      $route = $this->container->get('router')->match($ref)['_route'];
+
+      if ($route != 'registration_login') {
+        $session->set('last_product_page', $lastProductPage); 
+      }
+
       return $this->render('ZiiwebEcommerceBundle:Order:preenvio_resumen.html.twig', array(
 	  'shippingMethods' => $shippingMethods,
 	  'paymentMethods' => $paymentMethods,
