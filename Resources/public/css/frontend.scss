@@ -105,9 +105,11 @@ html {
 	  }
 	  .root-ul > li > a{
 	    color: #7F6860 !important;
+	    height: 70px !important;
+	    line-height: 70px !important;  
 	    @media screen and (max-width: 992px) {
-	      height: 70px;
-	      line-height: 70px; 
+	      height: 40px !important;
+	      line-height: 40px !important; 
             }
 	  }
 	  .dropdown-menu {

@@ -81,11 +81,13 @@ html {
               html body header .navbar-second .container .logo {
                 width: 80px; } }
           html body header .navbar-second .container .root-ul > li > a {
-            color: #7F6860 !important; }
+            color: #7F6860 !important;
+            height: 70px !important;
+            line-height: 70px !important; }
             @media screen and (max-width: 992px) {
               html body header .navbar-second .container .root-ul > li > a {
-                height: 70px;
-                line-height: 70px; } }
+                height: 40px !important;
+                line-height: 40px !important; } }
           html body header .navbar-second .container .dropdown-menu {
             border-radius: 0;
             border: 1px solid #ccc;
