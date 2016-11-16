@@ -131,6 +131,11 @@ html {
 	  .search {
 	    padding-top: 27px;
 	    width: 100px;
+	    @media screen and (max-width: 990px) {
+	      padding-top: 17px;
+	      padding-right: 12px;
+	      width: 150px;
+            }
 	  }
         }
       }

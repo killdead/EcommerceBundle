@@ -103,6 +103,11 @@ html {
           html body header .navbar-second .container .search {
             padding-top: 27px;
             width: 100px; }
+            @media screen and (max-width: 990px) {
+              html body header .navbar-second .container .search {
+                padding-top: 17px;
+                padding-right: 12px;
+                width: 150px; } }
     html body main {
       margin-top: 133px; }
       @media screen and (max-width: 992px) {
