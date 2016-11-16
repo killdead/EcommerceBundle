@@ -98,7 +98,12 @@ function clander(aux, new_producto_qty) {
 
         actual_li.find('.precio_total_subitem').html(precio_total_subitem);
 
-        $('.nav .cart-item .tag-pill').text(response.total_number_products);
+	var subitem_en_carro = $(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
+	subitem_en_carro.find('input').val(response.productoQty).change();
+	subitem_en_carro.find('.precio_total_subitem').html(precio_total_subitem);
+
+	$('.nav .cart-item .tag-pill').text(response.total_number_products);
+	$('.left-menu-button .tag-pill').text(response.total_number_products);
 
         updateTotals(response);
       }
@@ -199,61 +204,51 @@ $('body').on('click', '.anadir_product', function(){
         } else {
           var clase = 'odd';
         }
-        //is not already in the cart
-        if (response.en_carro == 'false')
-        { 
-          var arrow_down = '';
-          if (response.productoQty == 1) {
-            var arrow_down = '<div class="subitem-qty down" style="display: none"></div>';
-          }
-          if (response.size != undefined) {
-            var size_string = ' <b>talla ' + response.size + '</b>';
-          } else {
-            var size_string = '';
-            var size = '';
-          }
-  
-          var product_name = $.trim(response.nombre).substring(0, 28).trim(this);
-          if (response.nombre.length >= 28) {
-            product_name += ' ...';
-          }
 
-          var size = $('#size input[type="radio"]:checked').val();
-          $('.products-list').prepend(
-            '<li class="subitem ' +  clase + '" '  +
-            '" data-element_collection_id="' + response.element_collection_id +
-            '" data-product_version_size_id="' + product_version_size_id + '"' +
-            '" data-size="' + size + '"' +
-            ' data-color_id="' + response.color_id + '">' + 
-            '<div class="pull-left img-trash"><img src="/uploads/xs/' + response.image_path + '"></div>' +
-              product_name + size_string +  
-              '<div class="form-inline">' +
-                precio + 
-                '<div class="qty-container">' + 
-                  '<i class="down subitem-qty fa fa-minus-circle "></i> ' + 
-                  '<input class="form-control form-control-sm cart-qty" type="text" min="1" max="100" size="1" value="' + response.productoQty + '"> ' + 
-                  '<i class="up subitem-qty fa fa-plus-circle "></i> ' + 
-                  arrow_down +
-                '</div>' +
-              '</div>' +
-              '<btn class="eliminar" title="Eliminar"><i class="fa fa-trash-o aria-hidden="true"></i></span>' + 
-            '</li>'
-          );
-          $('.metodo-de-envio input[value=' + response.metodo_envio + ']').attr('checked', 'checked');
-          $('.metodo-de-pago input[value=' + response.metodo_pago + ']').attr('checked', 'checked');
- 
- 
-          $('.nav .cart-item .tag-pill').text(response.total_number_products);
-          $('.left-menu-button .tag-pill').text(response.total_number_products);
+	var arrow_down = '';
+	if (response.productoQty == 1) {
+	  var arrow_down = '<div class="subitem-qty down" style="display: none"></div>';
+	}
+	if (response.size != undefined) {
+	  var size_string = ' <b>talla ' + response.size + '</b>';
+	} else {
+	  var size_string = '';
+	  var size = '';
+	}
 
-        //is already in the cart
-        } else {
-          var subitem_en_carro = $(".products-list .subitem[data-product_version_size_id='" + product_version_size_id  + "']");
-          subitem_en_carro.find('input').val(response.productoQty).change();
-          subitem_en_carro.find('.precio_total_subitem').html(precio_total_subitem);
+	var product_name = $.trim(response.nombre).substring(0, 28).trim(this);
+	if (response.nombre.length >= 28) {
+	  product_name += ' ...';
+	}
 
-          $('.nav .cart-item .tag-pill').text(response.total_number_products);
-        }
+	var size = $('#size input[type="radio"]:checked').val();
+	$('.products-list').prepend(
+	  '<li class="subitem ' +  clase + '" '  +
+	  '" data-element_collection_id="' + response.element_collection_id +
+	  '" data-product_version_size_id="' + product_version_size_id + '"' +
+	  '" data-size="' + size + '"' +
+	  ' data-color_id="' + response.color_id + '">' + 
+	  '<div class="pull-left img-trash"><img src="/uploads/xs/' + response.image_path + '"></div>' +
+	    product_name + size_string +  
+	    '<div class="form-inline">' +
+	      precio + 
+	      '<div class="qty-container">' + 
+		'<i class="down subitem-qty fa fa-minus-circle "></i> ' + 
+		'<input class="form-control form-control-sm cart-qty" type="text" min="1" max="100" size="1" value="' + response.productoQty + '"> ' + 
+		'<i class="up subitem-qty fa fa-plus-circle "></i> ' + 
+		arrow_down +
+	      '</div>' +
+	    '</div>' +
+	    '<btn class="eliminar" title="Eliminar"><i class="fa fa-trash-o aria-hidden="true"></i></span>' + 
+	  '</li>'
+	);
+	$('.metodo-de-envio input[value=' + response.metodo_envio + ']').attr('checked', 'checked');
+	$('.metodo-de-pago input[value=' + response.metodo_pago + ']').attr('checked', 'checked');
+
+
+	$('.nav .cart-item .tag-pill').text(response.total_number_products);
+	$('.left-menu-button .tag-pill').text(response.total_number_products);
+
         updateTotals(response);
       }
     },
