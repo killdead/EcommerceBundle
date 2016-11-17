@@ -20,6 +20,22 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ziiweb_ecommerce');
 
+        $rootNode
+            ->children()
+		 ->arrayNode('company_data')
+		   ->children()
+		       ->scalarNode('name')->end()
+		       ->scalarNode('email')->end()
+		   ->end()
+                 ->end()
+		 ->arrayNode('client_purchase_email')
+		   ->children()
+		       ->scalarNode('text_1')->end()
+		       ->scalarNode('text_2')->end()
+		   ->end()
+                 ->end()
+        ->end();
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.

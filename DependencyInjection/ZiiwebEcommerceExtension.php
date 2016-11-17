@@ -22,6 +22,9 @@ class ZiiwebEcommerceExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('ziiweb_ecommerce.company_data', $config['company_data']);      
+        $container->setParameter('ziiweb_ecommerce.client_purchase_email', $config['client_purchase_email']);      
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }
