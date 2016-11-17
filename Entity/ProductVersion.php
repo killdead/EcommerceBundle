@@ -46,7 +46,7 @@ class ProductVersion
     protected $price;
 
     /**
-     * @ORM\Column(type="float", name="sale_price")
+     * @ORM\Column(type="float", name="sale_price", nullable=true)
      *
      * @var string $salePrice
      */
