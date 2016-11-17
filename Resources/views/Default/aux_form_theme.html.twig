@@ -1,66 +1,83 @@
 
 {%- block jquery_ui_range_row -%}
+
   {% set amount_id = form.vars.name ~ '-amount' %}
-  {% set slider_range_id = form.vars.name ~ '-slider-range' %}
+
   <p>
-    <label for="amount">{{ form.vars.label }}</label>
-    <input type="text" id="{{ amount_id }}" readonly style="border:0; color:#f6931f; font-weight:bold;">
-    <input hidden type="text" id="{{ amount_id }}-min" name="filter[{{ form.vars.name }}][min]">
-    <input hidden type="text" id="{{ amount_id }}-max" name="filter[{{ form.vars.name }}][max]">
+    <label for="amount">{{ form.vars.label }}</label><br>
+    <span id="{{ amount_id }}-min-max-price">
+      {% set min_aux = (min * (1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE')))|number_format(2, ',', '.') %}
+      {% set max_aux = (max * (1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE')))|number_format(2, ',', '.') %}
+      {{ min_aux ~ ' € - ' ~ max_aux ~ ' €' }}
+    </span>
+    <input hidden type="text" id="{{ amount_id }}-min" name="filter[{{ form.vars.name }}][min]" value="{{ min }}">
+    <input hidden type="text" id="{{ amount_id }}-max" name="filter[{{ form.vars.name }}][max]" value="{{ max }}">
   </p>
-  <div id="{{ slider_range_id }}"></div>
-   
-  <script type="text/javascript">
-    //this will called inside a windows.onload() call, because we need jQuery and jQuery UI loaded
-    function setupFilter() { 
-      $( "#{{ slider_range_id }}" ).slider({
-	step: {{ step }},
-	range: true,
-	min: {{ min }},
-	max: {{ max }},
-	values: [ {{ min }}, {{ max }} ],
-	slide: function( event, ui ) {
 
-          page = 1;
-      filter_clicked = true;
-	  $( "#{{ amount_id }}" ).val(amount(ui.values[0], ui.values[1], {{ currency}}, {{ add_taxes}}));
-	  $('#{{ amount_id ~ "-min" }}').val(ui.values[0]);
-	  $('#{{ amount_id ~ "-max" }}').val(ui.values[1]);
+  <div style="height: 30px">
+  <div id="slider"></div>
+  </div>
 
+
+
+  <script>
+
+    function setupFilter() {
+
+      var slider = document.getElementById('slider');
+      slider.style.height = '20px';
+      slider.style.width = '120px';
+      slider.style.margin = '0 auto';
+
+      noUiSlider.create(slider, {
+	start: [{{ min }}, {{ max }}],
+	connect: false,
+	range: {
+	    'min': {{ min }},
+	    'max': {{ max }}
 	},
-	stop: function(event, ui) {
-
-	  filter();
-
-	} 
+	format: wNumb({
+          decimals: 7,
+	})
       });
 
-      $( "#{{ amount_id }}" ).val(amount( {{ min }}, {{ max }}, {{ currency }}, {{ add_taxes }} ));
-      $('#{{ amount_id ~ "-min" }}').val({{ min }});
-      $('#{{ amount_id ~ "-max" }}').val({{ max }});
+      //SLIDE - SLIDE - SLIDE - SLIDE - SLIDE - SLIDE - SLIDE - 
+      slider.noUiSlider.on('slide', function(values, handle){
+        page = 1;
+	filter_clicked = true;
 
-    }
+	var min_taxes = 1;
+	var max_taxes = 1;
 
+	if ({{ add_taxes }} == 1) {
+	    min_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
+	    max_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
+	}
 
-    function amount(min, max, currency, add_taxes) {
-    
-      var min_taxes = 1;
-      var max_taxes = 1;
-      if (add_taxes == 1) {
-	  min_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
-	  max_taxes = {{ 1 + constant('Ziiweb\\EcommerceBundle\\Entity\\TaxRates::VAT_RATE') }};
-      }
+	var min = values[0] * min_taxes; 
+	var max = values[1] * max_taxes; 
 
-      var min = min * min_taxes; 
-      var max = max * max_taxes; 
-
-      if (currency == 1) {
-	min = accounting.formatMoney(min);
-	max = accounting.formatMoney(max);
-      }
+        if ({{ currency }} == 1) {
+	  min = accounting.formatMoney(min);
+	  max = accounting.formatMoney(max);
+        }
  
-      return min + ' - ' + max;
+	$('#{{ amount_id}}-min-max-price').text(min + ' - ' + max);
+          
+      });
+
+
+      //END (STOP) - END (STOP) - END (STOP) - END (STOP) - END (STOP) - 
+      slider.noUiSlider.on('end', function(values, handle){
+	 $('#{{ amount_id}}-min').val(values[0]);
+	 $('#{{ amount_id}}-max').val(values[1]);
+	 
+	 filter();
+      });
     }
+
   </script>
 
+
 {%- endblock -%}
+
