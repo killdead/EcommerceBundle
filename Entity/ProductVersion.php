@@ -46,6 +46,13 @@ class ProductVersion
     protected $price;
 
     /**
+     * @ORM\Column(type="float", name="sale_price")
+     *
+     * @var string $salePrice
+     */
+    protected $salePrice;
+
+    /**
      * @ORM\Column(type="string", name="color", nullable=true)
      *
      * @var string $color
@@ -159,6 +166,30 @@ class ProductVersion
     public function getPrice()
     {
         return $this->price;
+    }
+
+    /**
+     * Set salePrice
+     *
+     * @param float $salePrice
+     *
+     * @return ProductVersion
+     */
+    public function setSalePrice($salePrice)
+    {
+        $this->salePrice = $salePrice;
+
+        return $this;
+    }
+
+    /**
+     * Get salePrice
+     *
+     * @return float
+     */
+    public function getSalePrice()
+    {
+        return $this->salePrice;
     }
 
     /**

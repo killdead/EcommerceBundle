@@ -60,3 +60,33 @@ $(document).on('click', '.delete-image', function(event) {
 
 ///////////////////////////////////////////////
 
+////////////////////// PRICES /////////////////////////////
+
+//DETECT CHANGES ON "PRICE"
+
+  $(document).on('change key paste keyup', "[id^=product_productVersions][id$='salePrice']", function() {
+    var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
+    var tax_rate = $(this).data('tax-rate'); 
+    var sale_price_plus_taxes =  price_with_dots * tax_rate; 
+    var index_collection = $(this).attr('id').match(/\d+/);
+console.log(sale_price_plus_taxes);
+console.log(index_collection);
+console.log($('#product_productVersions_' + index_collection + 'sale_amount_plus_taxes'));
+    $('#product_productVersions_' + index_collection + '_sale_amount_plus_taxes').val(accounting.formatNumber(sale_price_plus_taxes, '2', '', ',')); 
+  });
+  //TRIGGER IT WHEN EDITING ALSO - TRIGGER IT WHEN EDITING ALSO - 
+  $("[id^=product_productVersions][id$='salePrice']").trigger('change');
+
+  console.log($("[id^=product_productVersions][id$='sale_price_plus_taxes']"));
+
+  //DETECT CHANGES ON "PRICE PLUS TAXES"
+  $(document).on('change key paste keyup load', "[id^=product_productVersions][id$='_sale_amount_plus_taxes']", function() {
+    var price_with_dots =  parseFloat($(this).val().replace(',', '.'));
+    var tax_rate = $(this).data('tax-rate'); 
+    var price =  price_with_dots / tax_rate; 
+    var index_collection = $(this).attr('id').match(/\d+/);
+    $('#product_productVersions_' + index_collection + '_salePrice').val(accounting.formatNumber(price, 20, '', ',')); 
+  }).trigger('change');
+
+
+///////////////////////////////////////////////
