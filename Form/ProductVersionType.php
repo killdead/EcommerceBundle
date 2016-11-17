@@ -27,7 +27,7 @@ class ProductVersionType extends AbstractType
             ->add('price', null, array('label' => 'Precio (sin I.V.A.)', 'attr' => array('class' => 'price', 'data-tax-rate' => \Ziiweb\EcommerceBundle\Entity\TaxRates::VAT_RATE + 1)))
             ->add('price_plus_taxes', TextType::class, array('label' => 'Precio (con I.V.A.)', 'mapped' => false, 'required' => false, 'attr' => array('class' => 'price_plus_taxes', 'data-tax-rate' => \Ziiweb\EcommerceBundle\Entity\TaxRates::VAT_RATE + 1)))
 
-            ->add('salePrice', null, array('label' => 'Precio rebajado (sin I.V.A.)', 'attr' => array('class' => 'price', 'data-tax-rate' => \Ziiweb\EcommerceBundle\Entity\TaxRates::VAT_RATE + 1)))
+            ->add('salePrice', null, array('label' => 'Precio rebajado (sin I.V.A.)', 'attr' => array('class' => 'price', 'required' => false, 'data-tax-rate' => \Ziiweb\EcommerceBundle\Entity\TaxRates::VAT_RATE + 1)))
             ->add('sale_amount_plus_taxes', TextType::class, array('label' => 'Precio rebajado (con I.V.A.)', 'mapped' => false, 'required' => false, 'attr' => array('class' => 'sale_amount_plus_taxes', 'data-tax-rate' => \Ziiweb\EcommerceBundle\Entity\TaxRates::VAT_RATE + 1)))
 
 
