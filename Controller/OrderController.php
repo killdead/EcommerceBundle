@@ -682,7 +682,7 @@ var_dump($response);
 
       $stringPedidos = $stringPedidos .
 	'SUBTOTAL: ' . number_format((float)$purchase->getSubtotal() - $purchase->getMetodoEnvio()->getPrecio(), 2, ',', '') . ' €' . '<br>' .
-	'GASTOS DE ENVÍO: ' . number_format($purchase->getMetodoEnvio()->getPrecio(), 2, ',', '') . '€' . '<br>' .
+	//'GASTOS DE ENVÍO: ' . number_format($purchase->getMetodoEnvio()->getPrecio(), 2, ',', '') . '€' . '<br>' .
 	'IVA General (' . (($pedido['tasa_iva'] - 1) * 100) . '%): ' . number_format($pedido['iva'] , 2, ',', '') . ' €' . '<br>';
 
 /*
@@ -697,33 +697,30 @@ var_dump($response);
 
       $stringPedidos = $stringPedidos . 
 
-      'TOTAL (IVA inc): ' . number_format((float)$purchase->getTotal(), 2, ',', '') . ' €' . '<br>' . '<br>'; 
+      'TOTAL A PAGAR (IVA inc): ' . number_format((float)$purchase->getTotal(), 2, ',', '') . ' €' . '<br>' . '<br>'; 
 
       $em->persist($purchase);
       $em->flush();
 
+       
+      $companyData = $this->container->getParameter('ziiweb_ecommerce.company_data'); 
+      $clientPurchaseEmail = $this->container->getParameter('ziiweb_ecommerce.client_purchase_email'); 
+
       $message = \Swift_Message::newInstance()
 	->setContentType('text/html')
-	->setSubject('Pedido realizado en la web de Pro Comunicaciones')
-	->setFrom(array('info@ziiweb.com'))
+	->setSubject('Pedido realizado en la web de ' . $companyData['name'])
+	->setFrom(array($companyData['email']))
 	->setTo(array(
 	  //'tirengarfio@gmail.com',
 	  //'pedidos@procomunicaciones.es'
-	  'info@ziiweb.com'
+	  $companyData['email'] 
 	))
 	->setBody(
-	  'Estimado Cliente,<br><br>' . 
-	  'Gracias por tu compra en PRO COMUNICACIONES.<br><br>' . 
-	  'Más abajo tienes el resumen de tu pedido:<br><br>' .
+          $clientPurchaseEmail['text_1'] . '<br>' . 
 	  $stringPedidos .
-	  $metodoEnvio->getNombre() . '<br>' .
+	  //$metodoEnvio->getNombre() . '<br>' .
 	  $metodoPago->getNombre() . '<br><br>' .
-	  'En un plazo máximo de 24 horas hábiles, recibirás la factura proforma a través de tu correo electrónico.<br><br>' .
-	  'Para cualquier otra consulta escribenos a <a href="mailto:info@ziiweb.com">info@ziiweb.com</a><br><br>' .
-	  'Gracias por confiar en nosotros.<br><br>' .
-	  'Atentamente,<br><br>' .
-	  'PRO COMUNICACIONES CB<br>' . 
-	  'Tu proveedor de confianza.<br><br>'  
+          $clientPurchaseEmail['text_2'] . '<br>'
 	);
 
       $this->get('mailer')->send($message);
@@ -779,6 +776,7 @@ var_dump($response);
 	  //'Empresa: ' . $user->getCompany() . '<br>' . 
 	  //'Nombre comercial (tienda/local): ' . $user->getShopName() . '<br>' . 
 	  //'NIF/CIF: ' . $user->getCif() . '<br>' . 
+	  'Nombre: ' . $pedido['name'] . '<br>' .
 	  'Dirección: ' . $pedido['address'] . '<br>' .
 	  'Código postal: ' . $pedido['postal_code'] . '<br>' .
 	  'Provincia: ' . $pedido['province'] . '<br>' . 
@@ -791,15 +789,15 @@ var_dump($response);
 	  //'¿Tiene la condición de revendedor?: ' . $reseller . '<br><br>' .
 	  $nuevaDireccion . 
 	  $stringPedidos . '<br>' .
-	  $metodoEnvio->getNombre() . '<br>' .
+	  //$metodoEnvio->getNombre() . '<br>' .
 	  $metodoPago->getNombre();
 
       $message = \Swift_Message::newInstance()
 	->setContentType('text/html')
-	->setSubject('Nuevo pedido Pro Comunicaciones')
-	->setFrom(array('info@ziiweb.com'))
+	->setSubject('Nuevo pedido ' . $companyData['name'])
+	->setFrom(array($companyData['email']))
 	->setTo(array(
-	  'info@ziiweb.com'
+	  $companyData['email'] 
 	  //'tirengarfio@gmail.com'
 	))
 	->setBody($emailBody);
