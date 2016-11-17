@@ -114,8 +114,8 @@ class DefaultController extends Controller
 		    $result = $query->getSingleResult();
      
 		    $column['values'] =  array(
-                        'min' => round($result['min_value'], 2),
-                        'max' => round($result['max_value'], 2)
+                        'min' => $result['min_value'],
+                        'max' => $result['max_value']
                     );
 
 		//ProductVersionSize
@@ -140,8 +140,8 @@ class DefaultController extends Controller
 		    $result = $query->getSingleResult();
      
 		    $column['values'] =  array(
-                        'min' => round($result['min_value'], 2),
-                        'max' => round($result['max_value'], 2)
+                        'min' => $result['min_value'],
+                        'max' => $result['max_value']
                     );
 		}
             //CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - CHECKBOX - 
