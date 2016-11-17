@@ -220,13 +220,20 @@ class OrderController extends Controller
 
 	$imagePath = $productVersionSize->getProductVersion()->getProductVersionImages()[0]->getFile();
 
+        if ($productVersionSize->getProductVersion()->getSalePrice()) {
+            $price = $productVersionSize->getProductVersion()->getSalePrice();
+        } else {
+            $price = $productVersionSize->getProductVersion()->getPrice(); 
+        }
+ 
+        $price = 
 	$aux = array(
 	  'id' => $productVersionSizeId, 
 	  'qty' => $productoQty, 
-	  'precio' => $productVersionSize->getProductVersion()->getPrice(), 
+	  'precio' => $price, 
 	  'nombre' => $name,
 	  'size' => $size,
-	  'precio_total_subitem' => ($productVersionSize->getProductVersion()->getPrice() * $productoQty),
+	  'precio_total_subitem' => ($price * $productoQty),
 	  'image_path' => $imagePath,
 	  'qty' => $productoQty
 	);
