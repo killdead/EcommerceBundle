@@ -258,7 +258,7 @@ class DefaultController extends Controller
         //SEARCH - SEARCH - SEARCH - SEARCH - SEARCH - SEARCH - SEARCH - 
         if ($categoryProduct == 'search') {
 	  $qb = $repository->createQueryBuilder('pv')
-             ->select("pv, CONCAT(p.name, ' ', m.name, ' ', pv.colorCode) AS full_product_name")
+             ->select("DISTINCT pv, CONCAT(p.name, ' ', m.name, ' ', pv.colorCode) AS full_product_name")
 	     ->join('pv.product', 'p')
 	     ->join('p.manufacturer', 'm')
 	     ->join('pv.productVersionSizes', 'pvs')
