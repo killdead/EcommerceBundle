@@ -1016,23 +1016,35 @@ var_dump($response);
     /**
      * @Route("/redsys-payment", name="redsys_payment")
      */
-    function redsysPaymentAction() {
+    function redsysPaymentAction(Request $request) {
 
 
         $session = $this->get('session');
         $pedido = $session->get('pedido');
 
 	try{
-	    //Key test
-	    $key = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7';
+
+            $companyData = $this->container->getParameter('ziiweb_ecommerce.company_data'); 
+ 
+            $domain = $companyData['domain'];
+	    $redsys = $this->container->getParameter('ziiweb_ecommerce.redsys');
+            if ($request->getHost() == 'www.' . $domain || $request->getHost() == $companyData['domain']) {
+                $key = $redsys['live']['key'];
+                $merchantCode = $redsys['live']['merchant_code'];
+                $merchantTerminal = $redsys['live']['merchant_terminal'];
+            } else {
+                $key = $redsys['test']['key'];
+                $merchantCode = $redsys['test']['merchant_code'];
+                $merchantTerminal = $redsys['test']['merchant_terminal'];
+            }
 
 	    $redsys = new Tpv();
 	    $redsys->setAmount($pedido['total']);
 	    $redsys->setOrder(time());
-	    $redsys->setMerchantcode('092536168'); //Reemplazar por el código que proporciona el banco
+	    $redsys->setMerchantcode($merchantCode); //Reemplazar por el código que proporciona el banco
 	    $redsys->setCurrency('978');
 	    $redsys->setTransactiontype('0');
-	    $redsys->setTerminal('001');
+	    $redsys->setTerminal($merchantTerminal);
 
 
 	    $redsys->setMethod('C'); //Solo pago con tarjeta, no mostramos iupay
