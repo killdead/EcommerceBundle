@@ -359,7 +359,8 @@ class DefaultController extends Controller
        $renderedView = $this->renderView('ZiiwebEcommerceBundle:Default:product_list_inner.html.twig', array('product_versions' => $result));
        $response->setData(array(
            'rendered_view' => $renderedView,
-           'count_product_versions' => count($totalProductVersions)
+           'count_product_versions' => count($totalProductVersions),
+           'max_results' => $maxResults 
        ));
 
        return $response;
