@@ -6,6 +6,10 @@ html {
     padding-bottom: 420px; }
     html body header {
       position: relative; }
+      @media screen and (max-width: 992px) {
+        html body header {
+          overflow-y: scroll !important;
+          height: 100% !important; } }
       html body header .vertical-menu-left {
         width: 300px; }
         @media screen and (max-width: 768px) {

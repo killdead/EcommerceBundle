@@ -6,6 +6,11 @@ html {
     padding-bottom: 420px;
     header {
       position: relative;
+      //TO MAKE THE NAVBAR CONTENT SCROLLABLE IN SMALL DEVICES
+      @media screen and (max-width: 992px) {
+	overflow-y: scroll !important; 
+	height: 100% !important;
+      }
       .vertical-menu-left {
 	width: 300px;
 	//SHOW VERTICAL MENU INSTEAD OF HORIZONTAL - SHOW VERTICAL MENU INSTEAD OF HORIZONTAL - 
