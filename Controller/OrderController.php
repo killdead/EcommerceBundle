@@ -713,6 +713,12 @@ var_dump($response);
       $companyData = $this->container->getParameter('ziiweb_ecommerce.company_data'); 
       $clientPurchaseEmail = $this->container->getParameter('ziiweb_ecommerce.client_purchase_email'); 
 
+      if ($this->getUser()) {
+	  $email = $this->getUser()->getEmail();
+      } else {
+	  $email = $pedido['email'];
+      }
+
       $message = \Swift_Message::newInstance()
 	->setContentType('text/html')
 	->setSubject('Pedido realizado en la web de ' . $companyData['name'])
@@ -720,7 +726,8 @@ var_dump($response);
 	->setTo(array(
 	  //'tirengarfio@gmail.com',
 	  //'pedidos@procomunicaciones.es'
-	  $companyData['email'] 
+	  //$companyData['email'] 
+	  $email
 	))
 	->setBody(
           $clientPurchaseEmail['text_1'] . '<br>' . 
@@ -772,11 +779,6 @@ var_dump($response);
 
       }
 
-      if ($this->getUser()) {
-	  $email = $this->getUser()->getEmail();
-      } else {
-	  $email = $pedido['email'];
-      }
 
       $emailBody = 
 	  //'Código cliente: ' . $user->getClientCode() . '<br>' . 
