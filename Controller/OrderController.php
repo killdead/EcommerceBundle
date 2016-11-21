@@ -1032,10 +1032,12 @@ var_dump($response);
                 $key = $redsys['live']['key'];
                 $merchantCode = $redsys['live']['merchant_code'];
                 $merchantTerminal = $redsys['live']['merchant_terminal'];
+                $environment = 'live';
             } else {
                 $key = $redsys['test']['key'];
                 $merchantCode = $redsys['test']['merchant_code'];
                 $merchantTerminal = $redsys['test']['merchant_terminal'];
+                $environment = 'test';
             }
 
 	    $redsys = new Tpv();
@@ -1064,7 +1066,7 @@ var_dump($response);
             ////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////
-	    $redsys->setEnviroment('test'); //Entorno test
+	    $redsys->setEnviroment($environment); //Entorno test
             ////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////
