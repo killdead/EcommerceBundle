@@ -243,7 +243,8 @@ html {
         html body main .products-container .products {
           transition: width 500ms;
           flex-grow: 1;
-          min-height: 600px; }
+          min-height: 600px;
+          position: relative; }
           html body main .products-container .products .grid-item {
             padding-left: 6px !important;
             padding-right: 6px !important; }
@@ -260,6 +261,18 @@ html {
                 color: #7F6860; }
                 html body main .products-container .products .product-container .info-product .wishlist .wished {
                   color: #EBB0CC !important; }
+          html body main .products-container .products .loader-high {
+            position: absolute;
+            right: 0;
+            left: 0;
+            margin: auto; }
+          html body main .products-container .products .loader-low {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            margin: auto;
+            display: none; }
     html body .product-container .product-card {
       border: 1px solid #daccc7;
       padding: 5px; }

@@ -305,6 +305,7 @@ html {
 	  transition: width 500ms; //replace 200ms with time of your choice
           flex-grow: 1;
           min-height: 600px;
+          position: relative;
 	  .grid-item { 
 	    padding-left: 6px !important;
 	    padding-right: 6px !important;
@@ -325,6 +326,20 @@ html {
                 }
 	      }
 	    }
+          }
+          .loader-high {
+            position: absolute;
+            right: 0;
+            left: 0;
+            margin: auto
+          }
+          .loader-low {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            margin: auto;
+            display: none;
           }
         }
       }
