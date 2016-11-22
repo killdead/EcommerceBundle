@@ -35,7 +35,7 @@ class Configuration implements ConfigurationInterface
 		       ->scalarNode('text_2')->end()
 		   ->end()
                  ->end()
-		 ->arrayNode('redsys')
+		 ->arrayNode('redsys')->setRequired(false)
 		   ->children()
 		       ->arrayNode('test')
 		         ->children()
