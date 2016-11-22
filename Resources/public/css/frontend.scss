@@ -158,9 +158,15 @@ html {
 	margin-top: 69px; 
       }
       .carousel-item{
-        height: 440px !important;
+        height: 840px ;
+	@media screen and (max-width: 1800px) {
+	  height: 600px !important; 
+	}
+	@media screen and (max-width: 1300px) {
+	  height: 500px !important; 
+	}
 	@media screen and (max-width: 992px) {
-	  height: 420px; 
+	  height: 420px !important; 
 	}
 	@media screen and (max-width: 768px) {
 	  height: 260px !important; 

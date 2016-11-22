@@ -124,10 +124,16 @@ html {
         html body main {
           margin-top: 69px; } }
       html body main .carousel-item {
-        height: 440px !important; }
+        height: 840px; }
+        @media screen and (max-width: 1800px) {
+          html body main .carousel-item {
+            height: 600px !important; } }
+        @media screen and (max-width: 1300px) {
+          html body main .carousel-item {
+            height: 500px !important; } }
         @media screen and (max-width: 992px) {
           html body main .carousel-item {
-            height: 420px; } }
+            height: 420px !important; } }
         @media screen and (max-width: 768px) {
           html body main .carousel-item {
             height: 260px !important; } }
