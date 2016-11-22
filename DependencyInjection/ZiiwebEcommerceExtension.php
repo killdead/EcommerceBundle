@@ -22,18 +22,12 @@ class ZiiwebEcommerceExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        if (isset($config['company_data'])) {
 	    $container->setParameter('ziiweb_ecommerce.company_data', $config['company_data']);      
-        }
 
 
-        if (isset($config['client_purchase_email'])) {
             $container->setParameter('ziiweb_ecommerce.client_purchase_email', $config['client_purchase_email']);      
-        }
    
-        if (isset($config['redsys'])) {
             $container->setParameter('ziiweb_ecommerce.redsys', $config['redsys']);      
-        }
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
