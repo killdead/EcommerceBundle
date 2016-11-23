@@ -281,6 +281,7 @@ class DefaultController extends Controller
         //FEATURED - FEATURED - FEATURED - FEATURED - FEATURED - 
         } else if ($categoryProduct == 'ziiweb_ecommerce_default_featured_products') {
 	  $qb = $repository->createQueryBuilder('pv')
+             ->select("DISTINCT pv")
 	     ->join('pv.product', 'p')
 	     ->join('pv.productVersionSizes', 'pvs')
              ->where('pv.featured = :pv_featured')
