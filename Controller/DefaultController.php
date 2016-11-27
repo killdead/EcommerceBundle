@@ -432,6 +432,7 @@ class DefaultController extends Controller
 	$options = array('decorate' => false);
         $tree = $repo->buildTree($nodesHierarchy, $options);
 
+        //ORDER SUBCATEGORIES ALPHABETICALLY BY NAME
         $treeAux = array();
         foreach ($tree as $key => $value) {
 
