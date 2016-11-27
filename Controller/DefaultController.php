@@ -428,51 +428,38 @@ class DefaultController extends Controller
           }
         }
 
-/*
-foreach ($nodesHierarchy as $key => $row) {
-    // replace 0 with the field's index/key
-    $aux[$key]  = $row['name'];
-}
-*/
-
-//$this->sortBySubValue($nodesHierarchy, 'name', true, true);
-usort($nodesHierarchy, function($a,$b){ return strcmp($a['name'], $b['name']); } );
-//var_dump($nodesHierarchy);
-
-/*
-usort($nodesHierarchy, function($a, $b) {
-    return $a['name'] - $b['name'];
-});
-*/
-
-
         //construct the TREE using the categories that has products, are enabled and with stock > 0 and their ANCESTORS
 	$options = array('decorate' => false);
         $tree = $repo->buildTree($nodesHierarchy, $options);
 
+/*
+var_dump($tree[0]);
+die("ljaf");
+*/
+
+        $treeAux = array();
+        foreach ($tree as $key => $value) {
+
+           $treeAux[$key] = $value;
+           $subcategories = $value['__children'];
+
+           usort($subcategories, function ($a, $b) {
+             return strcmp($a["name"], $b["name"]);
+           }); 
+           
+           $treeAux[$key]['__children'] = $subcategories;
+        }
+
+       //var_dump($treeAux[0]); 
+//die("jlfa");
+
+
         return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array(
-            'navbar' => $tree,
+            'navbar' => $treeAux,
             'current_route' => $request->get('current_route'),
             'current_category_product' => $request->get('current_category_product')
         ));
     }
-function sortBySubValue($array, $value, $asc = true, $preserveKeys = false)
-{
-    if (is_object(reset($array))) {
-        $preserveKeys ? uasort($array, function ($a, $b) use ($value, $asc) {
-            return $a->{$value} == $b->{$value} ? 0 : ($a->{$value} - $b->{$value}) * ($asc ? 1 : -1);
-        }) : usort($array, function ($a, $b) use ($value, $asc) {
-            return $a->{$value} == $b->{$value} ? 0 : ($a->{$value} - $b->{$value}) * ($asc ? 1 : -1);
-        });
-    } else {
-        $preserveKeys ? uasort($array, function ($a, $b) use ($value, $asc) {
-            return $a[$value] == $b[$value] ? 0 : ($a[$value] - $b[$value]) * ($asc ? 1 : -1);
-        }) : usort($array, function ($a, $b) use ($value, $asc) {
-            return $a[$value] == $b[$value] ? 0 : ($a[$value] - $b[$value]) * ($asc ? 1 : -1);
-        });
-    }
-    return $array;
-}
 
     /**
      * @Route("/categoria/{categoryProduct}", name="ziiweb_ecommerce_default_product_list") 
