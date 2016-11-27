@@ -432,11 +432,6 @@ class DefaultController extends Controller
 	$options = array('decorate' => false);
         $tree = $repo->buildTree($nodesHierarchy, $options);
 
-/*
-var_dump($tree[0]);
-die("ljaf");
-*/
-
         $treeAux = array();
         foreach ($tree as $key => $value) {
 
@@ -444,15 +439,11 @@ die("ljaf");
            $subcategories = $value['__children'];
 
            usort($subcategories, function ($a, $b) {
-             return strcmp($a["name"], $b["name"]);
+             return strcmp(ucfirst($a["name"]), ucfirst($b["name"]));
            }); 
            
            $treeAux[$key]['__children'] = $subcategories;
         }
-
-       //var_dump($treeAux[0]); 
-//die("jlfa");
-
 
         return $this->render('ZiiwebEcommerceBundle:Default:navbar.html.twig', array(
             'navbar' => $treeAux,
