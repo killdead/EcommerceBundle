@@ -343,7 +343,7 @@ class DefaultController extends Controller
        $query = $qb->getQuery();
        $totalProductVersions = $query->getResult();
 
-       $maxResults = 8;
+       $maxResults = 6;
        $page = $request->request->get('page') ? : 1;
 
        $firstResult = $maxResults * ($page - 1);
