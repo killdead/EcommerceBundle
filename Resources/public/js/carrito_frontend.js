@@ -28,6 +28,7 @@ $('body').on('click', '.eliminar', function(){
           '<button class="verde">Añadir al carro</button>' 
       );
       $('.nav .cart-item .tag-pill').text(response.total_number_products);
+      $('.left-menu-button .tag-pill').text(response.total_number_products);
       updateTotals(response);
       subitem.remove();
     },
