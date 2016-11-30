@@ -120,28 +120,30 @@ html {
         html body main {
           margin-top: 69px; } }
       html body main .carousel-item {
-        height: 860px; }
-        @media screen and (max-width: 2200px) {
-          html body main .carousel-item {
-            height: 750px !important; } }
-        @media screen and (max-width: 1800px) {
-          html body main .carousel-item {
-            height: 550px !important; } }
-        @media screen and (max-width: 1300px) {
-          html body main .carousel-item {
-            height: 420px !important; } }
-        @media screen and (max-width: 992px) {
-          html body main .carousel-item {
-            height: 320px !important; } }
-        @media screen and (max-width: 768px) {
-          html body main .carousel-item {
-            height: 220px !important; } }
-        @media screen and (max-width: 544px) {
-          html body main .carousel-item {
-            height: 152px !important; } }
-        @media screen and (max-width: 444px) {
-          html body main .carousel-item {
-            height: 132px !important; } }
+        /*
+        height: 860px;
+	@media screen and (max-width: 2200px) {
+	  height: 750px !important; 
+	}
+	@media screen and (max-width: 1800px) {
+	  height: 550px !important; 
+	}
+	@media screen and (max-width: 1300px) {
+	  height: 420px !important; 
+	}
+	@media screen and (max-width: 992px) {
+	  height: 320px !important; 
+	}
+	@media screen and (max-width: 768px) {
+	  height: 220px !important; 
+	}
+	@media screen and (max-width: 544px) {
+	  height: 152px !important; 
+	}
+	@media screen and (max-width: 444px) {
+	  height: 132px !important; 
+	}
+*/ }
         html body main .carousel-item img {
           width: 100% !important; }
       html body main .free-shipping {
