@@ -154,6 +154,9 @@ html {
       }
       .carousel-item{
         height: 860px;
+	@media screen and (max-width: 2200px) {
+	  height: 750px !important; 
+	}
 	@media screen and (max-width: 1800px) {
 	  height: 550px !important; 
 	}
