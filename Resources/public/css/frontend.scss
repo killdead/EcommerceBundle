@@ -164,10 +164,13 @@ html {
 	  height: 320px !important; 
 	}
 	@media screen and (max-width: 768px) {
-	  height: 170px !important; 
+	  height: 220px !important; 
 	}
 	@media screen and (max-width: 544px) {
-	  height: 200px; 
+	  height: 152px !important; 
+	}
+	@media screen and (max-width: 444px) {
+	  height: 132px !important; 
 	}
         img {
 	  width: 100% !important;

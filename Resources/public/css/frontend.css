@@ -132,10 +132,13 @@ html {
             height: 320px !important; } }
         @media screen and (max-width: 768px) {
           html body main .carousel-item {
-            height: 170px !important; } }
+            height: 220px !important; } }
         @media screen and (max-width: 544px) {
           html body main .carousel-item {
-            height: 200px; } }
+            height: 152px !important; } }
+        @media screen and (max-width: 444px) {
+          html body main .carousel-item {
+            height: 132px !important; } }
         html body main .carousel-item img {
           width: 100% !important; }
       html body main .free-shipping {
