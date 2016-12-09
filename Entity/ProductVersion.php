@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ziiweb\EcommerceBundle\Entity\Order;
 use Ziiweb\EcommerceBundle\Entity\ProductVersionSizes;
-use DefaultBundle\Entity\User;
+use UserBundle\Entity\User;
 
 /**
  * Ziiweb\EcommerceBundle\Entity\ProductVersion
@@ -389,11 +389,11 @@ class ProductVersion
     /**
      * Add user
      *
-     * @param \DefaultBundle\Entity\User $user
+     * @param \UserBundle\Entity\User $user
      *
      * @return ProductVersion
      */
-    public function addUser(\DefaultBundle\Entity\User $user)
+    public function addUser(\UserBundle\Entity\User $user)
     {
         $this->users[] = $user;
 
@@ -403,9 +403,9 @@ class ProductVersion
     /**
      * Remove user
      *
-     * @param \DefaultBundle\Entity\User $user
+     * @param \UserBundle\Entity\User $user
      */
-    public function removeUser(\DefaultBundle\Entity\User $user)
+    public function removeUser(\UserBundle\Entity\User $user)
     {
         $this->users->removeElement($user);
     }
