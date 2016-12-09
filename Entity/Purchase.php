@@ -25,7 +25,7 @@ class Purchase
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="DefaultBundle\Entity\User", inversedBy="purchases")
+     * @ORM\ManyToOne(targetEntity="UserBundle\Entity\User", inversedBy="purchases")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
      **/
     private $user;

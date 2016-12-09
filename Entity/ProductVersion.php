@@ -33,7 +33,7 @@ class ProductVersion
     private $product;
 
     /**
-     * @ORM\ManyToMany(targetEntity="DefaultBundle\Entity\User", inversedBy="productVersions")
+     * @ORM\ManyToMany(targetEntity="UserBundle\Entity\User", inversedBy="productVersions")
      * @ORM\JoinTable(name="wishlist")
      */
     private $users;
