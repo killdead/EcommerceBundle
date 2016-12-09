@@ -21,9 +21,9 @@ class DefaultController extends Controller
      */
     public function breadcrumbsAction($categoryProductSlug)
     {
-        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct')->findOneBy(array('slug' => $categoryProductSlug));
+        $categoryProduct = $this->getDoctrine()->getRepository('ZiiwebCatalogBundle:ProductCategory')->findOneBy(array('slug' => $categoryProductSlug));
 
-        $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:CategoryProduct');
+        $repository = $this->getDoctrine()->getRepository('ZiiwebCatalogBundle:ProductCategory');
 
         $index = 0;
         $parentCategories[$index]['slug'] = $categoryProduct->getSlug();
