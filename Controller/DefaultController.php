@@ -556,7 +556,7 @@ class DefaultController extends Controller
        $repo = $this->getDoctrine()->getRepository('DefaultBundle:User');
        $user = $repo->findOneBy(array('id' => $this->getUser()->getId()));
 
-       $repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+       $repo = $this->getDoctrine()->getRepository('ZiiwebCatalogBundle:ProductVersion');
        $productVersion = $repo->findOneBy(array('id' => $product_version_id));
      
        $user->removeProductVersion($productVersion); 
