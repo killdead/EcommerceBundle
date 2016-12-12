@@ -9,7 +9,7 @@ use Ziiweb\EcommerceBundle\Entity\ProductVersionImage;
 class ProductVersionImageEventListener
 {
 
-    public function prePersist(LifecycleEventArgs $args) 
+    public function prePersist(LifecycleEventArgs $args)
     {
         $this->aux($args);
     }

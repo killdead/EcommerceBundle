@@ -373,7 +373,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
+     	$repo = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:ProductVersion');
         $productVersions = $repo->findBy(array('featured' => true));
 
         return $this->render('ZiiwebEcommerceBundle:Default:index.html.twig', array(
