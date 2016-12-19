@@ -250,7 +250,7 @@ class DefaultController extends Controller
             array(
 		'name' => 'color',
                 'label' => 'Color',
-		'class' => 'ZiiwebPurchaseBundle:ProductVersion',
+		'class' => 'ZiiwebCatalogBundle:ProductVersion',
 		'type' => 'checkbox')
         );
 
@@ -327,7 +327,7 @@ class DefaultController extends Controller
 		        $qb->andWhere('pv.' . $filterColumnConfig['name'] . ' IN (:values' . $key . ')');
 		        $qb->setParameter('values' . $key, $filterColumnConfig['values']);
 		    }
-	       } else if ($filterColumnConfig['class'] == 'ZiiwebPurchaseBundle:ProductVersionSize') {
+	       } else if ($filterColumnConfig['class'] == 'ZiiwebCatalogBundle:ProductVersionSize') {
 		    if ($filterColumnConfig['type'] == 'range') {
 		        $qb->andWhere('pvs.' . $filterColumnConfig['name'] . ' >= :min' . $key . ' AND pvs.' . $filterColumnConfig['name'] . ' <= :max' . $key);
 		        $qb->setParameter('min' . $key, $filterColumnConfig['values']['min']);

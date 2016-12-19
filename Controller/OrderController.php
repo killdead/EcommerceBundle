@@ -891,8 +891,11 @@ var_dump($response);
       $repository = $this->getDoctrine()->getRepository('ZiiwebEcommerceBundle:PaymentMethod');
       $paymentMethods = $repository->findBy(array('enabled' => true));
 
-      $session = $this->get('session'); 
-      $pedido = $session->get('pedido'); 
+      $session = $this->get('session');
+      $purchaseId = $session->get('purchase_id');
+
+      $repository = $this->getDoctrine()->getRepository('ZiiwebPurchaseBundle:Purchase');
+      $purchase = $repository->findOneBy(array('id' => $purchaseId));
 
       $lastProductPage = $request->headers->get('referer');
 
@@ -906,7 +909,7 @@ var_dump($response);
       return $this->render('ZiiwebEcommerceBundle:Order:preenvio_resumen.html.twig', array(
 	  'shippingMethods' => $shippingMethods,
 	  'paymentMethods' => $paymentMethods,
-	  'pedido' => $pedido
+          'purchase' => $purchase
       ));
     }
 
