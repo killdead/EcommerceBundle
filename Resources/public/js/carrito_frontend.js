@@ -24,6 +24,11 @@ $('body').on('click', '.eliminar', function(){
     data: { product_version_size_id: product_version_size_id, size: size},
     success: function(response) {
       response = JSON.parse(response);
+
+      if (response.uncomplete_purchase == 'true') {
+        window.location.href="/";
+      }
+
       $('.subitem[data-product_version_size_id="' + product_version_size_id + '_' + size + '"]').find('.anadir-qty').html(
           '<button class="verde">Añadir al carro</button>' 
       );
@@ -80,6 +85,11 @@ function clander(aux, new_producto_qty) {
     dataType: 'json',
     success: function(response) {
       response = JSON.parse(response);
+
+      if (response.uncomplete_purchase == 'true') {
+        window.location.href="/";
+      }
+
       if (response.stock == '0') {
         alert("Lo sentimos, no tenemos tantas existencias de este producto.");
       } else {
@@ -172,6 +182,11 @@ $('body').on('click', '.anadir_product', function(){
     dataType: 'json',
     success: function(response) {
       response = JSON.parse(response);
+
+      if (response.uncomplete_purchase == 'true') {
+        window.location.href="/";
+      }
+
       if (response.enStock) {
         var message = 'Lo sentimos, solo queda(n) ' + response.stock + ' unidad(es)' + ' de este producto.';
         alert(message);
